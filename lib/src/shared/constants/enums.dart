@@ -4,3 +4,8 @@ enum Example {
   exampleB,
   exampleC,
 }
+
+enum AppRoute {
+  startup,
+  onboarding,
+}
