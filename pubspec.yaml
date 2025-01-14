@@ -8,9 +8,12 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
+  firebase_auth: ^5.4.0
+  firebase_core: ^3.10.0
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.6.1 # main Riverpod package
+  go_router: ^14.6.3 # simplifies navigation and routing
   riverpod_annotation: ^2.6.1 # enables code generation
 
 dev_dependencies:
