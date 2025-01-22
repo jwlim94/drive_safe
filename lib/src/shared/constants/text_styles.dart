@@ -1,12 +1,52 @@
+import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class TextStyles {
-  // Example
-  static const example = TextStyle(
-    fontSize: 26,
-    fontWeight: FontWeight.bold,
+  static const h1 = TextStyle(
+    fontSize: 50,
+    fontWeight: FontWeight.w500,
     height: 1.28,
-    letterSpacing: -0.2,
-    color: Colors.black,
+    letterSpacing: 0,
+    color: AppColors.customBlack,
+  );
+
+  static const h2 = TextStyle(
+    fontSize: 38,
+    fontWeight: FontWeight.w500,
+    height: 1.28,
+    letterSpacing: 0,
+    color: AppColors.customBlack,
+  );
+
+  static const h3 = TextStyle(
+    fontSize: 28,
+    fontWeight: FontWeight.normal,
+    height: 1.28,
+    letterSpacing: 0,
+    color: AppColors.customBlack,
+  );
+
+  static const h4 = TextStyle(
+    fontSize: 21,
+    fontWeight: FontWeight.normal,
+    height: 1.28,
+    letterSpacing: 0,
+    color: AppColors.customBlack,
+  );
+
+  static const bodyMedium = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    height: 1.28,
+    letterSpacing: 0,
+    color: AppColors.customBlack,
+  );
+
+  static const bodySmall = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.normal,
+    height: 1.28,
+    letterSpacing: 0,
+    color: AppColors.customBlack,
   );
 }
