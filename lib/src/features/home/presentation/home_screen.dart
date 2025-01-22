@@ -5,6 +5,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('home screen'));
+    return const Center(
+      child: Text(
+        'home screen',
+      ),
+    );
   }
 }

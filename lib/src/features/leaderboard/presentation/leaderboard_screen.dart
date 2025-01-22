@@ -6,7 +6,9 @@ class LeaderboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('leaderboard screen'),
+      child: Text(
+        'leaderboard screen',
+      ),
     );
   }
 }

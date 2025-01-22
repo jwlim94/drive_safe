@@ -6,7 +6,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('profile screen'),
+      child: Text(
+        'profile screen',
+      ),
     );
   }
 }
