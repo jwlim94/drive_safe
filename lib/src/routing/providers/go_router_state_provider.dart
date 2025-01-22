@@ -1,9 +1,14 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
+import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
+import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
+import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
+import 'package:drive_safe/src/features/user/presentation/profile_screen.dart';
 import 'package:drive_safe/src/onboarding_screen.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
 import 'package:drive_safe/src/routing/utils/extra_codec.dart';
 import 'package:drive_safe/src/routing/utils/go_router_refresh_stream.dart';
+import 'package:drive_safe/src/routing/utils/scaffold_with_nested_navigation.dart';
 import 'package:drive_safe/src/shared/constants/enums.dart';
 import 'package:drive_safe/src/shared/constants/keys.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +23,7 @@ GoRouter goRouterState(Ref ref) {
   final authRepository = ref.watch(authRepositoryProvider);
 
   return GoRouter(
-    initialLocation: '/onboarding',
+    initialLocation: '/home',
     extraCodec: const ExtraCodec(),
     debugLogDiagnostics: true,
     navigatorKey: Keys.rootNavigatorKey,
@@ -49,6 +54,72 @@ GoRouter goRouterState(Ref ref) {
         ),
       ),
       // Add more routes here...
+      StatefulShellRoute.indexedStack(
+        parentNavigatorKey: Keys.rootNavigatorKey,
+        pageBuilder: (context, state, navigationShell) => NoTransitionPage(
+          child: ScaffoldWithNestedNavigation(
+            navigationShell: navigationShell,
+          ),
+        ),
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: Keys.homeNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/home',
+                name: AppRoute.home.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(
+                    child: HomeScreen(),
+                  );
+                },
+              )
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: Keys.leaderboardNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/leaderboard',
+                name: AppRoute.leaderboard.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(
+                    child: LeaderboardScreen(),
+                  );
+                },
+              )
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: Keys.garageNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/garage',
+                name: AppRoute.garage.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(
+                    child: GarageScreen(),
+                  );
+                },
+              )
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: Keys.profileNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: AppRoute.profile.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(
+                    child: ProfileScreen(),
+                  );
+                },
+              )
+            ],
+          ),
+        ],
+      ),
     ],
   );
 }
