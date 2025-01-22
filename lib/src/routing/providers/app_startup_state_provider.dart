@@ -5,6 +5,9 @@ part 'app_startup_state_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 FutureOr<void> appStartupState(Ref ref) async {
+  // ? Temporary delay to simulate preloading tasks and show the splash screen
+  await Future.delayed(const Duration(seconds: 1));
+
   ref.onDispose(() {
     // Add providers to invalidate here... (such as shared preferences)
   });
