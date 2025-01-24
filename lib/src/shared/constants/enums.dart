@@ -12,4 +12,7 @@ enum AppRoute {
   leaderboard,
   garage,
   profile,
+  trophy,
+  carcustomization,
+  minigame
 }
