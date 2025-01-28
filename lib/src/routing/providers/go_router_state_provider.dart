@@ -3,7 +3,7 @@ import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:drive_safe/src/features/user/presentation/profile_screen.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_screen_personal.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
 import 'package:drive_safe/src/routing/utils/extra_codec.dart';
@@ -49,7 +49,8 @@ GoRouter goRouterState(Ref ref) {
       GoRoute(
         path: '/onboarding',
         name: AppRoute.onboarding.name,
-        pageBuilder: (context, state) => const NoTransitionPage( //animations later
+        pageBuilder: (context, state) => const NoTransitionPage(
+          //animations later
           child: OnboardingScreen(),
         ),
       ),
@@ -94,43 +95,43 @@ GoRouter goRouterState(Ref ref) {
             navigatorKey: Keys.garageNavigatorKey,
             routes: [
               GoRoute(
-                path: '/garage',
-                name: AppRoute.garage.name,
-                pageBuilder: (context, state) {
-                  return const NoTransitionPage(
-                    child: GarageScreen(),
-                  );
-                },
-                routes: [
-                  GoRoute(
-                    path: '/trophy',
-                    name: AppRoute.trophy.name,
-                    pageBuilder: (context, state) {
-                      return const NoTransitionPage(
-                        child: GarageScreen(),
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: '/carcustomization',
-                    name: AppRoute.carcustomization.name,
-                    pageBuilder: (context, state) {
-                      return const NoTransitionPage( //add any animations here...
-                        child: GarageScreen(),
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: '/minigame',
-                    name: AppRoute.minigame.name,
-                    pageBuilder: (context, state) {
-                      return const NoTransitionPage(
-                        child: GarageScreen(),
-                      );
-                    },
-                  ),
-                ]
-              )
+                  path: '/garage',
+                  name: AppRoute.garage.name,
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(
+                      child: GarageScreen(),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: '/trophy',
+                      name: AppRoute.trophy.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                          child: GarageScreen(),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: '/carcustomization',
+                      name: AppRoute.carcustomization.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                          //add any animations here...
+                          child: GarageScreen(),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: '/minigame',
+                      name: AppRoute.minigame.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                          child: GarageScreen(),
+                        );
+                      },
+                    ),
+                  ])
             ],
           ),
           StatefulShellBranch(

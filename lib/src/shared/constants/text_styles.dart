@@ -7,7 +7,7 @@ class TextStyles {
     fontWeight: FontWeight.w500,
     height: 1.28,
     letterSpacing: 0,
-    color: AppColors.customBlack,
+    color: AppColors.customWhite,
   );
 
   static const h2 = TextStyle(
@@ -15,7 +15,7 @@ class TextStyles {
     fontWeight: FontWeight.w500,
     height: 1.28,
     letterSpacing: 0,
-    color: AppColors.customBlack,
+    color: AppColors.customWhite,
   );
 
   static const h3 = TextStyle(
@@ -23,7 +23,7 @@ class TextStyles {
     fontWeight: FontWeight.normal,
     height: 1.28,
     letterSpacing: 0,
-    color: AppColors.customBlack,
+    color: AppColors.customWhite,
   );
 
   static const h4 = TextStyle(
@@ -31,7 +31,7 @@ class TextStyles {
     fontWeight: FontWeight.normal,
     height: 1.28,
     letterSpacing: 0,
-    color: AppColors.customBlack,
+    color: AppColors.customWhite,
   );
 
   static const bodyMedium = TextStyle(
@@ -39,7 +39,7 @@ class TextStyles {
     fontWeight: FontWeight.normal,
     height: 1.28,
     letterSpacing: 0,
-    color: AppColors.customBlack,
+    color: AppColors.customWhite,
   );
 
   static const bodySmall = TextStyle(
@@ -47,6 +47,20 @@ class TextStyles {
     fontWeight: FontWeight.normal,
     height: 1.28,
     letterSpacing: 0,
-    color: AppColors.customBlack,
+    color: AppColors.customWhite,
+  );
+
+  static const searchHint = TextStyle(
+    fontSize: 18,
+    color: AppColors.customGray,
+    fontWeight: FontWeight.w100,
+    letterSpacing: 0,
+  );
+
+  static const searchHeader = TextStyle(
+    fontSize: 14,
+    color: AppColors.customGray,
+    fontWeight: FontWeight.w100,
+    letterSpacing: 0,
   );
 }
