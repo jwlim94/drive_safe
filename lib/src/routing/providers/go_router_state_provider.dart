@@ -2,8 +2,10 @@ import 'package:drive_safe/src/features/authentication/data/auth_repository.dart
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_accountconnection.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_vehicleselection.dart';
 import 'package:drive_safe/src/features/user/presentation/profile_screen.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_screen_personal.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basicinfo.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
 import 'package:drive_safe/src/routing/utils/extra_codec.dart';
@@ -23,7 +25,7 @@ GoRouter goRouterState(Ref ref) {
   final authRepository = ref.watch(authRepositoryProvider);
 
   return GoRouter(
-    initialLocation: '/onboarding',
+    initialLocation: '/onboardingBasicInfo',
     extraCodec: const ExtraCodec(),
     debugLogDiagnostics: true,
     navigatorKey: Keys.rootNavigatorKey,
@@ -47,11 +49,27 @@ GoRouter goRouterState(Ref ref) {
         ),
       ),
       GoRoute(
-        path: '/onboarding',
-        name: AppRoute.onboarding.name,
+        path: '/onboardingBasicInfo',
+        name: AppRoute.onboardingBasicInfo.name,
         pageBuilder: (context, state) => const NoTransitionPage(
           //animations later
-          child: OnboardingScreen(),
+          child: OnboardingScreenBasicInfo(),
+        ),
+      ),
+      GoRoute(
+        path: '/onboardingVehicleSelection',
+        name: AppRoute.onboardingVehicleSelection.name,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          //animations later
+          child: OnboardingScreenVehicleSelection(),
+        ),
+      ),
+      GoRoute(
+        path: '/onboardingAccountConnection',
+        name: AppRoute.onboardingAccountConnection.name,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          //animations later
+          child: OnboardingAccountconnection(),
         ),
       ),
       // Add more routes here...

@@ -63,4 +63,11 @@ class TextStyles {
     fontWeight: FontWeight.w100,
     letterSpacing: 0,
   );
+
+  static const finePrint = TextStyle(
+    fontSize: 8,
+    color: AppColors.customGray,
+    fontWeight: FontWeight.w100,
+    letterSpacing: 0,
+  );
 }

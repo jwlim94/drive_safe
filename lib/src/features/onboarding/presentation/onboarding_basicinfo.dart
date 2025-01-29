@@ -3,24 +3,32 @@ import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/routing/utils/custom_app_bar.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+class OnboardingScreenBasicInfo extends StatefulWidget {
+  const OnboardingScreenBasicInfo({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  State<OnboardingScreenBasicInfo> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreenBasicInfo> {
+  int selectedIndex = 0;
+
+  void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.customBlack,
-      appBar: const CustomAppBar(
-          //currentPage: 'Basic Information',
-          ),
+      appBar: CustomAppBar(
+          selectedIndex: selectedIndex, onItemTapped: onItemTapped),
       body: ListView(
-        children: [_headerText(), _userInputFields()],
+        children: [_userInputFields()],
       ),
     );
   }
@@ -29,6 +37,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          margin: const EdgeInsets.only(top: 20, left: 20, bottom: 40),
+          child: const Text(
+            'Basic\nInformation',
+            style: TextStyles.h2,
+          ),
+        ),
         const Padding(
           padding: EdgeInsets.only(bottom: 7.0, left: 20),
           child: Text(
@@ -97,28 +112,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     borderSide: BorderSide.none)),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.only(top: 50),
+        Padding(
+          padding: const EdgeInsets.only(top: 50),
           child: Center(
             child: CustomButton(
               text: "Continue",
-              onPressed: VoidCallbackAction.new,
+              onPressed: () => context.go('/onboardingVehicleSelection'),
               horizontalPadding: 115,
               backgroundColor: AppColors.customPink,
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Container _headerText() {
-    return Container(
-      margin: const EdgeInsets.only(top: 20, left: 20, bottom: 40),
-      child: const Text(
-        'Basic\nInformation',
-        style: TextStyles.h2,
-      ),
     );
   }
 }

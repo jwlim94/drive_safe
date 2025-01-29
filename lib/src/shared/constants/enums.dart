@@ -7,7 +7,9 @@ enum Example {
 
 enum AppRoute {
   startup,
-  onboarding,
+  onboardingBasicInfo,
+  onboardingAccountConnection,
+  onboardingVehicleSelection,
   home,
   leaderboard,
   garage,
