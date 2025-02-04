@@ -1,4 +1,5 @@
 import 'package:drive_safe/src/routing/providers/go_router_state_provider.dart';
+import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ class App extends ConsumerWidget {
       routerConfig: goRouterState,
       theme: ThemeData(
         fontFamily: Strings.roboto,
+        scaffoldBackgroundColor: AppColors.customBlack,
       ),
     );
   }
