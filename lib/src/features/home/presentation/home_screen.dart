@@ -94,95 +94,94 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.customBlack,
         body: Center(
-          child: Column(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Text(
+              'Points $titleText Drive',
+              textAlign: TextAlign.center,
+              style: TextStyles.h2,
+            ),
+          ),
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
+              //insert dynamic numbers later
+              if (points > 99)
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: AppColors.customLightGray, width: 2)),
+                  child: Text(
+                    (points ~/ 100).toString(),
+                    style: TextStyles.xlText,
+                  ),
+                ),
+              Container(
+                margin: const EdgeInsets.only(right: 5),
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border:
+                        Border.all(color: AppColors.customLightGray, width: 2)),
                 child: Text(
-                  'Points $titleText Drive',
-                  textAlign: TextAlign.center,
-                  style: TextStyles.h2,
+                  ((points ~/ 10) % 10).toString(),
+                  style: TextStyles.xlText,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //insert dynamic numbers later
-                  if (points > 99)
-                    Container(
-                      margin: const EdgeInsets.only(left: 5),
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                              color: AppColors.customLightGray, width: 2)),
-                      child: Text(
-                        (points ~/ 100).toString(),
-                        style: TextStyles.xlText,
-                      ),
-                    ),
-                  Container(
-                    margin: const EdgeInsets.only(right: 5),
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.customLightGray, width: 2)),
-                    child: Text(
-                      ((points ~/ 10) % 10).toString(),
-                      style: TextStyles.xlText,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 5),
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.customLightGray, width: 2)),
-                    child: Text(
-                      ((points ~/ 1) % 10).toString(),
-                      style: TextStyles.xlText,
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
+              Container(
+                margin: const EdgeInsets.only(left: 5),
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border:
+                        Border.all(color: AppColors.customLightGray, width: 2)),
                 child: Text(
-                  'Safe Minutes: ${timeElapsed.inMinutes}m ${timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
-                  textAlign: TextAlign.center,
-                  style: TextStyles.bodyMedium,
+                  ((points ~/ 1) % 10).toString(),
+                  style: TextStyles.xlText,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Center(
-                  child: CustomButton(
-                    text: '$buttonText Drive',
-                    onPressed: () => startDrive(),
-                    horizontalPadding: 115,
-                    backgroundColor: AppColors.customPink,
-                  ),
-                ),
-              ),
-              if (state == 'Started')
-                Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Center(
-                    child: CustomButton(
-                      text: '$pauseButtonText Drive',
-                      onPressed: () => pauseDrive(),
-                      horizontalPadding: 115,
-                      backgroundColor: AppColors.customPink,
-                    ),
-                  ),
-                ),
             ],
           ),
-        ));
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Text(
+              'Safe Minutes: ${timeElapsed.inMinutes}m ${timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
+              textAlign: TextAlign.center,
+              style: TextStyles.bodyMedium,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Center(
+              child: CustomButton(
+                text: '$buttonText Drive',
+                onPressed: () => startDrive(),
+                horizontalPadding: 115,
+                backgroundColor: AppColors.customPink,
+              ),
+            ),
+          ),
+          if (state == 'Started')
+            Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Center(
+                child: CustomButton(
+                  text: '$pauseButtonText Drive',
+                  onPressed: () => pauseDrive(),
+                  horizontalPadding: 115,
+                  backgroundColor: AppColors.customPink,
+                ),
+              ),
+            ),
+        ],
+      ),
+    ));
   }
 }
