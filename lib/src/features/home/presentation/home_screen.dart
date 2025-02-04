@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: Text(
-                  'Safe Minutes: ${timeElapsed.inMinutes.remainder(60)}m ${timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
+                  'Safe Minutes: ${timeElapsed.inMinutes}m ${timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
                   textAlign: TextAlign.center,
                   style: TextStyles.bodyMedium,
                 ),
