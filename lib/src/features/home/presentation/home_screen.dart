@@ -2,6 +2,7 @@ import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,26 +16,44 @@ class _HomeScreenState extends State<HomeScreen> {
   String titleText = 'Last';
   String buttonText = 'Start';
   String pauseButtonText = 'Pause';
+  int points = 0; //How about 1 point for every 5 safe minutes??
+  int lastAwardedMinute = 0; //Store the last minute when a point was awarded
   Duration timeElapsed = Duration.zero;
   final stopWatch = Stopwatch();
+  late Timer timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      setState(() {
+        if (stopWatch.isRunning) {
+          updateElapsedEarnings();
+        }
+      });
+    });
+  }
 
   void startDrive() {
     if (state == 'Stopped') {
       setState(() {
         timeElapsed = Duration.zero;
+        points = 0;
         pauseButtonText = 'Pause';
         titleText = 'This';
         buttonText = 'Finish';
         state = 'Started';
       });
       stopWatch.start();
+      updateElapsedEarnings();
     } else {
       setState(() {
         titleText = 'Last';
         buttonText = 'Start';
         state = 'Stopped';
-        timeElapsed = stopWatch.elapsed;
       });
+      stopWatch.stop();
       stopWatch.reset();
     }
   }
@@ -43,15 +62,33 @@ class _HomeScreenState extends State<HomeScreen> {
     if (pauseButtonText == 'Pause') {
       setState(() {
         pauseButtonText = 'Resume';
-        timeElapsed = stopWatch.elapsed;
       });
       stopWatch.stop();
+      updateElapsedEarnings();
     } else {
       setState(() {
         pauseButtonText = 'Pause';
       });
       stopWatch.start();
+      updateElapsedEarnings();
     }
+  }
+
+  void updateElapsedEarnings() {
+    setState(() {
+      timeElapsed = stopWatch.elapsed;
+      if (timeElapsed.inMinutes >= lastAwardedMinute + 5) {
+        points += 1;
+        lastAwardedMinute = timeElapsed.inMinutes;
+      }
+    });
+  }
+
+  //Resource cleanup on widget tree 'destruction'
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -74,6 +111,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //insert dynamic numbers later
+                  if (points > 99)
+                    Container(
+                      margin: const EdgeInsets.only(left: 5),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: AppColors.customLightGray, width: 2)),
+                      child: Text(
+                        (points ~/ 100).toString(),
+                        style: TextStyles.xlText,
+                      ),
+                    ),
                   Container(
                     margin: const EdgeInsets.only(right: 5),
                     padding: const EdgeInsets.only(left: 10, right: 10),
@@ -81,8 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                             color: AppColors.customLightGray, width: 2)),
-                    child: const Text(
-                      '5',
+                    child: Text(
+                      ((points ~/ 10) % 10).toString(),
                       style: TextStyles.xlText,
                     ),
                   ),
@@ -93,8 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                             color: AppColors.customLightGray, width: 2)),
-                    child: const Text(
-                      '6',
+                    child: Text(
+                      ((points ~/ 1) % 10).toString(),
                       style: TextStyles.xlText,
                     ),
                   ),
@@ -103,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: Text(
-                  'Safe Minutes: ${timeElapsed.inMinutes}m ${timeElapsed.inSeconds}s', //insert dynamic minutes and seconds later
+                  'Safe Minutes: ${timeElapsed.inMinutes.remainder(60)}m ${timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
                   textAlign: TextAlign.center,
                   style: TextStyles.bodyMedium,
                 ),
