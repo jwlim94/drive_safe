@@ -66,8 +66,15 @@ class TextStyles {
 
   static const finePrint = TextStyle(
     fontSize: 8,
-    color: AppColors.customGray,
+    color: AppColors.customWhite,
     fontWeight: FontWeight.w100,
+    letterSpacing: 0,
+  );
+
+  static const xlText = TextStyle(
+    fontSize: 80,
+    color: AppColors.customWhite,
+    fontWeight: FontWeight.bold,
     letterSpacing: 0,
   );
 }
