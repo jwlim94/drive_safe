@@ -5,7 +5,8 @@ class AppColors {
   static const customBlack = Color(0xFF252525);
 
   static const customLightGray = Color(0xFFE1E1E1);
-  static const customGray = Color(0xFFB5B5B5);
+  static const customGray = Color(0xFFD9D9D9);
+  static const customDarkGray = Color(0xFFB5B5B5);
 
   static const customWhite = Color(0xFFF9F9F9);
 
