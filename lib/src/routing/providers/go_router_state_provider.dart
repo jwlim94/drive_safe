@@ -1,5 +1,6 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
+import 'package:drive_safe/src/features/home/presentation/drivingstatus_end_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/drivingstatus_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
@@ -31,13 +32,9 @@ GoRouter goRouterState(Ref ref) {
     debugLogDiagnostics: true,
     navigatorKey: Keys.rootNavigatorKey,
     redirect: (context, state) {
-      // Show splash screen while the app is initializing
       if (appStartupState.isLoading || appStartupState.hasError) {
         return '/startup';
       }
-
-      // Add silently signin and signout redirects here...
-
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authRepository.authStateChanges()),
@@ -53,7 +50,6 @@ GoRouter goRouterState(Ref ref) {
         path: '/onboardingBasicInfo',
         name: AppRoute.onboardingBasicInfo.name,
         pageBuilder: (context, state) => const NoTransitionPage(
-          //animations later
           child: OnboardingScreenBasicInfo(),
         ),
       ),
@@ -61,7 +57,6 @@ GoRouter goRouterState(Ref ref) {
         path: '/onboardingVehicleSelection',
         name: AppRoute.onboardingVehicleSelection.name,
         pageBuilder: (context, state) => const NoTransitionPage(
-          //animations later
           child: OnboardingScreenVehicleSelection(),
         ),
       ),
@@ -69,11 +64,19 @@ GoRouter goRouterState(Ref ref) {
         path: '/onboardingAccountConnection',
         name: AppRoute.onboardingAccountConnection.name,
         pageBuilder: (context, state) => const NoTransitionPage(
-          //animations later
           child: OnboardingAccountconnection(),
         ),
       ),
-      // Add more routes here...
+      // route to DrivingStatusEnd
+      GoRoute(
+        path: '/driving_status_end',
+        name: AppRoute.drivingStatusEnd.name,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(
+            child: DrivingStatusEndScreen(),
+          );
+        },
+      ),
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: Keys.rootNavigatorKey,
         pageBuilder: (context, state, navigationShell) => NoTransitionPage(
@@ -95,7 +98,7 @@ GoRouter goRouterState(Ref ref) {
                 },
                 routes: [
                   GoRoute(
-                    path: 'driving_status', // '/' 없이 상대경로로 설정
+                    path: 'driving_status',
                     name: AppRoute.drivingStatus.name,
                     pageBuilder: (context, state) {
                       return const NoTransitionPage(
@@ -104,7 +107,7 @@ GoRouter goRouterState(Ref ref) {
                     },
                   ),
                 ],
-              )
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -118,50 +121,21 @@ GoRouter goRouterState(Ref ref) {
                     child: LeaderboardScreen(),
                   );
                 },
-              )
+              ),
             ],
           ),
           StatefulShellBranch(
             navigatorKey: Keys.garageNavigatorKey,
             routes: [
               GoRoute(
-                  path: '/garage',
-                  name: AppRoute.garage.name,
-                  pageBuilder: (context, state) {
-                    return const NoTransitionPage(
-                      child: GarageScreen(),
-                    );
-                  },
-                  routes: [
-                    GoRoute(
-                      path: '/trophy',
-                      name: AppRoute.trophy.name,
-                      pageBuilder: (context, state) {
-                        return const NoTransitionPage(
-                          child: GarageScreen(),
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: '/carcustomization',
-                      name: AppRoute.carcustomization.name,
-                      pageBuilder: (context, state) {
-                        return const NoTransitionPage(
-                          //add any animations here...
-                          child: GarageScreen(),
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: '/minigame',
-                      name: AppRoute.minigame.name,
-                      pageBuilder: (context, state) {
-                        return const NoTransitionPage(
-                          child: GarageScreen(),
-                        );
-                      },
-                    ),
-                  ])
+                path: '/garage',
+                name: AppRoute.garage.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(
+                    child: GarageScreen(),
+                  );
+                },
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -175,7 +149,7 @@ GoRouter goRouterState(Ref ref) {
                     child: ProfileScreen(),
                   );
                 },
-              )
+              ),
             ],
           ),
         ],

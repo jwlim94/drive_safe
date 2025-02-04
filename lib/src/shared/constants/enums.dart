@@ -17,5 +17,6 @@ enum AppRoute {
   trophy,
   carcustomization,
   minigame,
-  drivingStatus
+  drivingStatus,
+  drivingStatusEnd
 }

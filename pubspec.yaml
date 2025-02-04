@@ -1,5 +1,6 @@
 name: drive_safe
-description: "Drive safe is a mobile app that promotes safe driving through gamification. Earn points for safe driving, customize your car, and compete in fun games within your network."
+description: "Drive safe is a mobile app that promotes safe driving through gamification."
+
 publish_to: "none"
 version: 0.1.0
 
@@ -12,21 +13,18 @@ dependencies:
   firebase_core: ^3.10.0
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.6.1 # main Riverpod package
-  go_router: ^14.6.3 # simplifies navigation and routing
-  riverpod_annotation: ^2.6.1 # enables code generation
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.3
+  riverpod_annotation: ^2.6.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  build_runner: ^2.4.13 # handles code generation. used with riverpod_annotaion, json_serializable, or freezed packages
-  riverpod_generator: ^2.6.3 # enables code generation for providers when used in conjunction with build_runner
-  custom_lint: ^0.7.0 # allows defining custom lint rules
-  riverpod_lint: ^2.6.3 # provides pre-defined lint rules specifically for Riverpod
-
-flutter:
-  uses-material-design: true
+  build_runner: ^2.4.13
+  riverpod_generator: ^2.6.3
+  custom_lint: ^0.7.0
+  riverpod_lint: ^2.6.3
 
 flutter:  
   uses-material-design: true

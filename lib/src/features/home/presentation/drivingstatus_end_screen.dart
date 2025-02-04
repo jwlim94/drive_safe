@@ -2,8 +2,8 @@ import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class DrivingStatusScreen extends StatelessWidget {
-  const DrivingStatusScreen({super.key});
+class DrivingStatusEndScreen extends StatelessWidget {
+  const DrivingStatusEndScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class DrivingStatusScreen extends StatelessWidget {
           const SizedBox(height: 10),
           _buildSafeMinutes(),
           const SizedBox(height: 30),
-          _buildStartButton(context), //
+          _buildEndButton(context),
         ],
       ),
     );
@@ -94,19 +94,19 @@ class DrivingStatusScreen extends StatelessWidget {
     );
   }
 
-  /// 🚗 Start Drive button → End Drive View
-  Widget _buildStartButton(BuildContext context) {
+  /// 🚗 End Drive button → Home
+  Widget _buildEndButton(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.customPink,
-        padding: const EdgeInsets.symmetric(horizontal: 96, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 102, vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onPressed: () {
-        context.go('/driving_status_end'); // move to End Drive View
+        context.go('/home');
       },
       child: const Text(
-        "Start Drive",
+        "End Drive",
         style: TextStyle(
             fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
       ),
