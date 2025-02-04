@@ -1,11 +1,12 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
+import 'package:drive_safe/src/features/home/presentation/drivingstatus_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_accountconnection.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basicinfo.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_vehicleselection.dart';
 import 'package:drive_safe/src/features/user/presentation/profile_screen.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basicinfo.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
 import 'package:drive_safe/src/routing/utils/extra_codec.dart';
@@ -92,6 +93,17 @@ GoRouter goRouterState(Ref ref) {
                     child: HomeScreen(),
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'driving_status', // '/' 없이 상대경로로 설정
+                    name: AppRoute.drivingStatus.name,
+                    pageBuilder: (context, state) {
+                      return const NoTransitionPage(
+                        child: DrivingStatusScreen(),
+                      );
+                    },
+                  ),
+                ],
               )
             ],
           ),

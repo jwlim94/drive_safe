@@ -28,6 +28,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+flutter:  
+  uses-material-design: true
+
   fonts:
     - family: Roboto
       fonts:
@@ -37,3 +40,6 @@ flutter:
           weight: 500
         - asset: assets/fonts/Roboto-Bold.ttf
           weight: 700
+
+  assets:
+    - assets/images/checkered_flag.png
