@@ -1,5 +1,6 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
+import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_accountconnection.dart';
@@ -72,6 +73,15 @@ GoRouter goRouterState(Ref ref) {
           child: OnboardingAccountconnection(),
         ),
       ),
+      GoRoute(
+        path: '/achievements',
+        name: AppRoute.achievements.name,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(
+            child: AchievementScreen(),
+          );
+        },
+      ),
       // Add more routes here...
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: Keys.rootNavigatorKey,
@@ -92,7 +102,7 @@ GoRouter goRouterState(Ref ref) {
                     child: HomeScreen(),
                   );
                 },
-              )
+              ),
             ],
           ),
           StatefulShellBranch(

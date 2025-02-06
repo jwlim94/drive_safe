@@ -61,7 +61,6 @@ class _OnboardingScreenState extends State<OnboardingScreenBasicInfo> {
                 spreadRadius: 0.0)
           ]),
           child: TextField(
-            autofocus: true,
             decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.transparent,
