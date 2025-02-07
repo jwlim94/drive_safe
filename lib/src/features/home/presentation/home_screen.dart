@@ -1,26 +1,30 @@
+import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  Drive driveObject =
+      Drive(points: 0, timeElapsed: Duration.zero, getAchievement: true);
   String state = 'Stopped';
   String titleText = 'Last';
   String buttonText = 'Start';
   String pauseButtonText = 'Pause';
-  int points = 0; //How about 1 point for every 5 safe minutes??
   int lastAwardedMinute = 0; //Store the last minute when a point was awarded
-  Duration timeElapsed = Duration.zero;
   final stopWatch = Stopwatch();
   late Timer timer;
+  double buttonSize = 100;
 
   @override
   void initState() {
@@ -38,12 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void startDrive() {
     if (state == 'Stopped') {
       setState(() {
-        timeElapsed = Duration.zero;
-        points = 0;
+        driveObject.timeElapsed = Duration.zero;
+        driveObject.points = 0;
         pauseButtonText = 'Pause';
         titleText = 'This';
-        buttonText = 'Finish';
+        buttonText = 'End';
         state = 'Started';
+        buttonSize = 40;
       });
       stopWatch.start();
       updateElapsedEarnings();
@@ -52,6 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
         titleText = 'Last';
         buttonText = 'Start';
         state = 'Stopped';
+        buttonSize = 100;
+        //persist information from last drive
+        //ref.read(pointsTimeProvider.notifier).updatePoints(driveObject);
+        if (driveObject.getAchievement) {
+          //Eventually, this will be a method that returns an achievement object (if it is empty, then do not show the next pages)
+          context.go('/achievements');
+        }
       });
       stopWatch.stop();
       stopWatch.reset();
@@ -76,10 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void updateElapsedEarnings() {
     setState(() {
-      timeElapsed = stopWatch.elapsed;
-      if (timeElapsed.inMinutes >= lastAwardedMinute + 5) {
-        points += 1;
-        lastAwardedMinute = timeElapsed.inMinutes;
+      driveObject.timeElapsed = stopWatch.elapsed;
+      if (driveObject.timeElapsed.inMinutes >= lastAwardedMinute + 5) {
+        driveObject.points += 1;
+        lastAwardedMinute = driveObject.timeElapsed.inMinutes;
       }
     });
   }
@@ -110,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //insert dynamic numbers later
-              if (points > 99)
+              if (driveObject.points > 99)
                 Container(
                   margin: const EdgeInsets.only(left: 5),
                   padding: const EdgeInsets.only(left: 10, right: 10),
@@ -119,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: Border.all(
                           color: AppColors.customLightGray, width: 2)),
                   child: Text(
-                    (points ~/ 100).toString(),
+                    (driveObject.points ~/ 100).toString(),
                     style: TextStyles.xlText,
                   ),
                 ),
@@ -131,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     border:
                         Border.all(color: AppColors.customLightGray, width: 2)),
                 child: Text(
-                  ((points ~/ 10) % 10).toString(),
+                  ((driveObject.points ~/ 10) % 10).toString(),
                   style: TextStyles.xlText,
                 ),
               ),
@@ -143,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     border:
                         Border.all(color: AppColors.customLightGray, width: 2)),
                 child: Text(
-                  ((points ~/ 1) % 10).toString(),
+                  ((driveObject.points ~/ 1) % 10).toString(),
                   style: TextStyles.xlText,
                 ),
               ),
@@ -152,34 +164,37 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 30),
             child: Text(
-              'Safe Minutes: ${timeElapsed.inMinutes}m ${timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
+              'Safe Minutes: ${driveObject.timeElapsed.inMinutes}m ${driveObject.timeElapsed.inSeconds.remainder(60)}s', //insert dynamic minutes and seconds later
               textAlign: TextAlign.center,
               style: TextStyles.bodyMedium,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 30),
-            child: Center(
-              child: CustomButton(
-                text: '$buttonText Drive',
-                onPressed: () => startDrive(),
-                horizontalPadding: 115,
-                backgroundColor: AppColors.customPink,
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            if (state == 'Started')
+              Padding(
+                padding: const EdgeInsets.only(top: 30, right: 20),
+                child: Center(
+                  child: CustomButton(
+                    text: '$pauseButtonText Drive',
+                    onPressed: () => pauseDrive(),
+                    horizontalPadding: 40,
+                    borderOutline: AppColors.customPink,
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
               ),
-            ),
-          ),
-          if (state == 'Started')
             Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Center(
                 child: CustomButton(
-                  text: '$pauseButtonText Drive',
-                  onPressed: () => pauseDrive(),
-                  horizontalPadding: 115,
+                  text: '$buttonText Drive',
+                  onPressed: () => startDrive(),
+                  horizontalPadding: buttonSize,
                   backgroundColor: AppColors.customPink,
                 ),
               ),
             ),
+          ])
         ],
       ),
     ));
