@@ -4,7 +4,7 @@ import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_accountconnection.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_vehicleselection.dart';
-import 'package:drive_safe/src/features/user/presentation/profile_screen.dart';
+import 'package:drive_safe/src/features/user/presentation/profile/profile_screen.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basicinfo.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
