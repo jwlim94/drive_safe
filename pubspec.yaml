@@ -17,11 +17,12 @@ dependencies:
   go_router: ^14.6.3 # simplifies navigation and routing
   riverpod_annotation: ^2.6.1 # enables code generation
   flutter_svg: ^2.0.17 # provides the ability to load svg
+  shared_preferences: ^2.5.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   build_runner: ^2.4.13 # handles code generation. used with riverpod_annotaion, json_serializable, or freezed packages
   riverpod_generator: ^2.6.3 # enables code generation for providers when used in conjunction with build_runner
   custom_lint: ^0.7.0 # allows defining custom lint rules

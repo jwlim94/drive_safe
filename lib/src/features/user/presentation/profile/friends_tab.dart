@@ -1,17 +1,139 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class FriendsTab extends StatelessWidget {
+import 'package:drive_safe/src/features/user/presentation/profile/add_friends_tab.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class FriendsTab extends StatefulWidget {
   const FriendsTab({super.key});
 
   @override
+  State<FriendsTab> createState() => _FriendsTabState();
+}
+
+class _FriendsTabState extends State<FriendsTab> {
+  List<Map<String, String>> addedFriends = []; // Initially empty
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFriends(); // Load saved friends on startup
+  }
+
+  // Load friends from SharedPreferences
+  Future<void> _loadFriends() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? savedFriends = prefs.getString('friendsList');
+    if (savedFriends != null) {
+      setState(() {
+        addedFriends = List<Map<String, String>>.from(json
+            .decode(savedFriends)
+            .map((friend) => Map<String, String>.from(friend)));
+      });
+    }
+  }
+
+  // Save friends to SharedPreferences
+  Future<void> _saveFriends() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('friendsList', json.encode(addedFriends));
+  }
+
+  // Add a new friend and save the list
+  void _addNewFriend(Map<String, String> friend) {
+    setState(() {
+      if (!addedFriends.any((f) => f['phone'] == friend['phone'])) {
+        addedFriends.add(friend);
+        _saveFriends(); // Save updated list
+      }
+    });
+  }
+
+  // Delete a friend and save the list
+  void _deleteFriend(int index) {
+    setState(() {
+      addedFriends.removeAt(index);
+      _saveFriends(); // Save updated list
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Friends Tab',
-        style: TextStyle(
-          color: Colors.white,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.person_add,
+                          color: Colors.white, size: 40),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AddFriendsScreen(onFriendAdded: _addNewFriend),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 5),
+                    const Text("Add Friends",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(
+                width: double.infinity,
+                child:
+                    Divider(color: Colors.white, thickness: 1.5, height: 20)),
+          ],
         ),
-      ),
+        Expanded(
+          child: addedFriends.isEmpty
+              ? const Center(
+                  child: Text("No friends added yet",
+                      style: TextStyle(color: Colors.white54, fontSize: 16)),
+                )
+              : ListView.builder(
+                  itemCount: addedFriends.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            addedFriends[index]['avatarColor'] == 'blue'
+                                ? Colors.blue
+                                : Colors.purple,
+                        child: Text(addedFriends[index]['initial']!,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 18)),
+                      ),
+                      title: Text(addedFriends[index]['name']!,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      subtitle: Text(addedFriends[index]['description']!,
+                          style: const TextStyle(color: Colors.white70)),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _deleteFriend(index);
+                        },
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 }
