@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drive_safe/src/features/user/presentation/profile/add_friends_tab.dart';
+import 'package:drive_safe/src/features/user/presentation/profile/search_friends_tab.dart'; // Import SearchFriendsTab
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +21,6 @@ class _FriendsTabState extends State<FriendsTab> {
     _loadFriends(); // Load saved friends on startup
   }
 
-  // Load friends from SharedPreferences
   Future<void> _loadFriends() async {
     final prefs = await SharedPreferences.getInstance();
     final String? savedFriends = prefs.getString('friendsList');
@@ -33,27 +33,24 @@ class _FriendsTabState extends State<FriendsTab> {
     }
   }
 
-  // Save friends to SharedPreferences
   Future<void> _saveFriends() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('friendsList', json.encode(addedFriends));
   }
 
-  // Add a new friend and save the list
   void _addNewFriend(Map<String, String> friend) {
     setState(() {
       if (!addedFriends.any((f) => f['phone'] == friend['phone'])) {
         addedFriends.add(friend);
-        _saveFriends(); // Save updated list
+        _saveFriends();
       }
     });
   }
 
-  // Delete a friend and save the list
   void _deleteFriend(int index) {
     setState(() {
       addedFriends.removeAt(index);
-      _saveFriends(); // Save updated list
+      _saveFriends();
     });
   }
 
@@ -67,6 +64,7 @@ class _FriendsTabState extends State<FriendsTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // Add Friends Icon
                 Column(
                   children: [
                     IconButton(
@@ -84,6 +82,31 @@ class _FriendsTabState extends State<FriendsTab> {
                     ),
                     const SizedBox(height: 5),
                     const Text("Add Friends",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+
+                // Search Icon (Navigates to SearchFriendsTab)
+                Column(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.search,
+                          color: Colors.white, size: 40),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SearchFriendsTab(addedFriends: addedFriends),
+                          ), // Navigate to search page
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 5),
+                    const Text("Search",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
