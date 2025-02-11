@@ -17,6 +17,7 @@ dependencies:
   go_router: ^14.6.3 # simplifies navigation and routing
   riverpod_annotation: ^2.6.1 # enables code generation
   flutter_svg: ^2.0.17 # provides the ability to load svg
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
