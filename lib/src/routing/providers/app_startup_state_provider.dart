@@ -1,3 +1,4 @@
+import 'package:drive_safe/src/features/authentication/presentation/controllers/cache_current_user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -9,9 +10,10 @@ FutureOr<void> appStartupState(Ref ref) async {
   await Future.delayed(const Duration(seconds: 1));
 
   ref.onDispose(() {
-    // Add providers to invalidate here... (such as shared preferences)
+    ref.invalidate(cacheCurrentUserControllerProvider);
   });
-  return;
 
-  // Add invalidated providers to watch here...
+  await ref
+      .watch(cacheCurrentUserControllerProvider.notifier)
+      .cacheCurrentUser();
 }
