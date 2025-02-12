@@ -1,8 +1,10 @@
+import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color foregroundColor;
   final double verticalPadding;
@@ -13,7 +15,7 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     this.backgroundColor = Colors.black,
     this.foregroundColor = Colors.white,
     this.verticalPadding = 12,
@@ -28,6 +30,7 @@ class CustomButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         side: BorderSide(color: borderOutline, width: 2),
+        disabledBackgroundColor: AppColors.customDarkGray,
         backgroundColor: backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
@@ -39,7 +42,10 @@ class CustomButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(color: foregroundColor),
+        style: TextStyles.h4.copyWith(
+          color: foregroundColor,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
