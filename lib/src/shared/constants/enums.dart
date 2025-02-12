@@ -7,8 +7,10 @@ enum Example {
 
 enum AppRoute {
   startup,
+  auth,
+  signIn,
+  signUp,
   onboardingBasicInfo,
-  onboardingAccountConnection,
   onboardingVehicleSelection,
   home,
   leaderboard,
@@ -17,5 +19,12 @@ enum AppRoute {
   trophy,
   carcustomization,
   minigame,
-  achievements
+  achievements,
+  settings,
+}
+
+enum AuthType {
+  signIn,
+  signUp,
+  guest,
 }
