@@ -15,7 +15,29 @@ class AuthRepository {
     return _authState.authStateChanges();
   }
 
-  // Add signout, send code, and verify code methods here...
+  Future<void> signOut() {
+    return _authState.signOut();
+  }
+
+  Future<UserCredential> createUserWithEmailAndPassword(
+    String email,
+    String password,
+  ) {
+    return _authState.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  Future<UserCredential> signInWithEmailAndPassword(
+    String email,
+    String password,
+  ) {
+    return _authState.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
 }
 
 @Riverpod(keepAlive: true)
