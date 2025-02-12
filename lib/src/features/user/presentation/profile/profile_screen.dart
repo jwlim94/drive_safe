@@ -1,9 +1,11 @@
 import 'package:drive_safe/src/features/user/presentation/profile/friends_tab.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/me_tab.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/constants/enums.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -47,9 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               color: AppColors.customGray,
               size: 32,
             ),
-            onPressed: () {
-              print('Go to settings page');
-            },
+            onPressed: () => context.goNamed(AppRoute.settings.name),
           )
         ],
       ),
