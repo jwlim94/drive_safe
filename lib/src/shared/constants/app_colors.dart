@@ -19,4 +19,6 @@ class AppColors {
   static const customDarkPurple = Color(0xFF5028C6); // hover color
 
   static const customBlue = Color(0xFF8CE0F3);
+
+  static const customYellow = Color(0xFFE8DA5B);
 }

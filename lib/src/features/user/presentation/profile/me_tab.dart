@@ -1,17 +1,76 @@
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MeTab extends StatelessWidget {
+class MeTab extends ConsumerWidget {
   const MeTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Me Tab',
-        style: TextStyle(
-          color: Colors.white,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(currentUserStateProvider);
+
+    // Handle error state
+    if (currentUser == null) return Container();
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              decoration: const BoxDecoration(
+                color: AppColors.customYellow,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  currentUser.name[0].toUpperCase(),
+                  style: const TextStyle(
+                    // TODO: Give a random color when sign up?
+                    color: Color(0xFF937922),
+                    fontSize: 64,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    currentUser.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.customWhite,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  ),
+                  const SizedBox(height: 8),
+                  // TODO: Apply car name and description from currentUser
+                  // TODO: fetch the car by id? or include partial car data in user's model?
+                  const Text(
+                    'Classy Chrysler',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: AppColors.customWhite,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ),
+      ],
     );
   }
 }
