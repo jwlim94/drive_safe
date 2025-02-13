@@ -38,6 +38,36 @@ class CarsRepository {
           toFirestore: (Car car, _) => car.toMap(),
         );
   }
+
+  Future<Car> updateCarType(String carId, String type) async {
+    final carsRef = _firestore.collection(Strings.carsCollection).doc(carId);
+
+    // Update the car document in Firestore
+    await carsRef.update({
+      'type': type,
+    });
+
+    // Fetch the updated car document
+    final updatedSnapshot = await carsRef.get();
+    if (!updatedSnapshot.exists) throw Exception('Car not found');
+
+    return Car.fromMap(updatedSnapshot.data()!);
+  }
+
+  Future<Car> updateCarDescription(String carId, String description) async {
+    final carsRef = _firestore.collection(Strings.carsCollection).doc(carId);
+
+    // Update the car document in Firestore
+    await carsRef.update({
+      'description': description,
+    });
+
+    // Fetch the updated car document
+    final updatedSnapshot = await carsRef.get();
+    if (!updatedSnapshot.exists) throw Exception('Car not found');
+
+    return Car.fromMap(updatedSnapshot.data()!);
+  }
 }
 
 @Riverpod(keepAlive: true)
