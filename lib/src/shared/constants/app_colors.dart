@@ -29,4 +29,8 @@ class AppColors {
   static const emeraldLeague = Color(0xFF448f60);
   static const rubyLeague = Color(0xFFba4588);
   static const diamondLeague = Color(0xFF1a857f);
+
+  //Leaderboard Colors
+  static const upArrow = Color(0xFF20ea6a);
+  static const downArrow = Color(0xFFf03d3e);
 }
