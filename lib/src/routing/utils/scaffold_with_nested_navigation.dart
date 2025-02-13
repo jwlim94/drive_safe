@@ -27,7 +27,7 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 12,
+        toolbarHeight: 75,
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -37,15 +37,12 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
             'assets/images/checkered_flag.svg',
             width: double.infinity,
             fit: BoxFit.cover,
+            height: 75,
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: navigationShell,
-          ),
-        ],
+      body: Center(
+        child: navigationShell,
       ),
       bottomNavigationBar: Theme(
         data: ThemeData(
