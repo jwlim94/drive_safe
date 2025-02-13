@@ -11,6 +11,11 @@ class CarsRepository {
   CarsRepository(this._firestore);
   final FirebaseFirestore _firestore;
 
+  Future<Car?> fetchCar(String carId) async {
+    final snapshot = await _carDocumentRef(carId).get();
+    return snapshot.data();
+  }
+
   Future<Car> createCar(CarData carData) async {
     final String carId = carData.id!;
 
