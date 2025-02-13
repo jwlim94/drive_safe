@@ -5,10 +5,9 @@ import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basic_info_screen.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_vehicle_selection_screen.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/profile_screen.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basic_info_screen.dart';
-import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/settings/settings_screen.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
@@ -27,7 +26,6 @@ part 'go_router_state_provider.g.dart';
 GoRouter goRouterState(Ref ref) {
   final appStartupState = ref.watch(appStartupStateProvider);
   final authRepository = ref.watch(authRepositoryProvider);
-  final currentUser = ref.watch(currentUserStateProvider);
 
   return GoRouter(
     initialLocation: '/auth',
@@ -44,7 +42,7 @@ GoRouter goRouterState(Ref ref) {
       final isVerified = authRepository.currentUser != null;
 
       // Silently sign in
-      if (path.endsWith('/auth') && isVerified && currentUser != null) {
+      if (path.startsWith('/auth') && isVerified) {
         return '/home';
       }
 
