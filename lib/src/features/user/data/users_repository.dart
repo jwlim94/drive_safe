@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/features/authentication/domain/auth_user_data.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
+import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -25,6 +26,8 @@ class UsersRepository {
       age: authUserData.age!,
       carId: authUserData.carId!,
       email: authUserData.email!,
+      primaryColor: ColorUtils.generateRandomColors()[0],
+      secondaryColor: ColorUtils.generateRandomColors()[1],
     );
 
     await _userDocumentRef(userId).set(user);
