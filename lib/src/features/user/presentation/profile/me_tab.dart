@@ -1,6 +1,7 @@
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,16 +24,15 @@ class MeTab extends ConsumerWidget {
             Container(
               width: 96,
               height: 96,
-              decoration: const BoxDecoration(
-                color: AppColors.customYellow,
+              decoration: BoxDecoration(
+                color: ColorUtils.toColor(currentUser.primaryColor),
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
                   currentUser.name[0].toUpperCase(),
-                  style: const TextStyle(
-                    // TODO: Give a random color when sign up?
-                    color: Color(0xFF937922),
+                  style: TextStyle(
+                    color: ColorUtils.toColor(currentUser.secondaryColor),
                     fontSize: 64,
                     fontWeight: FontWeight.bold,
                   ),
