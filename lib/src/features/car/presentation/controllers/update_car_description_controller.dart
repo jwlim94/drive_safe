@@ -20,7 +20,7 @@ class UpdateCarDescriptionController extends _$UpdateCarDescriptionController {
 
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(
-      () => carsRepository.updateCarType(
+      () => carsRepository.updateCarDescription(
         currentCar.id,
         description,
       ),
