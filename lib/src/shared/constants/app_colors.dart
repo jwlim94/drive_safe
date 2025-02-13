@@ -20,6 +20,8 @@ class AppColors {
 
   static const customBlue = Color(0xFF8CE0F3);
 
+  static const customYellow = Color(0xFFE8DA5B);
+
   //League Colors
   static const bronzeLeague = Color(0xFFe7a461);
   static const silverLeague = Color(0xFFc0c0c0);
