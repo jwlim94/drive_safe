@@ -1,5 +1,6 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
-import 'package:drive_safe/src/features/authentication/presentation/controllers/cache_current_user_controller.dart';
+import 'package:drive_safe/src/features/car/presentation/controllers/cache_current_car_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/cache_current_user_controller.dart';
 import 'package:drive_safe/src/features/authentication/presentation/providers/auth_user_data_state_provider.dart';
 import 'package:drive_safe/src/features/car/data/cars_repository.dart';
 import 'package:drive_safe/src/features/car/presentation/providers/car_data_state_provider.dart';
@@ -47,6 +48,9 @@ class AuthService {
       await ref
           .read(cacheCurrentUserControllerProvider.notifier)
           .cacheCurrentUser();
+      await ref
+          .read(cacheCurrentCarControllerProvider.notifier)
+          .cacheCurrentCar();
     } catch (e) {
       // TODO: Handle rollback
     }
@@ -69,6 +73,9 @@ class AuthService {
       await ref
           .read(cacheCurrentUserControllerProvider.notifier)
           .cacheCurrentUser();
+      await ref
+          .read(cacheCurrentCarControllerProvider.notifier)
+          .cacheCurrentCar();
     } catch (e) {
       // TODO: Handle rollback
     }

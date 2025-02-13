@@ -1,3 +1,4 @@
+import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,11 @@ class MeTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserStateProvider);
+    final currentCar = ref.watch(currentCarStateProvider);
 
-    // Handle error state
+    // TODO: Handle error state
     if (currentUser == null) return Container();
+    if (currentCar == null) return Container();
 
     return Column(
       children: [
@@ -53,11 +56,9 @@ class MeTab extends ConsumerWidget {
                     softWrap: true,
                   ),
                   const SizedBox(height: 8),
-                  // TODO: Apply car name and description from currentUser
-                  // TODO: fetch the car by id? or include partial car data in user's model?
-                  const Text(
-                    'Classy Chrysler',
-                    style: TextStyle(
+                  Text(
+                    "${currentCar.description} ${currentCar.type}",
+                    style: const TextStyle(
                       fontSize: 24,
                       color: AppColors.customWhite,
                     ),

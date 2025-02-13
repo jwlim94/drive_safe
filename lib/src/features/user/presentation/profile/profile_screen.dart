@@ -38,23 +38,18 @@ class _ProfileScreenState extends State<ProfileScreen>
     final double horizontalPadding = screenWidth * 0.075;
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 40,
-        backgroundColor: AppColors.customBlack,
-        actions: [
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
           IconButton(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(top: 4, right: 12),
             icon: const Icon(
               Icons.settings,
               color: AppColors.customGray,
               size: 32,
             ),
             onPressed: () => context.goNamed(AppRoute.settings.name),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
+          ),
           TabBar(
             controller: _tabController,
             indicator: CustomTabIndicator(width: indicatorWidth),
