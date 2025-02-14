@@ -171,10 +171,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         style: TextStyles.h4,
                       ),
 
-                      // User ID section
-                      // TODO: Get random unique user id
+                      // User Code Section
                       const SizedBox(height: 4),
-                      const Text('123-456-789', style: TextStyles.h4),
+                      Text(currentUser.code, style: TextStyles.h4),
 
                       // Vehicle Type Section
                       const SizedBox(height: 32),
