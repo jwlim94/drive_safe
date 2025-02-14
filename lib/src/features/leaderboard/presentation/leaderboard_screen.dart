@@ -117,6 +117,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 );
               }).toList(),
             ),
+            //TODO: switch statement for the query to the database
             // switch (currentIndex){
             //   0 => /*Query to db*/(0),
             //   1 => /*Query to db*/(1),
