@@ -78,7 +78,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           ),
           const SizedBox(height: 20),
           // Check selected tab and display the respective content
-          if (_selectedIndex == 0) ...[
+          if (_selectedIndex == 0) ...<Widget>[
             CarouselSlider(
               carouselController: buttonCarouselController,
               options: CarouselOptions(
@@ -120,21 +120,32 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 );
               }).toList(),
             ),
-            Column(children: [
-              CustomPlayerCard(
-                position: 1, //Put in player stats
-                playerName: "Jake", //Put in player name
-                onPressed: VoidCallbackAction.new,
-                backgroundColor: AppColors.customWhite,
-                leaguePositionColor:
-                    _leagues[currentIndex].color, //Put in player stats
-                borderOutline:
-                    _leagues[currentIndex].color, //Put in player stats
-                points: 500, //Put in player stats
-                positionMovement: "Increased", //Put in player stats
-                playerColor: AppColors.customBlack, //Put in player color
-              ),
-            ]),
+            // switch (currentIndex){
+            //   0 => /*Query to db*/(0),
+            //   1 => /*Query to db*/(1),
+            //   2 => /*Query to db*/(2),
+            //   3 => /*Query to db*/(3),
+            //   4 => /*Query to db*/(4),
+            //   5 => /*Query to db*/(5),
+            //   _ => /*Query to db*/
+            // },
+            Column(
+              children: [
+                CustomPlayerCard(
+                  position: 1, //Put in player stats
+                  playerName: "Jake", //Put in player name
+                  onPressed: VoidCallbackAction.new,
+                  backgroundColor: AppColors.customWhite,
+                  leaguePositionColor:
+                      _leagues[currentIndex].color, //Put in player stats
+                  borderOutline:
+                      _leagues[currentIndex].color, //Put in player stats
+                  points: 500, //Put in player stats
+                  positionMovement: "Increased", //Put in player stats
+                  playerColor: AppColors.customBlack, //Put in player color
+                ),
+              ],
+            ),
           ],
           if (_selectedIndex == 1) ...[
             const Center(
