@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:ffi';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
