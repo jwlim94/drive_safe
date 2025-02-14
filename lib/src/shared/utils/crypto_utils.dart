@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
+
 class CryptoUtils {
   static String generateRandomId() {
     final Random random = Random.secure();
@@ -13,5 +15,14 @@ class CryptoUtils {
 
     // Trim to length of 20
     return base64UrlEncode(bytes).substring(0, 20);
+  }
+
+  static String generateRandomUserCode() {
+    final Random random = Random.secure();
+    final List<int> randomBytes = List.generate(16, (_) => random.nextInt(256));
+    final String hash = sha256.convert(randomBytes).toString().toUpperCase();
+
+    // Extract characters to format as XXXX-XXXX-XXXX
+    return "${hash.substring(0, 4)}-${hash.substring(4, 8)}-${hash.substring(8, 12)}";
   }
 }
