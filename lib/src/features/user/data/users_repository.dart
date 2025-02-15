@@ -36,6 +36,19 @@ class UsersRepository {
     return user;
   }
 
+  Future<User> updateUserName(String userId, String name) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    // Update the user document in Firestore
+    await usersRef.update({'name': name});
+
+    // Fetch the udpated user document
+    final updatedSnapshot = await usersRef.get();
+    if (!updatedSnapshot.exists) throw Exception('User not found');
+
+    return User.fromMap(updatedSnapshot.data()!);
+  }
+
   Future<User> updateUserColors(
     String userId,
     int primaryColor,

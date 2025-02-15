@@ -3,7 +3,9 @@ import 'package:drive_safe/src/features/car/presentation/controllers/update_car_
 import 'package:drive_safe/src/features/car/presentation/controllers/update_car_type_controller.dart';
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_colors_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_name_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/settings/edit_name_modal.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/numbers.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
@@ -64,6 +66,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         .updateCarDesciption(value);
   }
 
+  void _handleEditName() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: AppColors.customWhite,
+      builder: (context) {
+        return EditNameModal(
+          onSave: (newName) {
+            ref
+                .read(updateUserNameControllerProvider.notifier)
+                .updateUserName(newName);
+          },
+        );
+      },
+    );
+  }
+
   void _handleCopy(String userCode) async {
     final messenger = ScaffoldMessenger.of(context);
 
@@ -80,6 +102,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     ref.watch(updateUserColorsControllerProvider);
+    ref.watch(updateUserNameControllerProvider);
     ref.watch(updateCarTypeControllerProvider);
     ref.watch(updateCarDescriptionControllerProvider);
     final currentUser = ref.watch(currentUserStateProvider);
@@ -188,7 +211,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: _handleEditName,
                             child: const Icon(
                               Icons.edit,
                               color: AppColors.customWhite,
