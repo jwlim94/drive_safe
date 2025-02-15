@@ -1,20 +1,22 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_player_card.dart';
 import 'package:drive_safe/src/shared/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LeaderboardScreen extends StatefulWidget {
+class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
-  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+  ConsumerState<LeaderboardScreen> createState() => _LeaderboardScreenState();
 }
 
-class _LeaderboardScreenState extends State<LeaderboardScreen>
+class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
@@ -40,6 +42,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     final double indicatorWidth = (screenWidth * 0.5) - (screenWidth * 0.15);
     CarouselSliderController buttonCarouselController =
         CarouselSliderController();
+    final currentUser = ref.watch(currentUserStateProvider);
 
     return Scaffold(
       body: Column(
@@ -131,7 +134,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
               children: [
                 CustomPlayerCard(
                   position: 1, //Put in player stats
-                  playerName: "Jake", //Put in player name
+                  playerName: currentUser?.name ?? "Guest", //Put in player name
                   onPressed: VoidCallbackAction.new,
                   backgroundColor: AppColors.customWhite,
                   leaguePositionColor:
@@ -140,7 +143,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                       _leagues[currentIndex].color, //Put in player stats
                   points: 500, //Put in player stats
                   positionMovement: "Increased", //Put in player stats
-                  playerColor: AppColors.customBlack, //Put in player color
+                  playerColor: Color(
+                      currentUser?.primaryColor.toUnsigned(32) ?? 0xFF2196F3),
                 ),
               ],
             ),
