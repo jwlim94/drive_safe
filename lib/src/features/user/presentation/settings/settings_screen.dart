@@ -12,6 +12,7 @@ import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:drive_safe/src/shared/utils/format_utils.dart';
 import 'package:drive_safe/src/shared/widgets/custom_dropdown_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -61,6 +62,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref
         .read(updateCarDescriptionControllerProvider.notifier)
         .updateCarDesciption(value);
+  }
+
+  void _handleCopy(String userCode) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    await Clipboard.setData(ClipboardData(text: userCode));
+
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('Copied to clipboard'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -199,7 +213,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () => _handleCopy(currentUser.code),
                             child: const Icon(
                               Icons.copy,
                               color: AppColors.customWhite,
