@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
+import 'package:drive_safe/src/shared/widgets/custom_player_card.dart';
 import 'package:drive_safe/src/shared/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,6 +19,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
   late TabController _tabController;
   int _selectedIndex = 0;
   List<League> _leagues = [];
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -36,6 +38,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double indicatorWidth = (screenWidth * 0.5) - (screenWidth * 0.15);
+    CarouselSliderController buttonCarouselController =
+        CarouselSliderController();
 
     return Scaffold(
       body: Column(
@@ -71,8 +75,9 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           ),
           const SizedBox(height: 20),
           // Check selected tab and display the respective content
-          if (_selectedIndex == 0) ...[
+          if (_selectedIndex == 0) ...<Widget>[
             CarouselSlider(
+              carouselController: buttonCarouselController,
               options: CarouselOptions(
                 height: 125,
                 autoPlay: false,
@@ -80,6 +85,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 enlargeFactor: .4,
                 enableInfiniteScroll: false,
                 viewportFraction: 0.5,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
               ),
               items: _leagues.map((league) {
                 return Builder(
@@ -106,6 +116,33 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                   },
                 );
               }).toList(),
+            ),
+            //TODO: switch statement for the query to the database
+            // switch (currentIndex){
+            //   0 => /*Query to db*/(0),
+            //   1 => /*Query to db*/(1),
+            //   2 => /*Query to db*/(2),
+            //   3 => /*Query to db*/(3),
+            //   4 => /*Query to db*/(4),
+            //   5 => /*Query to db*/(5),
+            //   _ => /*Query to db*/
+            // },
+            Column(
+              children: [
+                CustomPlayerCard(
+                  position: 1, //Put in player stats
+                  playerName: "Jake", //Put in player name
+                  onPressed: VoidCallbackAction.new,
+                  backgroundColor: AppColors.customWhite,
+                  leaguePositionColor:
+                      _leagues[currentIndex].color, //Put in player stats
+                  borderOutline:
+                      _leagues[currentIndex].color, //Put in player stats
+                  points: 500, //Put in player stats
+                  positionMovement: "Increased", //Put in player stats
+                  playerColor: AppColors.customBlack, //Put in player color
+                ),
+              ],
             ),
           ],
           if (_selectedIndex == 1) ...[
