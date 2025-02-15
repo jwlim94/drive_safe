@@ -12,6 +12,7 @@ import 'package:drive_safe/src/shared/constants/strings.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:drive_safe/src/shared/utils/format_utils.dart';
+import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:drive_safe/src/shared/widgets/custom_dropdown_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -99,6 +100,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  void _handleSignOut() {
+    ref.read(signOutControllerProvider.notifier).signOut();
+  }
+
+  // TODO: Implement for guest users
+  void _handleAddEmail() {
+    print('Add Email clicked');
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(updateUserColorsControllerProvider);
@@ -133,7 +143,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Color Change Seciton
                       const SizedBox(height: 28),
@@ -265,17 +275,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             _handleCarDescriptionChange(value),
                       ),
 
-                      // Sign Out Section
-                      // TODO: Where should we put sign out button?
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref
-                              .read(signOutControllerProvider.notifier)
-                              .signOut();
-                        },
-                        child: const Text('Sign out'),
+                      // Account Settings Section
+                      const SizedBox(height: 28),
+                      const Text('Account Settings', style: TextStyles.h4),
+                      const SizedBox(height: 4),
+                      GestureDetector(
+                        onTap: _handleAddEmail,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.add,
+                              color: AppColors.customLightPurple,
+                            ),
+                            Text(
+                              'Add Email',
+                              style: TextStyles.h4.copyWith(
+                                color: AppColors.customLightPurple,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+
+                      // Sign Out Section
+                      const SizedBox(height: 32),
+                      CustomButton(
+                        text: 'Sign out',
+                        backgroundColor: AppColors.customPink,
+                        onPressed: _handleSignOut,
+                      ),
+
+                      // Delete Account Section
                     ],
                   ),
                 ),
