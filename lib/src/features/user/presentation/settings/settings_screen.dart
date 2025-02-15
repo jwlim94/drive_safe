@@ -9,6 +9,7 @@ import 'package:drive_safe/src/shared/constants/numbers.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
+import 'package:drive_safe/src/shared/utils/format_utils.dart';
 import 'package:drive_safe/src/shared/widgets/custom_dropdown_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -166,17 +167,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                       // User Name Section
                       const SizedBox(height: 28),
-                      Text(
-                        currentUser.name,
-                        style: TextStyles.h4,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(currentUser.name, style: TextStyles.h4),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.edit,
+                              color: AppColors.customWhite,
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
 
                       // User Code Section
-                      const SizedBox(height: 4),
-                      Text(currentUser.code, style: TextStyles.h4),
+                      const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              FormatUtils.formatUserCode(
+                                currentUser.code,
+                              ),
+                              style: TextStyles.h4,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.copy,
+                              color: AppColors.customWhite,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
 
                       // Vehicle Type Section
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 28),
                       CustomDropdownFormField(
                         selectedValue: currentCar.type,
                         items: Strings.vehicleTypes,

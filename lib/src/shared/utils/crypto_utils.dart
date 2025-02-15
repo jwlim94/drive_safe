@@ -22,7 +22,6 @@ class CryptoUtils {
     final List<int> randomBytes = List.generate(16, (_) => random.nextInt(256));
     final String hash = sha256.convert(randomBytes).toString().toUpperCase();
 
-    // Extract characters to format as XXXX-XXXX-XXXX
-    return "${hash.substring(0, 4)}-${hash.substring(4, 8)}-${hash.substring(8, 12)}";
+    return hash.substring(0, 12);
   }
 }
