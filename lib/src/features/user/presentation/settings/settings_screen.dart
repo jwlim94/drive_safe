@@ -3,14 +3,19 @@ import 'package:drive_safe/src/features/car/presentation/controllers/update_car_
 import 'package:drive_safe/src/features/car/presentation/controllers/update_car_type_controller.dart';
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_colors_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_name_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/settings/edit_name_modal.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/numbers.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
+import 'package:drive_safe/src/shared/utils/format_utils.dart';
+import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:drive_safe/src/shared/widgets/custom_dropdown_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -62,9 +67,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         .updateCarDesciption(value);
   }
 
+  void _handleEditName() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: AppColors.customWhite,
+      builder: (context) {
+        return EditNameModal(
+          onSave: (newName) {
+            ref
+                .read(updateUserNameControllerProvider.notifier)
+                .updateUserName(newName);
+          },
+        );
+      },
+    );
+  }
+
+  void _handleCopy(String userCode) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    await Clipboard.setData(ClipboardData(text: userCode));
+
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('Copied to clipboard'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _handleSignOut() {
+    ref.read(signOutControllerProvider.notifier).signOut();
+  }
+
+  // TODO: Implement for guest users
+  void _handleAddEmail() {
+    print('Add Email clicked');
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(updateUserColorsControllerProvider);
+    ref.watch(updateUserNameControllerProvider);
     ref.watch(updateCarTypeControllerProvider);
     ref.watch(updateCarDescriptionControllerProvider);
     final currentUser = ref.watch(currentUserStateProvider);
@@ -95,7 +143,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Color Change Seciton
                       const SizedBox(height: 28),
@@ -166,17 +214,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                       // User Name Section
                       const SizedBox(height: 28),
-                      Text(
-                        currentUser.name,
-                        style: TextStyles.h4,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(currentUser.name, style: TextStyles.h4),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: _handleEditName,
+                            child: const Icon(
+                              Icons.edit,
+                              color: AppColors.customWhite,
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
 
                       // User Code Section
-                      const SizedBox(height: 4),
-                      Text(currentUser.code, style: TextStyles.h4),
+                      const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              FormatUtils.formatUserCode(
+                                currentUser.code,
+                              ),
+                              style: TextStyles.h4,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () => _handleCopy(currentUser.code),
+                            child: const Icon(
+                              Icons.copy,
+                              color: AppColors.customWhite,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
 
                       // Vehicle Type Section
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 28),
                       CustomDropdownFormField(
                         selectedValue: currentCar.type,
                         items: Strings.vehicleTypes,
@@ -194,17 +275,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             _handleCarDescriptionChange(value),
                       ),
 
-                      // Sign Out Section
-                      // TODO: Where should we put sign out button?
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref
-                              .read(signOutControllerProvider.notifier)
-                              .signOut();
-                        },
-                        child: const Text('Sign out'),
+                      // Account Settings Section
+                      const SizedBox(height: 28),
+                      const Text('Account Settings', style: TextStyles.h4),
+                      const SizedBox(height: 4),
+                      GestureDetector(
+                        onTap: _handleAddEmail,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.add,
+                              color: AppColors.customLightPurple,
+                            ),
+                            Text(
+                              'Add Email',
+                              style: TextStyles.h4.copyWith(
+                                color: AppColors.customLightPurple,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+
+                      // Sign Out Section
+                      const SizedBox(height: 32),
+                      CustomButton(
+                        text: 'Sign out',
+                        backgroundColor: AppColors.customPink,
+                        onPressed: _handleSignOut,
+                      ),
+
+                      // Delete Account Section
                     ],
                   ),
                 ),

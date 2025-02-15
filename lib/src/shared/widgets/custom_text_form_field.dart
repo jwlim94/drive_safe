@@ -10,12 +10,14 @@ class CustomTextFormField extends StatefulWidget {
     required this.keyboardType,
     this.inputFormatters,
     this.hintText,
+    this.onChanged,
   });
 
   final TextEditingController controller;
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final String? hintText;
+  final ValueChanged<String>? onChanged;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -37,6 +39,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       cursorColor: AppColors.customDarkGray,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(16),
         hintText: widget.hintText,
