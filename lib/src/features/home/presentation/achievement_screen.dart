@@ -187,8 +187,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                     child: Container(
                       width: 100,
                       height: 100,
-                      color: Color(currentUser?.primaryColor.toUnsigned(32) ??
-                          0xFF2196F3),
+                      color: Color(currentUser?.primaryColor ?? 4293980400),
                     ),
                   ),
                   Positioned(

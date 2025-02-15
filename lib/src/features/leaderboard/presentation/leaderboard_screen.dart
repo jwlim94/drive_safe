@@ -143,8 +143,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                       _leagues[currentIndex].color, //Put in player stats
                   points: 500, //Put in player stats
                   positionMovement: "Increased", //Put in player stats
-                  playerColor: Color(
-                      currentUser?.primaryColor.toUnsigned(32) ?? 0xFF2196F3),
+                  playerColor: Color(currentUser?.primaryColor ?? 4293980400),
                 ),
               ],
             ),
