@@ -38,6 +38,13 @@ class AuthRepository {
       password: password,
     );
   }
+
+  Future<void> deleteUser() async {
+    final user = _authState.currentUser;
+    if (user == null) return;
+
+    return user.delete();
+  }
 }
 
 @Riverpod(keepAlive: true)

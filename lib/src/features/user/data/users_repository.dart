@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/authentication/domain/auth_user_data.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
@@ -10,8 +11,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'users_repository.g.dart';
 
 class UsersRepository {
-  UsersRepository(this._firestore);
+  UsersRepository(this._firestore, this._ref);
   final FirebaseFirestore _firestore;
+  final Ref _ref;
 
   Future<User?> fetchUser(String userId) async {
     final snapshot = await _userDocumentRef(userId).get();
@@ -69,6 +71,32 @@ class UsersRepository {
     return User.fromMap(updatedSnapshot.data()!);
   }
 
+  Future<void> deleteUser(String userId) async {
+    // start batch
+    final batch = _firestore.batch();
+
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    // retrieve associated car id
+    final userSnapshot = await usersRef.get();
+    final user = User.fromMap(userSnapshot.data()!);
+    final carId = user.carId;
+
+    // delete user from collection
+    batch.delete(usersRef);
+
+    final carsRef = _firestore.collection(Strings.carsCollection).doc(carId);
+
+    // delete associated car
+    batch.delete(carsRef);
+
+    // end batch
+    await batch.commit();
+
+    // delete user from Firebase Authentication
+    _ref.read(authRepositoryProvider).deleteUser();
+  }
+
   DocumentReference<User> _userDocumentRef(String userId) {
     return _firestore
         .collection(Strings.usersCollection)
@@ -82,5 +110,5 @@ class UsersRepository {
 
 @Riverpod(keepAlive: true)
 UsersRepository usersRepository(Ref ref) {
-  return UsersRepository(FirebaseFirestore.instance);
+  return UsersRepository(FirebaseFirestore.instance, ref);
 }
