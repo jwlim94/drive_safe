@@ -2,9 +2,11 @@ import 'package:drive_safe/src/features/authentication/presentation/controllers/
 import 'package:drive_safe/src/features/car/presentation/controllers/update_car_description_controller.dart';
 import 'package:drive_safe/src/features/car/presentation/controllers/update_car_type_controller.dart';
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/delete_user_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_colors_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_name_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/settings/delete_account_dialog.dart';
 import 'package:drive_safe/src/features/user/presentation/settings/edit_name_modal.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/numbers.dart';
@@ -109,10 +111,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     print('Add Email clicked');
   }
 
+  void _handleDeleteAccount() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const DeleteAccountDialog();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(updateUserColorsControllerProvider);
     ref.watch(updateUserNameControllerProvider);
+    ref.watch(deleteUserControllerProvider);
     ref.watch(updateCarTypeControllerProvider);
     ref.watch(updateCarDescriptionControllerProvider);
     final currentUser = ref.watch(currentUserStateProvider);
@@ -142,171 +155,195 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Flexible(
               child: SafeArea(
                 child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Color Change Seciton
-                      const SizedBox(height: 28),
-                      Row(
-                        children: [
-                          Container(
-                            width: 96,
-                            height: 96,
-                            decoration: BoxDecoration(
-                              color:
-                                  ColorUtils.toColor(currentUser.primaryColor),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                currentUser.name[0].toUpperCase(),
-                                style: TextStyle(
-                                  color: ColorUtils.toColor(
-                                      currentUser.secondaryColor),
-                                  fontSize: 64,
-                                  fontWeight: FontWeight.bold,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Color Change Seciton
+                        Row(
+                          children: [
+                            Container(
+                              width: 96,
+                              height: 96,
+                              decoration: BoxDecoration(
+                                color: ColorUtils.toColor(
+                                    currentUser.primaryColor),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  currentUser.name[0].toUpperCase(),
+                                  style: TextStyle(
+                                    color: ColorUtils.toColor(
+                                        currentUser.secondaryColor),
+                                    fontSize: 64,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 28),
-                          Expanded(
-                            child: Wrap(
-                              spacing: 12,
-                              runSpacing: 16,
-                              children: List.generate(
-                                Numbers.userPrimaryColors.length,
-                                (index) {
-                                  final isSelected = _selectedIndex == index;
+                            const SizedBox(width: 28),
+                            Expanded(
+                              child: Wrap(
+                                spacing: 12,
+                                runSpacing: 16,
+                                children: List.generate(
+                                  Numbers.userPrimaryColors.length,
+                                  (index) {
+                                    final isSelected = _selectedIndex == index;
 
-                                  return GestureDetector(
-                                    onTap: () => _handleColorClick(index),
-                                    child: Container(
-                                      width: 28,
-                                      height: 28,
-                                      decoration: BoxDecoration(
-                                        color: ColorUtils.toColor(
-                                            Numbers.userPrimaryColors[index]),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: isSelected
-                                          ? Center(
-                                              child: Container(
-                                                width: 16,
-                                                height: 16,
-                                                decoration: BoxDecoration(
-                                                  color: ColorUtils.toColor(
-                                                      Numbers.userSecondaryColors[
-                                                          index]),
-                                                  shape: BoxShape.circle,
+                                    return GestureDetector(
+                                      onTap: () => _handleColorClick(index),
+                                      child: Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          color: ColorUtils.toColor(
+                                              Numbers.userPrimaryColors[index]),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: isSelected
+                                            ? Center(
+                                                child: Container(
+                                                  width: 16,
+                                                  height: 16,
+                                                  decoration: BoxDecoration(
+                                                    color: ColorUtils.toColor(
+                                                        Numbers.userSecondaryColors[
+                                                            index]),
+                                                    shape: BoxShape.circle,
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          : null,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // User Name Section
-                      const SizedBox(height: 28),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(currentUser.name, style: TextStyles.h4),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: _handleEditName,
-                            child: const Icon(
-                              Icons.edit,
-                              color: AppColors.customWhite,
-                              size: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // User Code Section
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              FormatUtils.formatUserCode(
-                                currentUser.code,
-                              ),
-                              style: TextStyles.h4,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () => _handleCopy(currentUser.code),
-                            child: const Icon(
-                              Icons.copy,
-                              color: AppColors.customWhite,
-                              size: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // Vehicle Type Section
-                      const SizedBox(height: 28),
-                      CustomDropdownFormField(
-                        selectedValue: currentCar.type,
-                        items: Strings.vehicleTypes,
-                        hintText: 'Select Car',
-                        onChanged: (value) => _handleCarTypeChange(value),
-                      ),
-
-                      // Vehicle Description Section
-                      const SizedBox(height: 16),
-                      CustomDropdownFormField(
-                        selectedValue: currentCar.description,
-                        items: Strings.vehicleDescriptions,
-                        hintText: 'Select Description',
-                        onChanged: (value) =>
-                            _handleCarDescriptionChange(value),
-                      ),
-
-                      // Account Settings Section
-                      const SizedBox(height: 28),
-                      const Text('Account Settings', style: TextStyles.h4),
-                      const SizedBox(height: 4),
-                      GestureDetector(
-                        onTap: _handleAddEmail,
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.add,
-                              color: AppColors.customLightPurple,
-                            ),
-                            Text(
-                              'Add Email',
-                              style: TextStyles.h4.copyWith(
-                                color: AppColors.customLightPurple,
+                                              )
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
 
-                      // Sign Out Section
-                      const SizedBox(height: 32),
-                      CustomButton(
-                        text: 'Sign out',
-                        backgroundColor: AppColors.customPink,
-                        onPressed: _handleSignOut,
-                      ),
+                        // User Name Section
+                        const SizedBox(height: 28),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                currentUser.name,
+                                style: TextStyles.h4,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: _handleEditName,
+                              child: const Icon(
+                                Icons.edit,
+                                color: AppColors.customWhite,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
 
-                      // Delete Account Section
-                    ],
+                        // User Code Section
+                        const SizedBox(height: 8),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                FormatUtils.formatUserCode(
+                                  currentUser.code,
+                                ),
+                                style: TextStyles.h4,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => _handleCopy(currentUser.code),
+                              child: const Icon(
+                                Icons.copy,
+                                color: AppColors.customWhite,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Vehicle Type Section
+                        const SizedBox(height: 28),
+                        CustomDropdownFormField(
+                          selectedValue: currentCar.type,
+                          items: Strings.vehicleTypes,
+                          hintText: 'Select Car',
+                          onChanged: (value) => _handleCarTypeChange(value),
+                        ),
+
+                        // Vehicle Description Section
+                        const SizedBox(height: 16),
+                        CustomDropdownFormField(
+                          selectedValue: currentCar.description,
+                          items: Strings.vehicleDescriptions,
+                          hintText: 'Select Description',
+                          onChanged: (value) =>
+                              _handleCarDescriptionChange(value),
+                        ),
+
+                        // Account Settings Section
+                        const SizedBox(height: 28),
+                        const Text('Account Settings', style: TextStyles.h4),
+                        const SizedBox(height: 4),
+                        GestureDetector(
+                          onTap: _handleAddEmail,
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.add,
+                                color: AppColors.customLightPurple,
+                              ),
+                              Text(
+                                'Add Email',
+                                style: TextStyles.h4.copyWith(
+                                  color: AppColors.customLightPurple,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Sign Out Section
+                        const SizedBox(height: 32),
+                        CustomButton(
+                          text: 'Sign out',
+                          backgroundColor: AppColors.customPink,
+                          onPressed: _handleSignOut,
+                        ),
+
+                        // Delete Account Section
+                        const SizedBox(height: 20),
+                        Center(
+                          child: GestureDetector(
+                            onTap: _handleDeleteAccount,
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.delete_forever,
+                                  color: AppColors.customWhite,
+                                ),
+                                Text(
+                                  ' Delete Account',
+                                  style: TextStyles.bodyMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
