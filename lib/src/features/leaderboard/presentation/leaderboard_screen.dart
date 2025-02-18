@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/fetch_user_league_controller.dart';
-import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_player_card.dart';
@@ -136,8 +135,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                     backgroundColor: AppColors.customWhite,
                     leagueTierColor: league.color,
                     borderOutline: league.color,
-                    points: user?['points'] ?? 0,
-                    positionMovement: "Increased",
+                    points: league.points,
+                    positionMovement: league.movement,
                     playerColor: Color(user?['primaryColor'] ?? 4293980400),
                   );
                 }).toList(),
