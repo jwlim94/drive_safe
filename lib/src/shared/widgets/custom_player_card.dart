@@ -8,7 +8,7 @@ class CustomPlayerCard extends StatelessWidget {
   final String playerName;
   final VoidCallback? onPressed;
   final Color backgroundColor;
-  final Color leaguePositionColor;
+  final Color leagueTierColor;
   final double verticalPadding;
   final double horizontalPadding;
   final double borderRadius;
@@ -16,6 +16,7 @@ class CustomPlayerCard extends StatelessWidget {
   final Icon icon;
   final Color playerColor;
   final String positionMovement;
+  final Color playerInitialColor;
 
   const CustomPlayerCard({
     super.key,
@@ -24,7 +25,7 @@ class CustomPlayerCard extends StatelessWidget {
     this.playerName = "Player Name",
     this.onPressed,
     this.backgroundColor = Colors.white,
-    this.leaguePositionColor = Colors.white,
+    this.leagueTierColor = Colors.white,
     this.verticalPadding = 0,
     this.horizontalPadding = 0,
     this.borderRadius = 15,
@@ -32,6 +33,7 @@ class CustomPlayerCard extends StatelessWidget {
     this.icon = const Icon(Icons.remove),
     this.playerColor = AppColors.customBlack,
     this.positionMovement = "",
+    this.playerInitialColor = AppColors.customBlack,
   });
 
   @override
@@ -70,7 +72,7 @@ class CustomPlayerCard extends StatelessWidget {
               radius: 19,
               child: Text(
                 playerName[0],
-                style: TextStyles.h3.copyWith(color: AppColors.customDarkGray),
+                style: TextStyles.h3,
               ),
             ),
 
@@ -104,7 +106,7 @@ class CustomPlayerCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: leaguePositionColor),
+                  color: leagueTierColor),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
