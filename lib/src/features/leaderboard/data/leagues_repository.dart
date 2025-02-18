@@ -43,7 +43,27 @@ class LeaguesRepository {
       };
     }).toList();
 
+    userLeageSnapshot.sort((a, b) {
+      int aPoints = a["league"].points ?? 0;
+      int bPoints = b["league"].points ?? 0;
+
+      return bPoints.compareTo(aPoints);
+    });
+
     return userLeageSnapshot;
+  }
+
+  void updateMovementPositions(List<Map<String, dynamic>> leagueData) async {
+    for (var item in leagueData) {
+      var leagueId = item['user']['leagueId'];
+      var movement = item['movement'];
+      var newPosition = item['position'];
+
+      await _firestore.collection('leagues').doc(leagueId).update({
+        'position': newPosition,
+        'movement': movement,
+      });
+    }
   }
 }
 

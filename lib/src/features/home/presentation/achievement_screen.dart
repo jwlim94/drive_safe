@@ -60,7 +60,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lastDrive = ref.watch(lastDriveNotifierProvider);
+    ref.watch(lastDriveNotifierProvider);
     final currentUser = ref.watch(currentUserStateProvider);
 
     if (state == 'Streak') {

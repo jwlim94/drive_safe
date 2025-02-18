@@ -89,10 +89,10 @@ class CustomPlayerCard extends StatelessWidget {
 
             Row(
               children: [
-                positionMovement == "Increased"
+                positionMovement == "increased"
                     ? const Icon(Icons.arrow_upward_rounded,
                         color: AppColors.upArrow, size: 32)
-                    : positionMovement == "Decreased"
+                    : positionMovement == "decreased"
                         ? const Icon(Icons.arrow_downward_rounded,
                             color: AppColors.downArrow, size: 32)
                         : const Icon(Icons.remove,
