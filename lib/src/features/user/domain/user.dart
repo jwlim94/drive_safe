@@ -13,6 +13,7 @@ class User {
     required this.primaryColor,
     required this.secondaryColor,
     required this.code,
+    required this.leagueId,
   });
 
   final String id;
@@ -23,6 +24,7 @@ class User {
   final int primaryColor;
   final int secondaryColor;
   final String code;
+  final String leagueId;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -38,6 +40,7 @@ class User {
       primaryColor: map['primaryColor'] as int,
       secondaryColor: map['secondaryColor'] as int,
       code: map['code'] as String,
+      leagueId: map['leagueId'] as String,
     );
   }
 
@@ -52,6 +55,7 @@ class User {
       'primaryColor': primaryColor,
       'secondaryColor': secondaryColor,
       'code': code,
+      'leagueId': leagueId,
     };
     // Optional fields should be added here
     return data;

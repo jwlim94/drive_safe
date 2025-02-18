@@ -1,5 +1,7 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/car/presentation/controllers/cache_current_car_controller.dart';
+import 'package:drive_safe/src/features/leaderboard/data/leagues_repository.dart';
+import 'package:drive_safe/src/features/leaderboard/presentation/controllers/cache_current_league_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/cache_current_user_controller.dart';
 import 'package:drive_safe/src/features/authentication/presentation/providers/auth_user_data_state_provider.dart';
 import 'package:drive_safe/src/features/car/data/cars_repository.dart';
@@ -44,6 +46,10 @@ class AuthService {
       final carsRepository = ref.read(carsRepositoryProvider);
       await carsRepository.createCar(carData);
 
+      // Create a league
+      final leaguesRepository = ref.read(leaguesRepositoryProvider);
+      await leaguesRepository.createUserLeague(userId);
+
       // Caching
       await ref
           .read(cacheCurrentUserControllerProvider.notifier)
@@ -51,6 +57,9 @@ class AuthService {
       await ref
           .read(cacheCurrentCarControllerProvider.notifier)
           .cacheCurrentCar();
+      await ref
+          .read(cacheCurrentLeagueControllerProvider.notifier)
+          .cacheCurrentLeague();
     } catch (e) {
       // TODO: Handle rollback
     }
@@ -76,6 +85,9 @@ class AuthService {
       await ref
           .read(cacheCurrentCarControllerProvider.notifier)
           .cacheCurrentCar();
+      await ref
+          .read(cacheCurrentLeagueControllerProvider.notifier)
+          .cacheCurrentLeague();
     } catch (e) {
       // TODO: Handle rollback
     }

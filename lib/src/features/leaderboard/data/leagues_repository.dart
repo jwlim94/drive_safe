@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
+import 'package:drive_safe/src/shared/utils/crypto_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -64,6 +65,37 @@ class LeaguesRepository {
         'movement': movement,
       });
     }
+  }
+
+  Future<League?> getUserLeague(String leagueId) async {
+    DocumentSnapshot<League> userLeagueSnapshot = await _firestore
+        .collection('leagues')
+        .doc(leagueId)
+        .withConverter<League>(
+          fromFirestore: (snapshot, _) => League.fromJson(snapshot.data()!),
+          toFirestore: (league, _) => league.toJson(),
+        )
+        .get();
+
+    return userLeagueSnapshot.data();
+  }
+
+  Future<void> createUserLeague(String userId) async {
+    String leagueId = CryptoUtils.generateRandomId();
+    League league = League(
+      id: leagueId,
+      name: 'bronze',
+      tier: 0,
+      color: 0xFFe7a461,
+      points: 0,
+      position: 0,
+      userId: userId,
+      movement: '',
+    );
+
+    await _firestore.collection('leagues').doc(userId).set(
+          league as Map<String, dynamic>,
+        );
   }
 }
 
