@@ -25,8 +25,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^4.0.0
   build_runner: ^2.4.13 # handles code generation. used with riverpod_annotaion, json_serializable packages
+
   riverpod_generator: ^2.6.3 # enables code generation for providers when used in conjunction with build_runner
   custom_lint: ^0.7.0 # allows defining custom lint rules
   riverpod_lint: ^2.6.3 # provides pre-defined lint rules specifically for Riverpod
