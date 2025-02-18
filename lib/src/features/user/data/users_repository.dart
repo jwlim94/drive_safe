@@ -32,6 +32,7 @@ class UsersRepository {
       primaryColor: ColorUtils.generateRandomColors()[0],
       secondaryColor: ColorUtils.generateRandomColors()[1],
       code: CryptoUtils.generateRandomUserCode(),
+      points: 0,
     );
 
     await _userDocumentRef(userId).set(user);

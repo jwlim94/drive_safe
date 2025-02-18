@@ -91,4 +91,11 @@ class TextStyles {
     fontWeight: FontWeight.bold,
     letterSpacing: 0,
   );
+
+  static const error = TextStyle(
+    fontSize: 15,
+    color: AppColors.customDarkPink,
+    fontWeight: FontWeight.normal,
+    letterSpacing: 0,
+  );
 }
