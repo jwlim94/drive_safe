@@ -1,31 +1,34 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
+import 'package:drive_safe/src/features/leaderboard/presentation/controllers/fetch_user_league_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_player_card.dart';
 import 'package:drive_safe/src/shared/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LeaderboardScreen extends StatefulWidget {
+class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
-  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+  ConsumerState<LeaderboardScreen> createState() => _LeaderboardScreenState();
 }
 
-class _LeaderboardScreenState extends State<LeaderboardScreen>
+class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
-  List<League> _leagues = [];
+  List<League> _carouselLeagues = [];
   int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _leagues = League.getLeagues();
+    _carouselLeagues = League.getLeagues();
 
     _tabController.addListener(() {
       setState(() {
@@ -40,6 +43,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     final double indicatorWidth = (screenWidth * 0.5) - (screenWidth * 0.15);
     CarouselSliderController buttonCarouselController =
         CarouselSliderController();
+    final leagueAsync =
+        ref.watch(fetchUserLeagueControllerProvider(currentIndex));
 
     return Scaffold(
       body: Column(
@@ -89,9 +94,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                   setState(() {
                     currentIndex = index;
                   });
+                  ref.invalidate(fetchUserLeagueControllerProvider);
                 },
               ),
-              items: _leagues.map((league) {
+              items: _carouselLeagues.map((league) {
                 return Builder(
                   builder: (context) {
                     return Container(
@@ -117,32 +123,32 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 );
               }).toList(),
             ),
-            //TODO: switch statement for the query to the database
-            // switch (currentIndex){
-            //   0 => /*Query to db*/(0),
-            //   1 => /*Query to db*/(1),
-            //   2 => /*Query to db*/(2),
-            //   3 => /*Query to db*/(3),
-            //   4 => /*Query to db*/(4),
-            //   5 => /*Query to db*/(5),
-            //   _ => /*Query to db*/
-            // },
-            Column(
-              children: [
-                CustomPlayerCard(
-                  position: 1, //Put in player stats
-                  playerName: "Jake", //Put in player name
-                  onPressed: VoidCallbackAction.new,
-                  backgroundColor: AppColors.customWhite,
-                  leaguePositionColor:
-                      _leagues[currentIndex].color, //Put in player stats
-                  borderOutline:
-                      _leagues[currentIndex].color, //Put in player stats
-                  points: 500, //Put in player stats
-                  positionMovement: "Increased", //Put in player stats
-                  playerColor: AppColors.customBlack, //Put in player color
+            leagueAsync.when(
+              data: (leagueData) => Column(
+                children: leagueData.map((data) {
+                  final league = data['league'] as League;
+                  final user = data['user'];
+
+                  return CustomPlayerCard(
+                    position: league.position, // Ensure position is set
+                    playerName: user?['name'] ?? "Guest",
+                    onPressed: () {}, // Provide a valid callback
+                    backgroundColor: AppColors.customWhite,
+                    leagueTierColor: league.color,
+                    borderOutline: league.color,
+                    points: user?['points'] ?? 0,
+                    positionMovement: "Increased",
+                    playerColor: Color(user?['primaryColor'] ?? 4293980400),
+                  );
+                }).toList(),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(
+                child: Text(
+                  "Error: $error",
+                  style: TextStyles.error,
                 ),
-              ],
+              ),
             ),
           ],
           if (_selectedIndex == 1) ...[

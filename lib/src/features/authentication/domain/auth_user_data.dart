@@ -11,6 +11,7 @@ class AuthUserData {
     this.carId,
     this.email,
     this.password,
+    this.leagueId,
   });
 
   final String? id;
@@ -19,6 +20,7 @@ class AuthUserData {
   final String? carId;
   final String? email;
   final String? password;
+  final String? leagueId;
 
   factory AuthUserData.fromJson(Map<String, dynamic> json) =>
       _$AuthUserDataFromJson(json);
