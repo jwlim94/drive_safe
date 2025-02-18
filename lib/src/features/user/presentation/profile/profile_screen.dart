@@ -1,9 +1,11 @@
 import 'package:drive_safe/src/features/user/presentation/profile/friends_tab.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/me_tab.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/constants/enums.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -36,25 +38,18 @@ class _ProfileScreenState extends State<ProfileScreen>
     final double horizontalPadding = screenWidth * 0.075;
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 40,
-        backgroundColor: AppColors.customBlack,
-        actions: [
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
           IconButton(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(top: 4, right: 12),
             icon: const Icon(
               Icons.settings,
               color: AppColors.customGray,
               size: 32,
             ),
-            onPressed: () {
-              print('Go to settings page');
-            },
-          )
-        ],
-      ),
-      body: Column(
-        children: [
+            onPressed: () => context.goNamed(AppRoute.settings.name),
+          ),
           TabBar(
             controller: _tabController,
             indicator: CustomTabIndicator(width: indicatorWidth),

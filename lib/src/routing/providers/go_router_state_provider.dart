@@ -1,12 +1,14 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
+import 'package:drive_safe/src/features/authentication/presentation/sign_in_screen.dart';
+import 'package:drive_safe/src/features/authentication/presentation/sign_up_screen.dart';
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_accountconnection.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_vehicleselection.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basic_info_screen.dart';
+import 'package:drive_safe/src/features/onboarding/presentation/onboarding_vehicle_selection_screen.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/profile_screen.dart';
-import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basicinfo.dart';
+import 'package:drive_safe/src/features/user/presentation/settings/settings_screen.dart';
 import 'package:drive_safe/src/routing/app_startup.dart';
 import 'package:drive_safe/src/routing/providers/app_startup_state_provider.dart';
 import 'package:drive_safe/src/routing/utils/extra_codec.dart';
@@ -26,7 +28,7 @@ GoRouter goRouterState(Ref ref) {
   final authRepository = ref.watch(authRepositoryProvider);
 
   return GoRouter(
-    initialLocation: '/onboardingBasicInfo',
+    initialLocation: '/auth',
     extraCodec: const ExtraCodec(),
     debugLogDiagnostics: true,
     navigatorKey: Keys.rootNavigatorKey,
@@ -36,7 +38,18 @@ GoRouter goRouterState(Ref ref) {
         return '/startup';
       }
 
-      // Add silently signin and signout redirects here...
+      final path = state.uri.path;
+      final isVerified = authRepository.currentUser != null;
+
+      // Silently sign in
+      if (path.startsWith('/auth') && isVerified) {
+        return '/home';
+      }
+
+      // Sign out
+      if (path.startsWith('/profile') && !isVerified) {
+        return '/auth';
+      }
 
       return null;
     },
@@ -50,28 +63,49 @@ GoRouter goRouterState(Ref ref) {
         ),
       ),
       GoRoute(
-        path: '/onboardingBasicInfo',
-        name: AppRoute.onboardingBasicInfo.name,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          //animations later
-          child: OnboardingScreenBasicInfo(),
-        ),
-      ),
-      GoRoute(
-        path: '/onboardingVehicleSelection',
-        name: AppRoute.onboardingVehicleSelection.name,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          //animations later
-          child: OnboardingScreenVehicleSelection(),
-        ),
-      ),
-      GoRoute(
-        path: '/onboardingAccountConnection',
-        name: AppRoute.onboardingAccountConnection.name,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          //animations later
-          child: OnboardingAccountconnection(),
-        ),
+        path: '/auth',
+        name: AppRoute.auth.name,
+        redirect: (context, state) {
+          final path = state.uri.path;
+          if (path == '/auth') return '/auth/signup';
+          return null;
+        },
+        routes: [
+          GoRoute(
+            path: 'signUp',
+            name: AppRoute.signUp.name,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SignUpScreen(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'onboardingBasicInfo',
+                name: AppRoute.onboardingBasicInfo.name,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  //animations later
+                  child: OnboardingBasicInfoScreen(),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'onboardingVehicleSelection',
+                    name: AppRoute.onboardingVehicleSelection.name,
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      //animations later
+                      child: OnboardingVehicleSelectionScreen(),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'signIn',
+            name: AppRoute.signIn.name,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SignInScreen(),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: '/achievements',
@@ -82,7 +116,6 @@ GoRouter goRouterState(Ref ref) {
           );
         },
       ),
-      // Add more routes here...
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: Keys.rootNavigatorKey,
         pageBuilder: (context, state, navigationShell) => NoTransitionPage(
@@ -132,7 +165,7 @@ GoRouter goRouterState(Ref ref) {
                   },
                   routes: [
                     GoRoute(
-                      path: '/trophy',
+                      path: 'trophy',
                       name: AppRoute.trophy.name,
                       pageBuilder: (context, state) {
                         return const NoTransitionPage(
@@ -141,7 +174,7 @@ GoRouter goRouterState(Ref ref) {
                       },
                     ),
                     GoRoute(
-                      path: '/carcustomization',
+                      path: 'carcustomization',
                       name: AppRoute.carcustomization.name,
                       pageBuilder: (context, state) {
                         return const NoTransitionPage(
@@ -151,7 +184,7 @@ GoRouter goRouterState(Ref ref) {
                       },
                     ),
                     GoRoute(
-                      path: '/minigame',
+                      path: 'minigame',
                       name: AppRoute.minigame.name,
                       pageBuilder: (context, state) {
                         return const NoTransitionPage(
@@ -173,6 +206,17 @@ GoRouter goRouterState(Ref ref) {
                     child: ProfileScreen(),
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'settings',
+                    name: AppRoute.settings.name,
+                    pageBuilder: (context, state) {
+                      return const NoTransitionPage(
+                        child: SettingsScreen(),
+                      );
+                    },
+                  )
+                ],
               )
             ],
           ),

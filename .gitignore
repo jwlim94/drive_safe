@@ -154,3 +154,6 @@ app.*.symbols
 # Environment files
 .env
 .env.*
+
+# Ignore generated JSON serialization files
+**/*.g.dart

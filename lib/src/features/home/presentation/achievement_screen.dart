@@ -1,24 +1,24 @@
+import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:confetti/confetti.dart';
 
-class AchievementScreen extends StatefulWidget {
+class AchievementScreen extends ConsumerStatefulWidget {
   const AchievementScreen({super.key});
 
   @override
-  State<AchievementScreen> createState() => _AchievementScreenState();
+  ConsumerState<AchievementScreen> createState() => _AchievementScreenState();
 }
 
-class _AchievementScreenState extends State<AchievementScreen> {
+class _AchievementScreenState extends ConsumerState<AchievementScreen> {
   int consecutiveSafeDrives = 0; //Get this from the repo layer later...
   String state = 'Streak';
-  Color profileColor =
-      Colors.lightGreen; //Get this from the repo layer later...
-  String firstInitial = 'J'; //Get this from the repo layer later...
   late ConfettiController _controllerTopCenter; //just for fun!
   bool triggerConfetti = true;
 
@@ -60,16 +60,30 @@ class _AchievementScreenState extends State<AchievementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lastDrive = ref.watch(lastDriveNotifierProvider);
+    final currentUser = ref.watch(currentUserStateProvider);
+
     if (state == 'Streak') {
       return Scaffold(
-        body: Stack(
-          children: [
-            SvgPicture.asset(
+        appBar: AppBar(
+          toolbarHeight: 75,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          flexibleSpace: Align(
+            alignment: Alignment.topCenter,
+            child: SvgPicture.asset(
               'assets/images/checkered_flag.svg',
+              width: double.infinity,
+              fit: BoxFit.cover,
               height: 75,
             ),
+          ),
+        ),
+        body: Stack(
+          children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Align(
                   alignment: Alignment.center,
@@ -140,13 +154,24 @@ class _AchievementScreenState extends State<AchievementScreen> {
       );
     } else {
       return Scaffold(
-        body: Stack(children: [
-          SvgPicture.asset(
-            'assets/images/checkered_flag.svg',
-            height: 75,
+        appBar: AppBar(
+          toolbarHeight: 75,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          flexibleSpace: Align(
+            alignment: Alignment.topCenter,
+            child: SvgPicture.asset(
+              'assets/images/checkered_flag.svg',
+              width: double.infinity,
+              fit: BoxFit.cover,
+              height: 75,
+            ),
           ),
+        ),
+        body: Stack(children: [
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Padding(
                 padding: EdgeInsets.only(bottom: 20),
@@ -162,7 +187,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
                     child: Container(
                       width: 100,
                       height: 100,
-                      color: profileColor,
+                      color: Color(currentUser?.primaryColor ?? 4293980400),
                     ),
                   ),
                   Positioned(
@@ -172,7 +197,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
                       height: 100,
                       child: Center(
                         child: Text(
-                          firstInitial,
+                          currentUser?.name[0] ?? "?",
                           style: TextStyles.h1,
                         ),
                       ),

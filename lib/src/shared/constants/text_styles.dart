@@ -77,4 +77,25 @@ class TextStyles {
     fontWeight: FontWeight.bold,
     letterSpacing: 0,
   );
+
+  static const playerNamePositionCardText = TextStyle(
+    fontSize: 20,
+    color: AppColors.customBlack,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0,
+  );
+
+  static const playerPositionPositionCardText = TextStyle(
+    fontSize: 25,
+    color: AppColors.customBlack,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0,
+  );
+
+  static const error = TextStyle(
+    fontSize: 15,
+    color: AppColors.customDarkPink,
+    fontWeight: FontWeight.normal,
+    letterSpacing: 0,
+  );
 }
