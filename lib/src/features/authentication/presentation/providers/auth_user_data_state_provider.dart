@@ -16,6 +16,7 @@ class AuthUserDataState extends _$AuthUserDataState {
       name: state.name,
       age: state.age,
       carId: state.carId,
+      leagueId: state.leagueId,
       email: state.email,
       password: state.password,
     );
@@ -27,6 +28,7 @@ class AuthUserDataState extends _$AuthUserDataState {
       name: name,
       age: state.age,
       carId: state.carId,
+      leagueId: state.leagueId,
       email: state.email,
       password: state.password,
     );
@@ -38,6 +40,7 @@ class AuthUserDataState extends _$AuthUserDataState {
       name: state.name,
       age: age,
       carId: state.carId,
+      leagueId: state.leagueId,
       email: state.email,
       password: state.password,
     );
@@ -49,6 +52,19 @@ class AuthUserDataState extends _$AuthUserDataState {
       name: state.name,
       age: state.age,
       carId: id,
+      leagueId: state.leagueId,
+      email: state.email,
+      password: state.password,
+    );
+  }
+
+  void setLeagueId(String id) {
+    state = AuthUserData(
+      id: state.id,
+      name: state.name,
+      age: state.age,
+      carId: state.carId,
+      leagueId: id,
       email: state.email,
       password: state.password,
     );
@@ -60,6 +76,7 @@ class AuthUserDataState extends _$AuthUserDataState {
       name: state.name,
       age: state.age,
       carId: state.carId,
+      leagueId: state.leagueId,
       email: email,
       password: state.password,
     );
@@ -71,6 +88,7 @@ class AuthUserDataState extends _$AuthUserDataState {
       name: state.name,
       age: state.age,
       carId: state.carId,
+      leagueId: state.leagueId,
       email: state.email,
       password: password,
     );

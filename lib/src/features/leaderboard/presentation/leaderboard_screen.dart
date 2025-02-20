@@ -113,7 +113,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                           Text(
                             league.name,
                             style: TextStyles.bodyMedium
-                                .copyWith(color: league.color),
+                                .copyWith(color: Color(league.color)),
                           ),
                         ],
                       ),
@@ -133,8 +133,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                     playerName: user?['name'] ?? "Guest",
                     onPressed: () {}, // Provide a valid callback
                     backgroundColor: AppColors.customWhite,
-                    leagueTierColor: league.color,
-                    borderOutline: league.color,
+                    tierColor: Color(league.color),
+                    borderOutline: Color(league.color),
                     points: league.points,
                     positionMovement: league.movement,
                     playerColor: Color(user?['primaryColor'] ?? 4293980400),

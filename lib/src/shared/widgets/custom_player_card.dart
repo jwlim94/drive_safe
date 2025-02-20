@@ -8,7 +8,7 @@ class CustomPlayerCard extends StatelessWidget {
   final String playerName;
   final VoidCallback? onPressed;
   final Color backgroundColor;
-  final Color leagueTierColor;
+  final Color tierColor;
   final double verticalPadding;
   final double horizontalPadding;
   final double borderRadius;
@@ -25,7 +25,7 @@ class CustomPlayerCard extends StatelessWidget {
     this.playerName = "Player Name",
     this.onPressed,
     this.backgroundColor = Colors.white,
-    this.leagueTierColor = Colors.white,
+    this.tierColor = Colors.white,
     this.verticalPadding = 0,
     this.horizontalPadding = 0,
     this.borderRadius = 15,
@@ -105,8 +105,7 @@ class CustomPlayerCard extends StatelessWidget {
             // Points
             Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: leagueTierColor),
+                  borderRadius: BorderRadius.circular(15), color: tierColor),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
