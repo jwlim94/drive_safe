@@ -1,41 +1,72 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'leagues.g.dart';
+
+@JsonSerializable()
 class League {
-  String svgPath;
-  int lowBound;
-  int highBound;
+  String id;
   String name;
   int tier;
   int color;
-  int position;
   String userId;
-  String movement;
+  int position;
+  int highBound;
+  int lowBound;
   int points;
-  String id;
+  String movement;
+  String svgPath;
 
   League({
-    this.svgPath = '',
+    required this.id,
     required this.name,
     required this.tier,
     required this.color,
+    required this.userId,
     this.position = 0,
-    this.userId = '',
     this.highBound = 0, //exclusive
     this.lowBound = 0, //inclusive
-    this.movement = 'none',
     this.points = 0,
-    required this.id,
+    this.movement = 'none',
+    this.svgPath = '',
   });
 
+  factory League.fromJson(Map<String, dynamic> json) => _$LeagueFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LeagueToJson(this);
+
+  factory League.fromMap(Map<String, dynamic> map) {
+    return League(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      tier: map['tier'] as int,
+      color: map['color'] as int,
+      userId: map['userId'] as String,
+      position: map['position'] as int,
+      highBound: map['highBound'] as int,
+      lowBound: map['lowBound'] as int,
+      points: map['points'] as int,
+      movement: map['movement'] as String,
+      svgPath: map['svgPath'] as String,
+    );
+  }
+
   Map<String, dynamic> toMap() {
-    return {
+    final Map<String, dynamic> data = {
+      // Required fields
       'id': id,
       'name': name,
       'tier': tier,
       'color': color,
-      'points': points,
-      'position': position,
       'userId': userId,
+      'position': position,
+      'highBound': highBound,
+      'lowBound': lowBound,
+      'points': points,
       'movement': movement,
+      'svgPath': svgPath,
     };
+
+    return data;
   }
 
   static List<League> getLeagues() {
@@ -49,6 +80,7 @@ class League {
       lowBound: 0,
       highBound: 500,
       id: '',
+      userId: '',
     ));
 
     leagues.add(League(
@@ -59,6 +91,7 @@ class League {
       lowBound: 500,
       highBound: 1000,
       id: '',
+      userId: '',
     ));
 
     leagues.add(League(
@@ -69,6 +102,7 @@ class League {
       lowBound: 1000,
       highBound: 2000,
       id: '',
+      userId: '',
     ));
 
     leagues.add(League(
@@ -79,6 +113,7 @@ class League {
       lowBound: 2000,
       highBound: 4000,
       id: '',
+      userId: '',
     ));
 
     leagues.add(League(
@@ -89,6 +124,7 @@ class League {
       lowBound: 4000,
       highBound: 8000,
       id: '',
+      userId: '',
     ));
 
     leagues.add(League(
@@ -98,38 +134,11 @@ class League {
       color: 0xFF1a857f,
       lowBound: 8000,
       id: '',
+      userId: '',
     ));
 
     leagues.sort((a, b) => a.tier.compareTo(b.tier));
 
     return leagues;
-  }
-
-  // Convert Firestore document to League object
-  factory League.fromJson(Map<String, dynamic> json) {
-    return League(
-      color: json['color'] as int,
-      name: json['name'] as String,
-      tier: json['tier'] as int,
-      position: json['position'] as int,
-      userId: json['userId'] as String,
-      movement: json['movement'] as String,
-      points: json['points'] as int,
-      id: json['id'] as String,
-    );
-  }
-
-  // Convert League object to Firestore document
-  Map<String, dynamic> toJson() {
-    return {
-      'color': color,
-      'name': name,
-      'tier': tier,
-      'position': position,
-      'userId': userId,
-      'movement': movement,
-      'points': points,
-      'id': id,
-    };
   }
 }
