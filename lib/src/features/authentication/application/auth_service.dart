@@ -23,6 +23,7 @@ class AuthService {
       final authUserData = ref.read(authUserDataStateProvider);
       final String email = authUserData.email!;
       final String password = authUserData.password!;
+      final String leagueId = authUserData.leagueId!;
 
       // Create user in Firebase Authentication
       final UserCredential userCredential =
@@ -48,7 +49,7 @@ class AuthService {
 
       // Create a league
       final leaguesRepository = ref.read(leaguesRepositoryProvider);
-      await leaguesRepository.createUserLeague(userId);
+      await leaguesRepository.createUserLeague(userId, leagueId);
 
       // Caching
       await ref

@@ -36,8 +36,9 @@ class _OnboardingVehicleSelectionScreenState
   }
 
   void _handleComplete() async {
-    // Handle car data
+    // Handle car and league data
     String randomCarId = CryptoUtils.generateRandomId();
+    String randomLeagueId = CryptoUtils.generateRandomId();
     ref.read(carDataStateProvider.notifier).setId(randomCarId);
     ref.read(carDataStateProvider.notifier).setType(_selectedCarType!);
     ref
@@ -46,6 +47,7 @@ class _OnboardingVehicleSelectionScreenState
 
     // Handle user data
     ref.read(authUserDataStateProvider.notifier).setCarId(randomCarId);
+    ref.read(authUserDataStateProvider.notifier).setLeagueId(randomLeagueId);
 
     // Handle guest
     final AuthType authType = ref.read(authTypeStateProvider);

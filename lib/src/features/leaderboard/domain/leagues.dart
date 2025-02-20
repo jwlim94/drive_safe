@@ -24,6 +24,20 @@ class League {
     this.points = 0,
     required this.id,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'tier': tier,
+      'color': color,
+      'points': points,
+      'position': position,
+      'userId': userId,
+      'movement': movement,
+    };
+  }
+
   static List<League> getLeagues() {
     List<League> leagues = [];
 
