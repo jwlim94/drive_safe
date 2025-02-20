@@ -1,5 +1,5 @@
-import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 // Splash screen
 class AppStartupLoadingStateWidget extends StatelessWidget {
@@ -7,9 +7,23 @@ class AppStartupLoadingStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Drive Safe', style: TextStyles.h1),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: SvgPicture.asset(
+              'assets/images/checkered_flag.svg',
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          Center(
+            child: SvgPicture.asset(
+              'assets/images/logo_drive_safe.svg',
+              width: 250,
+              height: 450,
+            ),
+          ),
+        ],
       ),
     );
   }
