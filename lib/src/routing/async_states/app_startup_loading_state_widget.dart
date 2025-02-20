@@ -1,4 +1,3 @@
-import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
