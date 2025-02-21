@@ -1,13 +1,11 @@
-import 'package:drive_safe/src/shared/constants/app_colors.dart';
-import 'package:flutter/material.dart';
-
 class League {
   String svgPath;
   int lowBound;
   int highBound;
   String name;
   int leagueTier;
-  Color color;
+  int color;
+  String displayName;
   int position;
   String userId;
   String movement;
@@ -15,10 +13,11 @@ class League {
   String id;
 
   League({
-    this.svgPath = '',
     required this.name,
     required this.leagueTier,
     required this.color,
+    this.svgPath = '',
+    this.displayName = '',
     this.position = 0,
     this.userId = '',
     this.highBound = 0, //exclusive
@@ -31,55 +30,61 @@ class League {
     List<League> leagues = [];
 
     leagues.add(League(
+      name: 'bronze',
       svgPath: 'assets/images/bronze_trophy.svg',
-      name: 'Bronze League',
+      displayName: 'Bronze League',
       leagueTier: 0,
-      color: AppColors.bronzeLeague,
+      color: 0xFFe7a461,
       lowBound: 0,
       highBound: 500,
     ));
 
     leagues.add(League(
+      name: 'silver',
       svgPath: 'assets/images/silver_trophy.svg',
-      name: 'Silver League',
+      displayName: 'Silver League',
       leagueTier: 1,
-      color: AppColors.silverLeague,
+      color: 0xFFc0c0c0,
       lowBound: 500,
       highBound: 1000,
     ));
 
     leagues.add(League(
+      name: 'gold',
       svgPath: 'assets/images/gold_trophy.svg',
-      name: 'Gold League',
+      displayName: 'Gold League',
       leagueTier: 2,
-      color: AppColors.goldLeague,
+      color: 0xFFc5be44,
       lowBound: 1000,
       highBound: 2000,
     ));
 
     leagues.add(League(
+      name: 'emerald',
       svgPath: 'assets/images/emerald_trophy.svg',
-      name: 'Emerald League',
+      displayName: 'Emerald League',
       leagueTier: 3,
-      color: AppColors.emeraldLeague,
+      color: 0xFF448f60,
       lowBound: 2000,
       highBound: 4000,
     ));
 
     leagues.add(League(
+      name: 'ruby',
       svgPath: 'assets/images/ruby_trophy.svg',
-      name: 'Ruby League',
+      displayName: 'Ruby League',
       leagueTier: 4,
-      color: AppColors.rubyLeague,
+      color: 0xFFba4588,
       lowBound: 4000,
       highBound: 8000,
     ));
 
     leagues.add(League(
+      name: 'diamond',
       svgPath: 'assets/images/diamond_trophy.svg',
-      name: 'Diamond League',
+      displayName: 'Diamond League',
       leagueTier: 5,
-      color: AppColors.diamondLeague,
+      color: 0xFF1a857f,
       lowBound: 8000,
     ));
 
@@ -91,7 +96,7 @@ class League {
   // Convert Firestore document to League object
   factory League.fromJson(Map<String, dynamic> json) {
     return League(
-      color: Color(json['color']),
+      color: json['color'] as int,
       name: json['name'] as String,
       leagueTier: json['tier'] as int,
       position: json['position'] as int,

@@ -1,4 +1,5 @@
 import 'package:drive_safe/src/features/leaderboard/data/leagues_repository.dart';
+import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -37,6 +38,12 @@ class LeaguePointsService {
     leaguesRepository.updateMovementPositions(leagueData);
 
     return leagueData;
+  }
+
+  void updateUserLeagueInfo(String userId, leagueId, int lastDrivePoints) {
+    List<League> leagues = League.getLeagues();
+    leaguesRepository.updateUserLeagueInfo(
+        userId, leagueId, leagues, lastDrivePoints);
   }
 }
 

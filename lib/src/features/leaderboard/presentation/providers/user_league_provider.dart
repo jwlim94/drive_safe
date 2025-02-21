@@ -1,5 +1,4 @@
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
-import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_league_provider.g.dart';
@@ -13,6 +12,6 @@ class UserLeagueNotifier extends _$UserLeagueNotifier {
         svgPath: 'assets/images/bronze_trophy.svg',
         name: 'Bronze League',
         leagueTier: 0,
-        color: AppColors.bronzeLeague);
+        color: 0xFFe7a461);
   }
 }

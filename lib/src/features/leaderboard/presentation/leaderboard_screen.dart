@@ -111,9 +111,9 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            league.name,
+                            league.displayName,
                             style: TextStyles.bodyMedium
-                                .copyWith(color: league.color),
+                                .copyWith(color: Color(league.color)),
                           ),
                         ],
                       ),
@@ -129,12 +129,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                   final user = data['user'];
 
                   return CustomPlayerCard(
-                    position: league.position, // Ensure position is set
+                    position: league.position,
                     playerName: user?['name'] ?? "Guest",
                     onPressed: () {}, // Provide a valid callback
                     backgroundColor: AppColors.customWhite,
-                    leagueTierColor: league.color,
-                    borderOutline: league.color,
+                    leagueTierColor: Color(league.color),
+                    borderOutline: Color(league.color),
                     points: league.points,
                     positionMovement: league.movement,
                     playerColor: Color(user?['primaryColor'] ?? 4293980400),

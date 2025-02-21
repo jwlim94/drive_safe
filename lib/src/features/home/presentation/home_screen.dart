@@ -1,5 +1,8 @@
 import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
+import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
+import 'package:drive_safe/src/features/user/domain/user.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
@@ -38,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  void startDrive() {
+  void startDrive(User? currentUser, int lastDrivePoints) {
     if (state == 'Stopped') {
       // Reset lastDrive when starting a new drive
       ref.read(lastDriveNotifierProvider.notifier).addLastDrive(
@@ -66,6 +69,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         state = 'Stopped';
         buttonSize = 100;
       });
+
+      if (currentUser != null) {
+        ref.watch(updateUserLeagueStatusControllerProvider(
+            currentUser, lastDrivePoints));
+      }
 
       // Navigate if achievement is earned
       final lastDrive = ref.read(lastDriveNotifierProvider);
@@ -117,6 +125,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final lastDrive = ref.watch(lastDriveNotifierProvider);
+    final currentUser = ref.watch(currentUserStateProvider);
 
     return Scaffold(
       body: Center(
@@ -168,7 +177,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Center(
                   child: CustomButton(
                     text: '$buttonText Drive',
-                    onPressed: startDrive,
+                    onPressed: () => startDrive(currentUser, lastDrive.points),
                     horizontalPadding: buttonSize,
                     backgroundColor: AppColors.customPink,
                   ),
