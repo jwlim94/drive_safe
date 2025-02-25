@@ -99,6 +99,48 @@ class LeaguesRepository {
       print(e);
     }
   }
+
+  void updateUserLeagueInfo(String userId, String leagueId,
+      List<League> leagues, int lastDrivePoints) async {
+    QuerySnapshot<League> userLeagueSnapshot = await _firestore
+        .collection('leagues')
+        .withConverter<League>(
+          fromFirestore: (snapshot, _) => League.fromJson(snapshot.data()!),
+          toFirestore: (league, _) => league.toJson(),
+        )
+        .where('id', isEqualTo: leagueId)
+        .get();
+
+    final currentUserLeague =
+        userLeagueSnapshot.docs.map((doc) => doc.data()).toList().first;
+    final newPoints = currentUserLeague.points + lastDrivePoints;
+    String newLeague = '';
+    String oldLeague = currentUserLeague.name;
+    int newLeagueColor = currentUserLeague.color;
+    String newMovement = '';
+    int newTier = currentUserLeague.tier;
+
+    for (League league in leagues) {
+      if (newPoints >= league.lowBound && newPoints < league.highBound) {
+        newLeague = league.name;
+        if (newLeague != oldLeague) {
+          newMovement = 'increased';
+          newLeagueColor = league.color;
+          newTier = league.tier;
+        }
+      } else if (newPoints >= league.lowBound && league.highBound.isNaN) {
+        newLeague = league.name;
+      }
+    }
+
+    await _firestore.collection('leagues').doc(leagueId).update({
+      'points': newPoints,
+      'name': newLeague,
+      'color': newLeagueColor,
+      'movement': newMovement,
+      'tier': newTier,
+    });
+  }
 }
 
 @Riverpod(keepAlive: true)

@@ -6,15 +6,16 @@ part 'leagues.g.dart';
 class League {
   String id;
   String name;
+  String displayName;
   int tier;
   int color;
-  String userId;
   int position;
-  int highBound;
-  int lowBound;
-  int points;
+  String userId;
   String movement;
   String svgPath;
+  int lowBound;
+  int highBound;
+  int points;
 
   League({
     required this.id,
@@ -22,12 +23,13 @@ class League {
     required this.tier,
     required this.color,
     required this.userId,
+    this.svgPath = '',
+    this.displayName = '',
     this.position = 0,
     this.highBound = 0, //exclusive
     this.lowBound = 0, //inclusive
     this.points = 0,
     this.movement = 'none',
-    this.svgPath = '',
   });
 
   factory League.fromJson(Map<String, dynamic> json) => _$LeagueFromJson(json);
@@ -73,8 +75,9 @@ class League {
     List<League> leagues = [];
 
     leagues.add(League(
+      name: 'bronze',
       svgPath: 'assets/images/bronze_trophy.svg',
-      name: 'Bronze League',
+      displayName: 'Bronze League',
       tier: 0,
       color: 0xFFe7a461,
       lowBound: 0,
@@ -84,8 +87,9 @@ class League {
     ));
 
     leagues.add(League(
+      name: 'silver',
       svgPath: 'assets/images/silver_trophy.svg',
-      name: 'Silver League',
+      displayName: 'Silver League',
       tier: 1,
       color: 0xFFc0c0c0,
       lowBound: 500,
@@ -95,8 +99,9 @@ class League {
     ));
 
     leagues.add(League(
+      name: 'gold',
       svgPath: 'assets/images/gold_trophy.svg',
-      name: 'Gold League',
+      displayName: 'Gold League',
       tier: 2,
       color: 0xFFc5be44,
       lowBound: 1000,
@@ -106,8 +111,9 @@ class League {
     ));
 
     leagues.add(League(
+      name: 'emerald',
       svgPath: 'assets/images/emerald_trophy.svg',
-      name: 'Emerald League',
+      displayName: 'Emerald League',
       tier: 3,
       color: 0xFF448f60,
       lowBound: 2000,
@@ -117,8 +123,9 @@ class League {
     ));
 
     leagues.add(League(
+      name: 'ruby',
       svgPath: 'assets/images/ruby_trophy.svg',
-      name: 'Ruby League',
+      displayName: 'Ruby League',
       tier: 4,
       color: 0xFFba4588,
       lowBound: 4000,
@@ -128,8 +135,9 @@ class League {
     ));
 
     leagues.add(League(
+      name: 'diamond',
       svgPath: 'assets/images/diamond_trophy.svg',
-      name: 'Diamond League',
+      displayName: 'Diamond League',
       tier: 5,
       color: 0xFF1a857f,
       lowBound: 8000,

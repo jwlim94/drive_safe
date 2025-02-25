@@ -10,7 +10,8 @@ class UserLeagueNotifier extends _$UserLeagueNotifier {
   League build() {
     return League(
       svgPath: 'assets/images/bronze_trophy.svg',
-      name: 'Bronze League',
+      displayName: 'Bronze League',
+      name: 'bronze',
       tier: 0,
       color: 0xFFe7A461,
       id: '',
