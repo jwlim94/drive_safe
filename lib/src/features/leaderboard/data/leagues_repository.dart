@@ -66,6 +66,40 @@ class LeaguesRepository {
     }
   }
 
+  Future<League?> getUserLeague(String leagueId) async {
+    DocumentSnapshot<League> userLeagueSnapshot = await _firestore
+        .collection('leagues')
+        .doc(leagueId)
+        .withConverter<League>(
+          fromFirestore: (snapshot, _) => League.fromJson(snapshot.data()!),
+          toFirestore: (league, _) => league.toJson(),
+        )
+        .get();
+
+    return userLeagueSnapshot.data();
+  }
+
+  Future<void> createUserLeague(String userId, String leagueId) async {
+    try {
+      League league = League(
+        id: leagueId,
+        name: 'bronze',
+        tier: 0,
+        color: 0xFFe7a461,
+        points: 0,
+        position: 0,
+        userId: userId,
+        movement: '',
+      );
+
+      await _firestore.collection('leagues').doc(leagueId).set(
+            league.toMap(),
+          );
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void updateUserLeagueInfo(String userId, String leagueId,
       List<League> leagues, int lastDrivePoints) async {
     QuerySnapshot<League> userLeagueSnapshot = await _firestore
@@ -84,7 +118,7 @@ class LeaguesRepository {
     String oldLeague = currentUserLeague.name;
     int newLeagueColor = currentUserLeague.color;
     String newMovement = '';
-    int newTier = currentUserLeague.leagueTier;
+    int newTier = currentUserLeague.tier;
 
     for (League league in leagues) {
       if (newPoints >= league.lowBound && newPoints < league.highBound) {
@@ -92,7 +126,7 @@ class LeaguesRepository {
         if (newLeague != oldLeague) {
           newMovement = 'increased';
           newLeagueColor = league.color;
-          newTier = league.leagueTier;
+          newTier = league.tier;
         }
       } else if (newPoints >= league.lowBound && league.highBound.isNaN) {
         newLeague = league.name;

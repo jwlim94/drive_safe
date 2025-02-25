@@ -133,7 +133,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                     playerName: user?['name'] ?? "Guest",
                     onPressed: () {}, // Provide a valid callback
                     backgroundColor: AppColors.customWhite,
-                    leagueTierColor: Color(league.color),
+                    tierColor: Color(league.color),
                     borderOutline: Color(league.color),
                     points: league.points,
                     positionMovement: league.movement,

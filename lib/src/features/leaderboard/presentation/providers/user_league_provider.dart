@@ -9,9 +9,13 @@ class UserLeagueNotifier extends _$UserLeagueNotifier {
   @override
   League build() {
     return League(
-        svgPath: 'assets/images/bronze_trophy.svg',
-        name: 'Bronze League',
-        leagueTier: 0,
-        color: 0xFFe7a461);
+      svgPath: 'assets/images/bronze_trophy.svg',
+      displayName: 'Bronze League',
+      name: 'bronze',
+      tier: 0,
+      color: 0xFFe7A461,
+      id: '',
+      userId: '',
+    );
   }
 }
