@@ -14,6 +14,7 @@ class UserLeagueNotifier extends _$UserLeagueNotifier {
       tier: 0,
       color: 0xFFe7A461,
       id: '',
+      userId: '',
     );
   }
 }
