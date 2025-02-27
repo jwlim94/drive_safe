@@ -33,10 +33,26 @@ class UsersRepository {
       secondaryColor: ColorUtils.generateRandomColors()[1],
       code: CryptoUtils.generateRandomUserCode(),
       leagueId: authUserData.leagueId!,
+      friends: [],
     );
 
     await _userDocumentRef(userId).set(user);
     return user;
+  }
+
+  Future<void> updateUserFriends(
+      String userId, String friendId, String action) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    if (action == 'add') {
+      await usersRef.update({
+        'friends': FieldValue.arrayUnion([friendId]),
+      });
+    } else if (action == 'remove') {
+      await usersRef.update({
+        'friends': FieldValue.arrayRemove([friendId]),
+      });
+    }
   }
 
   Future<User> updateUserName(String userId, String name) async {

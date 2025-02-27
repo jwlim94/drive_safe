@@ -5,6 +5,7 @@ import 'package:drive_safe/src/shared/constants/enums.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/input_format_utils.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
+import 'package:drive_safe/src/shared/widgets/custom_password_form_field.dart';
 import 'package:drive_safe/src/shared/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -153,7 +154,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         style: TextStyles.h4,
                       ),
                       const SizedBox(height: 12),
-                      CustomTextFormField(
+                      CustomPasswordFormField(
                         controller: _passwordController,
                         keyboardType: TextInputType.text,
                         hintText: 'At least 8 characters',
