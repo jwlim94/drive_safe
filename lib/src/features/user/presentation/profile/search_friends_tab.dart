@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class SearchFriendsTab extends StatefulWidget {
   const SearchFriendsTab({super.key, required this.addedFriends});
-  final List<Map<String, String>> addedFriends;
+  final List<Map<String, dynamic>> addedFriends; // ✅ 타입 변경 (String -> dynamic)
 
   @override
   State<SearchFriendsTab> createState() => _SearchFriendsTabState();
@@ -12,7 +12,7 @@ class SearchFriendsTab extends StatefulWidget {
 
 class _SearchFriendsTabState extends State<SearchFriendsTab> {
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, String>> filteredFriends = [];
+  List<Map<String, dynamic>> filteredFriends = [];
   bool showDropdown = false;
 
   @override
@@ -24,11 +24,11 @@ class _SearchFriendsTabState extends State<SearchFriendsTab> {
   void _searchFriends() {
     setState(() {
       filteredFriends = widget.addedFriends
-          .where((friend) => friend['name']!
+          .where((friend) => (friend['name']?.toString() ?? "")
               .toLowerCase()
               .contains(_searchController.text.toLowerCase()))
           .toList();
-      showDropdown = false; // Search 버튼을 누르면 dropdown 닫기
+      showDropdown = false;
     });
   }
 
@@ -36,8 +36,9 @@ class _SearchFriendsTabState extends State<SearchFriendsTab> {
     setState(() {
       showDropdown = value.isNotEmpty && filteredFriends.isNotEmpty;
       filteredFriends = widget.addedFriends
-          .where((friend) =>
-              friend['name']!.toLowerCase().startsWith(value.toLowerCase()))
+          .where((friend) => (friend['name']?.toString() ?? "")
+              .toLowerCase()
+              .startsWith(value.toLowerCase()))
           .toList();
     });
   }
@@ -52,7 +53,7 @@ class _SearchFriendsTabState extends State<SearchFriendsTab> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); //
+            Navigator.pop(context);
           },
         ),
       ),
@@ -83,18 +84,18 @@ class _SearchFriendsTabState extends State<SearchFriendsTab> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0), // 아이콘 간격 조절
+                    padding: const EdgeInsets.only(right: 8.0),
                     child: IconButton(
                       icon: const Icon(Icons.search, color: Colors.white),
                       onPressed: _searchFriends,
-                      splashRadius: 24, // 클릭 반응 영역 설정
+                      splashRadius: 24,
                     ),
                   ),
                 ],
               ),
             ),
 
-            // Dropdown Search Suggestions (입력해야만 표시)
+            // Dropdown Search Suggestions
             if (showDropdown && _searchController.text.isNotEmpty)
               Container(
                 decoration: BoxDecoration(
@@ -105,10 +106,11 @@ class _SearchFriendsTabState extends State<SearchFriendsTab> {
                 child: Column(
                   children: filteredFriends.map((friend) {
                     return ListTile(
-                      title: Text(friend['name']!,
+                      title: Text(friend['name']?.toString() ?? "Unknown",
                           style: const TextStyle(color: Colors.white)),
                       onTap: () {
-                        _searchController.text = friend['name']!;
+                        _searchController.text =
+                            friend['name']?.toString() ?? "";
                         _searchFriends();
                       },
                     );
@@ -130,18 +132,18 @@ class _SearchFriendsTabState extends State<SearchFriendsTab> {
                               ? Colors.blue
                               : Colors.purple,
                       child: Text(
-                        filteredFriends[index]['initial']!,
+                        filteredFriends[index]['initial']?.toString() ?? "",
                         style:
                             const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                     title: Text(
-                      filteredFriends[index]['name']!,
+                      filteredFriends[index]['name']?.toString() ?? "Unknown",
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      filteredFriends[index]['description']!,
+                      filteredFriends[index]['description']?.toString() ?? "",
                       style: const TextStyle(color: Colors.white70),
                     ),
                     trailing: ElevatedButton(
