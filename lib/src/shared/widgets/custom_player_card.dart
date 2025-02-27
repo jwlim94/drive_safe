@@ -16,7 +16,8 @@ class CustomPlayerCard extends StatelessWidget {
   final Icon icon;
   final Color playerColor;
   final String positionMovement;
-  final Color playerInitialColor;
+  final int userPrimaryColor;
+  final int userSecondaryColor;
 
   const CustomPlayerCard({
     super.key,
@@ -33,7 +34,8 @@ class CustomPlayerCard extends StatelessWidget {
     this.icon = const Icon(Icons.remove),
     this.playerColor = AppColors.customBlack,
     this.positionMovement = "",
-    this.playerInitialColor = AppColors.customBlack,
+    this.userPrimaryColor = 4458745,
+    this.userSecondaryColor = 4458745,
   });
 
   @override
@@ -68,11 +70,11 @@ class CustomPlayerCard extends StatelessWidget {
 
             // Profile Icon Placeholder
             CircleAvatar(
-              backgroundColor: playerColor, // Placeholder color
+              backgroundColor: Color(userPrimaryColor), // Placeholder color
               radius: 19,
               child: Text(
                 playerName[0],
-                style: TextStyles.h3,
+                style: TextStyles.h3.copyWith(color: Color(userSecondaryColor)),
               ),
             ),
 
