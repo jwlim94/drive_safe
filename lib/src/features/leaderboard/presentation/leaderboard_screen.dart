@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/fetch_user_league_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_player_card.dart';
@@ -44,6 +45,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
         CarouselSliderController();
     final leagueAsync =
         ref.watch(fetchUserLeagueControllerProvider(currentIndex));
+    final currentUser = ref.watch(currentUserStateProvider);
 
     return Scaffold(
       body: Column(
@@ -130,9 +132,19 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
 
                   return CustomPlayerCard(
                     position: league.position,
-                    playerName: user?['name'] ?? "Guest",
+                    playerName: user?['name'],
+                    userSecondaryColor: user?['secondaryColor'],
+                    userPrimaryColor: user?['primaryColor'],
                     onPressed: () {}, // Provide a valid callback
-                    backgroundColor: AppColors.customWhite,
+                    backgroundColor: (user?['id'] == currentUser?.id)
+                        ? Color.lerp(
+                            (currentUser!.primaryColor == 4294967295)
+                                ? Color(currentUser.secondaryColor)
+                                : Color(currentUser.primaryColor),
+                            AppColors.customWhite,
+                            .5,
+                          )!
+                        : AppColors.customWhite,
                     tierColor: Color(league.color),
                     borderOutline: Color(league.color),
                     points: league.points,
