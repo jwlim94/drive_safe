@@ -1,11 +1,11 @@
-import 'package:drive_safe/src/features/example/data/mock_friends.dart'; // Corrected import
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
 class AddFriendsScreen extends StatefulWidget {
-  final Function(Map<String, String>) onFriendAdded;
+  final Function(Map<String, dynamic>) onFriendAdded;
 
   const AddFriendsScreen({super.key, required this.onFriendAdded});
 
@@ -15,19 +15,58 @@ class AddFriendsScreen extends StatefulWidget {
 
 class _AddFriendsScreenState extends State<AddFriendsScreen> {
   final TextEditingController _friendCodeController = TextEditingController();
-  Map<String, String>? _searchedFriend;
+  Map<String, dynamic>? _searchedFriend;
+  bool _isLoading = false;
 
-  void _findFriend() {
+  /// Firestore에서 친구 찾기
+  void _findFriend() async {
     String enteredCode = _friendCodeController.text.trim();
 
+    if (enteredCode.isEmpty) return;
+
     setState(() {
-      _searchedFriend = mockFriends.firstWhere(
-        (friend) => friend['phone'] == enteredCode,
-        orElse: () => {},
-      );
+      _isLoading = true;
+      _searchedFriend = null; // 이전 검색 결과 초기화
     });
+
+    try {
+      // Firestore에서 code 값이 입력한 코드와 일치하는 문서를 찾기
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('code', isEqualTo: enteredCode)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        setState(() {
+          _searchedFriend = querySnapshot.docs.first.data();
+        });
+      } else {
+        setState(() {
+          _searchedFriend = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No friend found with this code."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
+  /// 친구 추가
   void _addFriend() {
     if (_searchedFriend != null) {
       widget.onFriendAdded(_searchedFriend!);
@@ -42,7 +81,7 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close popup only
+                Navigator.of(context).pop(); // 팝업 닫기
               },
               child: const Text("OK", style: TextStyle(color: Colors.blue)),
             ),
@@ -51,8 +90,8 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
       );
 
       setState(() {
-        _searchedFriend = null; // Clear after adding
-        _friendCodeController.clear(); // Reset input field
+        _searchedFriend = null; // 검색된 친구 정보 초기화
+        _friendCodeController.clear(); // 입력 필드 초기화
       });
     }
   }
@@ -86,11 +125,19 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
               ),
               child: TextField(
                 controller: _friendCodeController,
-                keyboardType: TextInputType.phone,
+                keyboardType: TextInputType.text,
                 style: const TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  // 입력값을 모두 대문자로 변환하여 저장
+                  _friendCodeController.value =
+                      _friendCodeController.value.copyWith(
+                    text: value.toUpperCase(),
+                    selection: TextSelection.collapsed(offset: value.length),
+                  );
+                },
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  hintText: "Enter Phone Number",
+                  hintText: "Enter Friend Code",
                   hintStyle: TextStyles.searchHint,
                 ),
               ),
@@ -99,26 +146,25 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
             SizedBox(
               width: double.infinity,
               child: CustomButton(
-                  text: "Find Friend",
-                  onPressed: _findFriend,
-                  backgroundColor: AppColors.customPink),
+                text: _isLoading ? "Searching..." : "Find Friend",
+                onPressed: _isLoading ? null : _findFriend,
+                backgroundColor: AppColors.customPink,
+              ),
             ),
-            if (_searchedFriend != null && _searchedFriend!.isNotEmpty) ...[
+            if (_searchedFriend != null) ...[
               const SizedBox(height: 20),
               ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: _searchedFriend!['avatarColor'] == 'blue'
-                      ? Colors.blue
-                      : Colors.purple,
+                  backgroundColor: Colors.blue,
                   child: Text(
-                    _searchedFriend!['initial']!,
+                    _searchedFriend!['name'][0].toUpperCase(),
                     style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                title: Text(_searchedFriend!['name']!,
+                title: Text(_searchedFriend!['name'],
                     style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text(_searchedFriend!['description']!,
+                subtitle: Text(_searchedFriend!['email'],
                     style: const TextStyle(color: Colors.white70)),
                 trailing: ElevatedButton(
                   style: ElevatedButton.styleFrom(
