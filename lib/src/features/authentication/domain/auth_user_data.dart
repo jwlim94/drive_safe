@@ -12,6 +12,7 @@ class AuthUserData {
     this.email,
     this.password,
     this.leagueId,
+    this.friends,
   });
 
   final String? id;
@@ -21,6 +22,7 @@ class AuthUserData {
   final String? email;
   final String? password;
   final String? leagueId;
+  final List? friends;
 
   factory AuthUserData.fromJson(Map<String, dynamic> json) =>
       _$AuthUserDataFromJson(json);

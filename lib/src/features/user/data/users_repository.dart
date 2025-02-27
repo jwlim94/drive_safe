@@ -33,11 +33,14 @@ class UsersRepository {
       secondaryColor: ColorUtils.generateRandomColors()[1],
       code: CryptoUtils.generateRandomUserCode(),
       leagueId: authUserData.leagueId!,
+      friends: [],
     );
 
     await _userDocumentRef(userId).set(user);
     return user;
   }
+
+  //TODO: UpdateUserFriendsLogic
 
   Future<User> updateUserName(String userId, String name) async {
     final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);

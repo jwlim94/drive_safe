@@ -23,10 +23,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
   int _selectedIndex = 0;
   List<League> _carouselLeagues = [];
   int currentIndex = 0;
+  CarouselSliderController? buttonCarouselController;
 
   @override
   void initState() {
     super.initState();
+    buttonCarouselController = CarouselSliderController();
     _tabController = TabController(length: 2, vsync: this);
     _carouselLeagues = League.getLeagues();
 
@@ -41,8 +43,6 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double indicatorWidth = (screenWidth * 0.5) - (screenWidth * 0.15);
-    CarouselSliderController buttonCarouselController =
-        CarouselSliderController();
     final leagueAsync =
         ref.watch(fetchUserLeagueControllerProvider(currentIndex));
     final currentUser = ref.watch(currentUserStateProvider);
@@ -54,6 +54,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
             controller: _tabController,
             indicator: CustomTabIndicator(width: indicatorWidth),
             dividerColor: Colors.transparent,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+              ref.invalidate(fetchUserLeagueControllerProvider);
+            },
             tabs: [
               Tab(
                 child: Text(
@@ -81,49 +87,49 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
           ),
           const SizedBox(height: 20),
           // Check selected tab and display the respective content
-          if (_selectedIndex == 0) ...<Widget>[
-            CarouselSlider(
-              carouselController: buttonCarouselController,
-              options: CarouselOptions(
-                height: 125,
-                autoPlay: false,
-                enlargeCenterPage: true,
-                enlargeFactor: .4,
-                enableInfiniteScroll: false,
-                viewportFraction: 0.5,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                  ref.invalidate(fetchUserLeagueControllerProvider);
-                },
-              ),
-              items: _carouselLeagues.map((league) {
-                return Builder(
-                  builder: (context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            league.svgPath,
-                            height: 50,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            league.displayName,
-                            style: TextStyles.bodyMedium
-                                .copyWith(color: Color(league.color)),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
+          CarouselSlider(
+            carouselController: buttonCarouselController,
+            options: CarouselOptions(
+              height: 125,
+              autoPlay: false,
+              enlargeCenterPage: true,
+              enlargeFactor: .4,
+              enableInfiniteScroll: false,
+              viewportFraction: 0.5,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  currentIndex = index;
+                });
+                ref.invalidate(fetchUserLeagueControllerProvider);
+              },
             ),
+            items: _carouselLeagues.map((league) {
+              return Builder(
+                builder: (context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          league.svgPath,
+                          height: 50,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          league.displayName,
+                          style: TextStyles.bodyMedium
+                              .copyWith(color: Color(league.color)),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+          if (_selectedIndex == 0) ...<Widget>[
             leagueAsync.when(
               data: (leagueData) => Column(
                 children: leagueData.map((data) {
@@ -162,11 +168,60 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
               ),
             ),
           ],
-          if (_selectedIndex == 1) ...[
-            const Center(
-              child: Text(
-                'Friends Leaderboard',
-                style: TextStyles.h4,
+          if (_selectedIndex == 1) ...<Widget>[
+            leagueAsync.when(
+              data: (leagueData) {
+                // Filter out users who are not friends
+                final friendsOnly = leagueData.where((data) {
+                  final user = data['user'];
+                  return user != null &&
+                          currentUser?.friends.contains(user['id']) == true ||
+                      currentUser?.id.contains(user['id']) == true;
+                }).toList();
+
+                return friendsOnly.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No Friends Here!",
+                          style: TextStyles.h4,
+                        ),
+                      )
+                    : Column(
+                        children: friendsOnly.map((data) {
+                          final league = data['league'] as League;
+                          final user = data['user'];
+
+                          return CustomPlayerCard(
+                            position: league.position,
+                            playerName: user['name'],
+                            userSecondaryColor: user['secondaryColor'],
+                            userPrimaryColor: user['primaryColor'],
+                            onPressed: () {}, // Provide a valid callback
+                            backgroundColor: (user['id'] == currentUser?.id)
+                                ? Color.lerp(
+                                    (currentUser!.primaryColor == 4294967295)
+                                        ? Color(currentUser.secondaryColor)
+                                        : Color(currentUser.primaryColor),
+                                    AppColors.customWhite,
+                                    .5,
+                                  )!
+                                : AppColors.customWhite,
+                            tierColor: Color(league.color),
+                            borderOutline: Color(league.color),
+                            points: league.points,
+                            positionMovement: league.movement,
+                            playerColor:
+                                Color(user['primaryColor'] ?? 4293980400),
+                          );
+                        }).toList(),
+                      );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(
+                child: Text(
+                  "Error: $error",
+                  style: TextStyles.error,
+                ),
               ),
             ),
           ],
