@@ -34,6 +34,7 @@ class UsersRepository {
       code: CryptoUtils.generateRandomUserCode(),
       leagueId: authUserData.leagueId!,
       friends: [],
+      driveStreak: 0,
     );
 
     await _userDocumentRef(userId).set(user);

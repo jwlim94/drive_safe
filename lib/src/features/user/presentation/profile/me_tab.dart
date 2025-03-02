@@ -127,12 +127,11 @@ class MeTab extends ConsumerWidget {
                           width: 40,
                           height: 40,
                         ),
-                        const Positioned(
+                        Positioned(
                           top: 18,
                           child: Text(
-                            // TODO: get real streak data from user
-                            '1',
-                            style: TextStyle(
+                            currentUser.driveStreak.toString(),
+                            style: const TextStyle(
                               color: AppColors.streakNumber,
                               fontWeight: FontWeight.bold,
                             ),
