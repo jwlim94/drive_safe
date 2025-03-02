@@ -149,4 +149,9 @@ class League {
 
     return leagues;
   }
+
+  @override
+  String toString() {
+    return 'League(id: $id, name: $name, displayName: $displayName, tier: $tier, color: $color, position: $position, userId: $userId, movement: $movement, svgPath: $svgPath, lowBound: $lowBound, highBound: $highBound, points: $points)';
+  }
 }

@@ -1,9 +1,12 @@
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
+import 'package:drive_safe/src/features/leaderboard/presentation/providers/current_league_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
+import 'package:drive_safe/src/shared/utils/league_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MeTab extends ConsumerWidget {
   const MeTab({super.key});
@@ -12,10 +15,12 @@ class MeTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserStateProvider);
     final currentCar = ref.watch(currentCarStateProvider);
+    final currentLeague = ref.watch(currentLeagueStateProvider);
 
     // TODO: Handle error state
     if (currentUser == null) return Container();
     if (currentCar == null) return Container();
+    if (currentLeague == null) return Container();
 
     return Column(
       children: [
@@ -67,6 +72,84 @@ class MeTab extends ConsumerWidget {
                     softWrap: true,
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 28),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.borderColor, width: 2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      LeagueUtils.getSvgPath(currentLeague.name),
+                      width: 40,
+                      height: 40,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      LeagueUtils.getFormattedLeagueName(currentLeague.name),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.customWhite,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.borderColor, width: 2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/flame.svg',
+                          width: 40,
+                          height: 40,
+                        ),
+                        const Positioned(
+                          top: 18,
+                          child: Text(
+                            // TODO: get real streak data from user
+                            '1',
+                            style: TextStyle(
+                              color: AppColors.streakNumber,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      'Drive Streak',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.customWhite,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -1,4 +1,6 @@
 import 'package:drive_safe/src/features/leaderboard/data/leagues_repository.dart';
+import 'package:drive_safe/src/features/leaderboard/domain/leagues.dart';
+import 'package:drive_safe/src/features/leaderboard/presentation/providers/current_league_state_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,5 +26,10 @@ class CacheCurrentLeagueController extends _$CacheCurrentLeagueController {
     );
 
     if (state.hasError) return FirebaseAuth.instance.signOut();
+
+    if (state.hasValue) {
+      final league = state.value as League;
+      ref.read(currentLeagueStateProvider.notifier).setLeague(league);
+    }
   }
 }
