@@ -2,6 +2,8 @@ import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
@@ -41,6 +43,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  void updateDriveStreak() {
+    final currentUser = ref.read(currentUserStateProvider);
+    if (currentUser == null) return;
+
+    final lastDriveStreakAt = currentUser.lastDriveStreakAt;
+
+    // First time streak tracking.
+    if (lastDriveStreakAt == null) {
+      ref
+          .read(updateUserDriveStreakControllerProvider.notifier)
+          .updateUserDriveStreak();
+      ref
+          .read(updateUserLastDriveStreakAtControllerProvider.notifier)
+          .updateUserLastDriveStreakAt();
+    }
+
+    final currentDate = DateTime.now();
+    final currentTimestamp =
+        DateTime(currentDate.year, currentDate.month, currentDate.day)
+            .millisecondsSinceEpoch;
+
+    final lastStreakDate =
+        DateTime.fromMillisecondsSinceEpoch(lastDriveStreakAt!);
+    final lastTimestamp =
+        DateTime(lastStreakDate.year, lastStreakDate.month, lastStreakDate.day)
+            .millisecondsSinceEpoch;
+
+    if (currentTimestamp == lastTimestamp) return;
+
+    // Update when it is not on the same day.
+    ref
+        .read(updateUserDriveStreakControllerProvider.notifier)
+        .updateUserDriveStreak();
+    ref
+        .read(updateUserLastDriveStreakAtControllerProvider.notifier)
+        .updateUserLastDriveStreakAt();
+  }
+
   void startDrive(User? currentUser, int lastDrivePoints) {
     if (state == 'Stopped') {
       // Reset lastDrive when starting a new drive
@@ -71,9 +117,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       });
 
       if (currentUser != null) {
-        ref.watch(updateUserLeagueStatusControllerProvider(
-            currentUser, lastDrivePoints));
+        ref.read(
+          updateUserLeagueStatusControllerProvider(
+            currentUser,
+            lastDrivePoints,
+          ),
+        );
       }
+
+      // Update drive streak and last drive streak date
+      updateDriveStreak();
 
       // Navigate if achievement is earned
       final lastDrive = ref.read(lastDriveNotifierProvider);
@@ -117,15 +170,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
-  void dispose() {
-    timer.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final lastDrive = ref.watch(lastDriveNotifierProvider);
     final currentUser = ref.watch(currentUserStateProvider);
+    ref.watch(updateUserDriveStreakControllerProvider);
+    ref.watch(updateUserLastDriveStreakAtControllerProvider);
+
+    // TODO: handle loading state
+    if (currentUser == null) return Container();
 
     return Scaffold(
       body: Center(

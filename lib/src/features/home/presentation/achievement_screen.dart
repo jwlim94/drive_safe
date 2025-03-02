@@ -1,4 +1,6 @@
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
@@ -17,7 +19,6 @@ class AchievementScreen extends ConsumerStatefulWidget {
 }
 
 class _AchievementScreenState extends ConsumerState<AchievementScreen> {
-  int consecutiveSafeDrives = 0; //Get this from the repo layer later...
   String state = 'Streak';
   late ConfettiController _controllerTopCenter; //just for fun!
   bool triggerConfetti = true;
@@ -61,7 +62,12 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
   @override
   Widget build(BuildContext context) {
     ref.watch(lastDriveNotifierProvider);
+    ref.watch(updateUserDriveStreakControllerProvider);
+    ref.watch(updateUserLastDriveStreakAtControllerProvider);
     final currentUser = ref.watch(currentUserStateProvider);
+
+    // TODO: handle loading state
+    if (currentUser == null) return Container();
 
     if (state == 'Streak') {
       return Scaffold(
@@ -120,7 +126,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                         height: 100,
                         child: Center(
                           child: Text(
-                            consecutiveSafeDrives.toString(),
+                            currentUser.driveStreak.toString(),
                             style: TextStyles.h2,
                           ),
                         ),
@@ -131,7 +137,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Text(
-                    'You have completed ${consecutiveSafeDrives.toString()} rides in a row! \n Let\'s see what that does for your progress!',
+                    'You have completed ${currentUser.driveStreak.toString()} rides in a row! \n Let\'s see what that does for your progress!',
                     style: TextStyles.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -187,7 +193,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                     child: Container(
                       width: 100,
                       height: 100,
-                      color: Color(currentUser?.primaryColor ?? 4293980400),
+                      color: Color(currentUser.primaryColor),
                     ),
                   ),
                   Positioned(
@@ -197,7 +203,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                       height: 100,
                       child: Center(
                         child: Text(
-                          currentUser?.name[0] ?? "?",
+                          currentUser.name[0],
                           style: TextStyles.h1,
                         ),
                       ),

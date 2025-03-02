@@ -16,7 +16,7 @@ class User {
     required this.leagueId,
     required this.friends,
     required this.driveStreak,
-    this.lastDriveStreakDate,
+    this.lastDriveStreakAt,
   });
 
   final String id;
@@ -30,7 +30,7 @@ class User {
   final String leagueId;
   final List friends;
   final int driveStreak;
-  DateTime? lastDriveStreakDate;
+  int? lastDriveStreakAt;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -49,7 +49,7 @@ class User {
       leagueId: map['leagueId'] as String,
       friends: map['friends'] as List,
       driveStreak: map['driveStreak'] as int,
-      lastDriveStreakDate: map['lastDriveStreakDate'],
+      lastDriveStreakAt: map['lastDriveStreakAt'],
     );
   }
 
@@ -70,8 +70,8 @@ class User {
     };
 
     // Optional fields should be added here
-    if (lastDriveStreakDate != null) {
-      data['lastDriveStreakDate'] = lastDriveStreakDate;
+    if (lastDriveStreakAt != null) {
+      data['lastDriveStreakAt'] = lastDriveStreakAt;
     }
 
     return data;
