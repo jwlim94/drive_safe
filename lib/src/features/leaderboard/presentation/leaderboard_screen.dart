@@ -133,33 +133,38 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
             ),
             if (_selectedIndex == 0) ...<Widget>[
               leagueAsync.when(
-                data: (leagueData) => Column(
-                  children: leagueData.map((data) {
-                    final league = data['league'] as League;
-                    final user = data['user'];
+                data: (leagueData) => Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: leagueData.map((data) {
+                        final league = data['league'] as League;
+                        final user = data['user'];
 
-                    return CustomPlayerCard(
-                      position: league.position,
-                      playerName: user?['name'],
-                      userSecondaryColor: user?['secondaryColor'],
-                      userPrimaryColor: user?['primaryColor'],
-                      onPressed: () {}, // Provide a valid callback
-                      backgroundColor: (user?['id'] == currentUser?.id)
-                          ? Color.lerp(
-                              (currentUser!.primaryColor == 4294967295)
-                                  ? Color(currentUser.secondaryColor)
-                                  : Color(currentUser.primaryColor),
-                              AppColors.customWhite,
-                              .5,
-                            )!
-                          : AppColors.customWhite,
-                      tierColor: Color(league.color),
-                      borderOutline: Color(league.color),
-                      points: league.points,
-                      positionMovement: league.movement,
-                      playerColor: Color(user?['primaryColor'] ?? 4293980400),
-                    );
-                  }).toList(),
+                        return CustomPlayerCard(
+                          position: league.position,
+                          playerName: user?['name'],
+                          userSecondaryColor: user?['secondaryColor'],
+                          userPrimaryColor: user?['primaryColor'],
+                          onPressed: () {}, // Provide a valid callback
+                          backgroundColor: (user?['id'] == currentUser?.id)
+                              ? Color.lerp(
+                                  (currentUser!.primaryColor == 4294967295)
+                                      ? Color(currentUser.secondaryColor)
+                                      : Color(currentUser.primaryColor),
+                                  AppColors.customWhite,
+                                  .5,
+                                )!
+                              : AppColors.customWhite,
+                          tierColor: Color(league.color),
+                          borderOutline: Color(league.color),
+                          points: league.points,
+                          positionMovement: league.movement,
+                          playerColor:
+                              Color(user?['primaryColor'] ?? 4293980400),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Center(
@@ -188,34 +193,41 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                             style: TextStyles.h4,
                           ),
                         )
-                      : Column(
-                          children: friendsOnly.map((data) {
-                            final league = data['league'] as League;
-                            final user = data['user'];
+                      : Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: friendsOnly.map((data) {
+                                final league = data['league'] as League;
+                                final user = data['user'];
 
-                            return CustomPlayerCard(
-                              position: league.position,
-                              playerName: user['name'],
-                              userSecondaryColor: user['secondaryColor'],
-                              userPrimaryColor: user['primaryColor'],
-                              onPressed: () {}, // Provide a valid callback
-                              backgroundColor: (user['id'] == currentUser?.id)
-                                  ? Color.lerp(
-                                      (currentUser!.primaryColor == 4294967295)
-                                          ? Color(currentUser.secondaryColor)
-                                          : Color(currentUser.primaryColor),
-                                      AppColors.customWhite,
-                                      .5,
-                                    )!
-                                  : AppColors.customWhite,
-                              tierColor: Color(league.color),
-                              borderOutline: Color(league.color),
-                              points: league.points,
-                              positionMovement: league.movement,
-                              playerColor:
-                                  Color(user['primaryColor'] ?? 4293980400),
-                            );
-                          }).toList(),
+                                return CustomPlayerCard(
+                                  position: league.position,
+                                  playerName: user['name'],
+                                  userSecondaryColor: user['secondaryColor'],
+                                  userPrimaryColor: user['primaryColor'],
+                                  onPressed: () {}, // Provide a valid callback
+                                  backgroundColor: (user['id'] ==
+                                          currentUser?.id)
+                                      ? Color.lerp(
+                                          (currentUser!.primaryColor ==
+                                                  4294967295)
+                                              ? Color(
+                                                  currentUser.secondaryColor)
+                                              : Color(currentUser.primaryColor),
+                                          AppColors.customWhite,
+                                          .5,
+                                        )!
+                                      : AppColors.customWhite,
+                                  tierColor: Color(league.color),
+                                  borderOutline: Color(league.color),
+                                  points: league.points,
+                                  positionMovement: league.movement,
+                                  playerColor:
+                                      Color(user['primaryColor'] ?? 4293980400),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
