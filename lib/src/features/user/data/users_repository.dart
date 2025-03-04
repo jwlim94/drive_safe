@@ -34,6 +34,7 @@ class UsersRepository {
       code: CryptoUtils.generateRandomUserCode(),
       leagueId: authUserData.leagueId!,
       friends: [],
+      drivePoints: 0,
       driveStreak: 0,
     );
 
@@ -107,6 +108,19 @@ class UsersRepository {
 
     // Update the user document in Firestore
     await usersRef.update({'lastDriveStreakAt': timestamp});
+
+    // Fetch the udpated user document
+    final updatedSnapshot = await usersRef.get();
+    if (!updatedSnapshot.exists) throw Exception('User not found');
+
+    return User.fromMap(updatedSnapshot.data()!);
+  }
+
+  Future<User> updateUserDrivePoints(String userId, int drivePoints) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    // Update the user document in Firestore
+    await usersRef.update({'drivePoints': drivePoints});
 
     // Fetch the udpated user document
     final updatedSnapshot = await usersRef.get();

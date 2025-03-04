@@ -43,4 +43,6 @@ class Numbers {
     Numbers.userSecondaryBlack,
     Numbers.userSecondaryWhite,
   ];
+
+  static const int pointsAwardIntervalMinutes = 2;
 }

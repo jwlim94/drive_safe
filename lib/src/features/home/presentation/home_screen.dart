@@ -2,10 +2,12 @@ import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_points_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/constants/numbers.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +89,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .updateUserLastDriveStreakAt();
   }
 
+  void updateDrivePoints() {
+    final currentUser = ref.read(currentUserStateProvider);
+    if (currentUser == null) return;
+
+    final lastDrive = ref.read(lastDriveNotifierProvider);
+    final totalPoints = currentUser.drivePoints + lastDrive.points;
+    ref
+        .read(updateUserDrivePointsControllerProvider.notifier)
+        .updateUserDrivePoints(totalPoints);
+  }
+
   void startDrive(User? currentUser, int lastDrivePoints) {
     if (state == 'Stopped') {
       // Reset lastDrive when starting a new drive
@@ -128,6 +141,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       // Update drive streak and last drive streak date
       updateDriveStreak();
 
+      // Update drive points
+      updateDrivePoints();
+
       // Navigate if achievement is earned
       final lastDrive = ref.read(lastDriveNotifierProvider);
       if (lastDrive.getAchievement) {
@@ -157,7 +173,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final updatedDrive = lastDrive.copyWith(
       timeElapsed: stopWatch.elapsed,
-      points: (stopWatch.elapsed.inMinutes >= lastAwardedMinute + 5)
+      points: (stopWatch.elapsed.inMinutes >=
+              lastAwardedMinute + Numbers.pointsAwardIntervalMinutes)
           ? lastDrive.points + 1
           : lastDrive.points,
     );
@@ -175,6 +192,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final currentUser = ref.watch(currentUserStateProvider);
     ref.watch(updateUserDriveStreakControllerProvider);
     ref.watch(updateUserLastDriveStreakAtControllerProvider);
+    ref.watch(updateUserDrivePointsControllerProvider);
 
     // TODO: handle loading state
     if (currentUser == null) return Container();

@@ -157,8 +157,7 @@ class MeTab extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            // TODO: use real points from db
-            'Level ${(123123 / 10000).floor()}',
+            'Level ${(currentUser.drivePoints / 10000).floor()}',
             style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -166,8 +165,7 @@ class MeTab extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 100),
-          // TODO: use real points from db
-          const GaugeMeter(points: 123123),
+          GaugeMeter(points: currentUser.drivePoints),
           const SizedBox(height: 28),
         ],
       ),
