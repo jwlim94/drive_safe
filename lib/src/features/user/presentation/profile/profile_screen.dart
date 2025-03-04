@@ -38,62 +38,65 @@ class _ProfileScreenState extends State<ProfileScreen>
     final double horizontalPadding = screenWidth * 0.075;
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          IconButton(
-            padding: const EdgeInsets.only(top: 4, right: 12),
-            icon: const Icon(
-              Icons.settings,
-              color: AppColors.customGray,
-              size: 32,
-            ),
-            onPressed: () => context.goNamed(AppRoute.settings.name),
-          ),
-          TabBar(
-            controller: _tabController,
-            indicator: CustomTabIndicator(width: indicatorWidth),
-            dividerColor: Colors.transparent,
-            tabs: [
-              Tab(
-                child: Text(
-                  'ME',
-                  style: TextStyles.h3.copyWith(
-                    color: _selectedIndex == 0
-                        ? AppColors.customBlue
-                        : Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            IconButton(
+              padding: const EdgeInsets.only(top: 4, right: 12),
+              icon: const Icon(
+                Icons.settings,
+                color: AppColors.customGray,
+                size: 32,
               ),
-              Tab(
-                child: Text(
-                  'FRIENDS',
-                  style: TextStyles.h3.copyWith(
-                    color: _selectedIndex == 1
-                        ? AppColors.customBlue
-                        : Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-              child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: horizontalPadding,
-              vertical: 48,
+              onPressed: () => context.goNamed(AppRoute.settings.name),
             ),
-            child: TabBarView(
+            TabBar(
               controller: _tabController,
-              children: const [
-                MeTab(),
-                FriendsTab(),
+              indicator: CustomTabIndicator(width: indicatorWidth),
+              dividerColor: Colors.transparent,
+              tabs: [
+                Tab(
+                  child: Text(
+                    'ME',
+                    style: TextStyles.h3.copyWith(
+                      color: _selectedIndex == 0
+                          ? AppColors.customBlue
+                          : Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    'FRIENDS',
+                    style: TextStyles.h3.copyWith(
+                      color: _selectedIndex == 1
+                          ? AppColors.customBlue
+                          : Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ],
             ),
-          )),
-        ],
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: 48,
+              ),
+              child: TabBarView(
+                controller: _tabController,
+                children: const [
+                  MeTab(),
+                  FriendsTab(),
+                ],
+              ),
+            )),
+          ],
+        ),
       ),
     );
   }

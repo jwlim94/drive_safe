@@ -37,7 +37,6 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
             'assets/images/checkered_flag.svg',
             width: double.infinity,
             fit: BoxFit.cover,
-            height: 75,
           ),
         ),
       ),

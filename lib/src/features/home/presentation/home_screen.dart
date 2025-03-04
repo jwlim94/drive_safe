@@ -180,64 +180,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (currentUser == null) return Container();
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 40),
-              child: Text(
-                'Points $titleText Drive',
-                textAlign: TextAlign.center,
-                style: TextStyles.h2,
-              ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: Text(
+              'Points $titleText Drive',
+              textAlign: TextAlign.center,
+              style: TextStyles.h2,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (lastDrive.points > 99)
-                  _buildPointContainer((lastDrive.points ~/ 100).toString()),
-                _buildPointContainer(
-                    ((lastDrive.points ~/ 10) % 10).toString()),
-                _buildPointContainer(((lastDrive.points ~/ 1) % 10).toString()),
-              ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (lastDrive.points > 99)
+                _buildPointContainer((lastDrive.points ~/ 100).toString()),
+              _buildPointContainer(((lastDrive.points ~/ 10) % 10).toString()),
+              _buildPointContainer(((lastDrive.points ~/ 1) % 10).toString()),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: Text(
+              'Safe Minutes: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
+              textAlign: TextAlign.center,
+              style: TextStyles.bodyMedium,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Text(
-                'Safe Minutes: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
-                textAlign: TextAlign.center,
-                style: TextStyles.bodyMedium,
-              ),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              if (state == 'Started')
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, right: 10),
-                  child: Center(
-                    child: CustomButton(
-                      text: '$pauseButtonText Drive',
-                      onPressed: pauseDrive,
-                      horizontalPadding: 10,
-                      borderOutline: AppColors.customPink,
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                ),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            if (state == 'Started')
               Padding(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.only(top: 40, right: 10),
                 child: Center(
                   child: CustomButton(
-                    text: '$buttonText Drive',
-                    onPressed: () => startDrive(currentUser, lastDrive.points),
-                    horizontalPadding: buttonSize,
-                    backgroundColor: AppColors.customPink,
+                    text: '$pauseButtonText Drive',
+                    onPressed: pauseDrive,
+                    horizontalPadding: 10,
+                    borderOutline: AppColors.customPink,
+                    backgroundColor: Colors.transparent,
                   ),
                 ),
               ),
-            ])
-          ],
-        ),
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: Center(
+                child: CustomButton(
+                  text: '$buttonText Drive',
+                  onPressed: () => startDrive(currentUser, lastDrive.points),
+                  horizontalPadding: buttonSize,
+                  backgroundColor: AppColors.customPink,
+                ),
+              ),
+            ),
+          ])
+        ],
       ),
     );
   }
