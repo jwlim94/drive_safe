@@ -8,6 +8,7 @@ import 'package:drive_safe/src/features/authentication/presentation/providers/au
 import 'package:drive_safe/src/features/car/data/cars_repository.dart';
 import 'package:drive_safe/src/features/car/presentation/providers/car_data_state_provider.dart';
 import 'package:drive_safe/src/features/user/data/users_repository.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -136,6 +137,32 @@ class AuthService {
       await ref
           .read(cacheCurrentLeagueControllerProvider.notifier)
           .cacheCurrentLeague();
+    } catch (e) {
+      // TODO: Handle rollback
+    }
+  }
+
+  Future<void> anonymousToEmailPassword(String email, String password) async {
+    try {
+      final User? user = ref.read(authRepositoryProvider).currentUser;
+      if (user == null || !user.isAnonymous) {
+        throw Exception("User is not a guest");
+      }
+
+      final AuthCredential credential =
+          EmailAuthProvider.credential(email: email, password: password);
+
+      await user.linkWithCredential(credential);
+
+      // Update Firestore to mark user as registered
+      final usersRepository = ref.read(usersRepositoryProvider);
+      final emailUpdatedUser =
+          await usersRepository.updateUserEmail(user.uid, email);
+      ref.read(currentUserStateProvider.notifier).setUser(emailUpdatedUser);
+
+      final isGuestUpdatedUser =
+          await usersRepository.updateUserIsGuest(user.uid, false);
+      ref.read(currentUserStateProvider.notifier).setUser(isGuestUpdatedUser);
     } catch (e) {
       // TODO: Handle rollback
     }

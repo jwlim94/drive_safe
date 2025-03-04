@@ -4,6 +4,7 @@ import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/enums.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/input_format_utils.dart';
+import 'package:drive_safe/src/shared/utils/validation_utils.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:drive_safe/src/shared/widgets/custom_password_form_field.dart';
 import 'package:drive_safe/src/shared/widgets/custom_text_form_field.dart';
@@ -43,10 +44,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text;
 
-    final bool isEmailValid = email.isEmpty ||
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-            .hasMatch(email);
-    final bool isPasswordValid = password.length >= 8;
+    final bool isEmailValid =
+        email.isEmpty || ValidationUtils.isValidEmail(email);
+    final bool isPasswordValid = ValidationUtils.isValidPassword(password);
 
     setState(() {
       _isButtonEnabled = isEmailValid && isPasswordValid;

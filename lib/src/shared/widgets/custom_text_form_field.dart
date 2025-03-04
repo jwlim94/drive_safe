@@ -11,6 +11,7 @@ class CustomTextFormField extends StatefulWidget {
     this.inputFormatters,
     this.hintText,
     this.onChanged,
+    this.textColor = AppColors.customDarkGray,
   });
 
   final TextEditingController controller;
@@ -18,6 +19,7 @@ class CustomTextFormField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? hintText;
   final ValueChanged<String>? onChanged;
+  final Color? textColor;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -35,7 +37,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      style: TextStyles.h4.copyWith(color: AppColors.customDarkGray),
+      style: TextStyles.h4.copyWith(color: widget.textColor),
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       cursorColor: AppColors.customDarkGray,

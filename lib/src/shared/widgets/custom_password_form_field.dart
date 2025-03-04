@@ -10,6 +10,7 @@ class CustomPasswordFormField extends StatefulWidget {
     required this.keyboardType,
     this.inputFormatters,
     this.hintText,
+    this.textColor = AppColors.customDarkGray,
     this.onChanged,
   });
 
@@ -17,6 +18,7 @@ class CustomPasswordFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final String? hintText;
+  final Color? textColor;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -37,7 +39,7 @@ class _CustomPasswordFormFieldState extends State<CustomPasswordFormField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      style: TextStyles.h4.copyWith(color: AppColors.customDarkGray),
+      style: TextStyles.h4.copyWith(color: widget.textColor),
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       cursorColor: AppColors.customDarkGray,

@@ -1,3 +1,4 @@
+import 'package:drive_safe/src/features/authentication/application/auth_service.dart';
 import 'package:drive_safe/src/features/authentication/presentation/controllers/sign_out_controller.dart';
 import 'package:drive_safe/src/features/car/presentation/controllers/update_car_description_controller.dart';
 import 'package:drive_safe/src/features/car/presentation/controllers/update_car_type_controller.dart';
@@ -6,6 +7,7 @@ import 'package:drive_safe/src/features/user/presentation/controllers/delete_use
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_colors_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_name_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/settings/link_account_modal.dart';
 import 'package:drive_safe/src/features/user/presentation/settings/delete_account_dialog.dart';
 import 'package:drive_safe/src/features/user/presentation/settings/edit_name_modal.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
@@ -106,9 +108,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.read(signOutControllerProvider.notifier).signOut();
   }
 
-  // TODO: Implement for guest users
-  void _handleAddEmail() {
-    print('Add Email clicked');
+  void _handleLinkAccount() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: AppColors.customWhite,
+      builder: (context) {
+        return LinkAccountModal(
+          onSave: (email, password) {
+            ref.read(authServiceProvider).anonymousToEmailPassword(
+                  email,
+                  password,
+                );
+          },
+        );
+      },
+    );
   }
 
   void _handleDeleteAccount() {
@@ -293,55 +311,59 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ),
 
                         // Account Settings Section
-                        const SizedBox(height: 28),
-                        const Text('Account Settings', style: TextStyles.h4),
-                        const SizedBox(height: 4),
-                        GestureDetector(
-                          onTap: _handleAddEmail,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.add,
-                                color: AppColors.customLightPurple,
-                              ),
-                              Text(
-                                'Add Email',
-                                style: TextStyles.h4.copyWith(
+                        if (currentUser.isGuest) const SizedBox(height: 28),
+                        if (currentUser.isGuest)
+                          const Text('Account Settings', style: TextStyles.h4),
+                        if (currentUser.isGuest) const SizedBox(height: 4),
+                        if (currentUser.isGuest)
+                          GestureDetector(
+                            onTap: _handleLinkAccount,
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.add,
                                   color: AppColors.customLightPurple,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Sign Out Section
-                        const SizedBox(height: 32),
-                        CustomButton(
-                          text: 'Sign out',
-                          backgroundColor: AppColors.customPink,
-                          onPressed: _handleSignOut,
-                        ),
-
-                        // Delete Account Section
-                        const SizedBox(height: 20),
-                        Center(
-                          child: GestureDetector(
-                            onTap: _handleDeleteAccount,
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.delete_forever,
-                                  color: AppColors.customWhite,
-                                ),
                                 Text(
-                                  ' Delete Account',
-                                  style: TextStyles.bodyMedium,
+                                  'Link Account',
+                                  style: TextStyles.h4.copyWith(
+                                    color: AppColors.customLightPurple,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
+
+                        // Sign Out Section
+                        if (!currentUser.isGuest) const SizedBox(height: 32),
+                        if (!currentUser.isGuest)
+                          CustomButton(
+                            text: 'Sign out',
+                            backgroundColor: AppColors.customPink,
+                            onPressed: _handleSignOut,
+                          ),
+
+                        // Delete Account Section
+                        if (!currentUser.isGuest) const SizedBox(height: 20),
+                        if (!currentUser.isGuest)
+                          Center(
+                            child: GestureDetector(
+                              onTap: _handleDeleteAccount,
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.delete_forever,
+                                    color: AppColors.customWhite,
+                                  ),
+                                  Text(
+                                    ' Delete Account',
+                                    style: TextStyles.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
