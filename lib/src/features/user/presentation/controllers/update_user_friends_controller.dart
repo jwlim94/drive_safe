@@ -18,14 +18,8 @@ class UpdateUserFriendsController extends _$UpdateUserFriendsController {
 
     if (currentUser == null) return;
 
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-      () => usersRepository.updateUserFriends(currentUser.id, friendId, action),
-    );
+    usersRepository.updateUserFriends(currentUser.id, friendId, action);
 
-    if (!state.hasError) {
-      final user = state.value as User;
-      ref.read(currentUserStateProvider.notifier).setUser(user);
-    }
+    ref.read(currentUserStateProvider.notifier).setUser(currentUser);
   }
 }

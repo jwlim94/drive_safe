@@ -20,7 +20,8 @@ dependencies:
   json_annotation: ^4.9.0 # enables code generation for json_serializable
   cloud_firestore: ^5.6.3 # enables to use Firebase Cloudstore
   crypto: ^3.0.6 # generates unique string securely
-  carousel_slider: ^5.0.0
+  carousel_slider: ^5.0.0 # carousel widget in leaderboard
+  flame: ^1.25.0 # game engine
 
 dev_dependencies:
   flutter_test:
@@ -50,3 +51,4 @@ flutter:
   # Bring in image assets
   assets:
     - assets/images/
+    - assets/mini_game/cars/
