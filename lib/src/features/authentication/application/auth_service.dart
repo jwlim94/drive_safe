@@ -1,4 +1,5 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
+import 'package:drive_safe/src/features/authentication/presentation/providers/auth_type_state_provider.dart';
 import 'package:drive_safe/src/features/car/presentation/controllers/cache_current_car_controller.dart';
 import 'package:drive_safe/src/features/leaderboard/data/leagues_repository.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/cache_current_league_controller.dart';
@@ -37,9 +38,10 @@ class AuthService {
       ref.read(authUserDataStateProvider.notifier).setId(userId);
 
       // Create a user
+      final authType = ref.read(authTypeStateProvider);
       final updatedAuthUserData = ref.read(authUserDataStateProvider);
       final usersRepository = ref.read(usersRepositoryProvider);
-      await usersRepository.createUser(updatedAuthUserData);
+      await usersRepository.createUser(updatedAuthUserData, authType);
 
       // Create a car
       final carData = ref.read(carDataStateProvider);
@@ -108,8 +110,12 @@ class AuthService {
       ref.read(authUserDataStateProvider.notifier).setEmail('');
 
       // Create guest user
+      final authType = ref.read(authTypeStateProvider);
       final updatedAuthUserData = ref.read(authUserDataStateProvider);
-      await ref.read(usersRepositoryProvider).createUser(updatedAuthUserData);
+      await ref.read(usersRepositoryProvider).createUser(
+            updatedAuthUserData,
+            authType,
+          );
 
       // Create a car
       final carData = ref.read(carDataStateProvider);

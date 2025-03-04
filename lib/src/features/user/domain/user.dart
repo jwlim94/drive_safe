@@ -15,6 +15,7 @@ class User {
     required this.code,
     required this.leagueId,
     required this.friends,
+    required this.isGuest,
     required this.drivePoints,
     required this.driveStreak,
     this.lastDriveStreakAt,
@@ -30,6 +31,7 @@ class User {
   final String code;
   final String leagueId;
   final List friends;
+  final bool isGuest;
   final int drivePoints;
   final int driveStreak;
   int? lastDriveStreakAt;
@@ -50,6 +52,7 @@ class User {
       code: map['code'] as String,
       leagueId: map['leagueId'] as String,
       friends: map['friends'] as List,
+      isGuest: map['isGuest'] as bool,
       drivePoints: map['drivePoints'] as int,
       driveStreak: map['driveStreak'] as int,
       lastDriveStreakAt: map['lastDriveStreakAt'],
@@ -69,6 +72,7 @@ class User {
       'code': code,
       'leagueId': leagueId,
       'friends': friends,
+      'isGuest': isGuest,
       'drivePoints': drivePoints,
       'driveStreak': driveStreak,
     };

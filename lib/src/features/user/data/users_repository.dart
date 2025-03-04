@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/authentication/domain/auth_user_data.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
+import 'package:drive_safe/src/shared/constants/enums.dart';
 import 'package:drive_safe/src/shared/constants/strings.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:drive_safe/src/shared/utils/crypto_utils.dart';
@@ -20,7 +21,7 @@ class UsersRepository {
     return snapshot.data();
   }
 
-  Future<User> createUser(AuthUserData authUserData) async {
+  Future<User> createUser(AuthUserData authUserData, AuthType authType) async {
     final String userId = authUserData.id!;
 
     final user = User(
@@ -34,6 +35,7 @@ class UsersRepository {
       code: CryptoUtils.generateRandomUserCode(),
       leagueId: authUserData.leagueId!,
       friends: [],
+      isGuest: authType == AuthType.guest ? true : false,
       drivePoints: 0,
       driveStreak: 0,
     );
