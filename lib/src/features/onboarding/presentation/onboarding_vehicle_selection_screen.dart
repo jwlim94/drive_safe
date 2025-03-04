@@ -12,7 +12,6 @@ import 'package:drive_safe/src/shared/widgets/custom_dropdown_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 
 class OnboardingVehicleSelectionScreen extends ConsumerStatefulWidget {
   const OnboardingVehicleSelectionScreen({super.key});
@@ -52,7 +51,7 @@ class _OnboardingVehicleSelectionScreenState
     // Handle guest
     final AuthType authType = ref.read(authTypeStateProvider);
     if (authType == AuthType.guest) {
-      context.goNamed(AppRoute.home.name);
+      await ref.read(authServiceProvider).signInAnonymously();
       return;
     }
 

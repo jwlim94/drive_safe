@@ -33,4 +33,8 @@ class CarDataState extends _$CarDataState {
       description: description,
     );
   }
+
+  void clear() {
+    state = CarData();
+  }
 }

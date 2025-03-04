@@ -23,7 +23,6 @@ class AuthService {
       final authUserData = ref.read(authUserDataStateProvider);
       final String email = authUserData.email!;
       final String password = authUserData.password!;
-      final String leagueId = authUserData.leagueId!;
 
       // Create user in Firebase Authentication
       final UserCredential userCredential =
@@ -49,7 +48,7 @@ class AuthService {
 
       // Create a league
       final leaguesRepository = ref.read(leaguesRepositoryProvider);
-      await leaguesRepository.createUserLeague(userId, leagueId);
+      await leaguesRepository.createUserLeague(userId, authUserData.leagueId!);
 
       // Caching
       await ref
@@ -78,6 +77,48 @@ class AuthService {
             email,
             password,
           );
+
+      // Caching
+      await ref
+          .read(cacheCurrentUserControllerProvider.notifier)
+          .cacheCurrentUser();
+      await ref
+          .read(cacheCurrentCarControllerProvider.notifier)
+          .cacheCurrentCar();
+      await ref
+          .read(cacheCurrentLeagueControllerProvider.notifier)
+          .cacheCurrentLeague();
+    } catch (e) {
+      // TODO: Handle rollback
+    }
+  }
+
+  Future<void> signInAnonymously() async {
+    try {
+      // Get guest user data from provider
+      final authUserData = ref.read(authUserDataStateProvider);
+
+      // Sign in anonymously in Firebase Authentication
+      final UserCredential userCredential =
+          await ref.read(authRepositoryProvider).signInAnonymously();
+
+      final String userId = userCredential.user?.uid ?? '';
+      if (userId.isEmpty) throw Exception("User Id is missing");
+      ref.read(authUserDataStateProvider.notifier).setId(userId);
+      ref.read(authUserDataStateProvider.notifier).setEmail('');
+
+      // Create guest user
+      final updatedAuthUserData = ref.read(authUserDataStateProvider);
+      await ref.read(usersRepositoryProvider).createUser(updatedAuthUserData);
+
+      // Create a car
+      final carData = ref.read(carDataStateProvider);
+      await ref.read(carsRepositoryProvider).createCar(carData);
+
+      // Create a league
+      await ref
+          .read(leaguesRepositoryProvider)
+          .createUserLeague(userId, authUserData.leagueId!);
 
       // Caching
       await ref

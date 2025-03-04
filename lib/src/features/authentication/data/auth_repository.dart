@@ -39,6 +39,10 @@ class AuthRepository {
     );
   }
 
+  Future<UserCredential> signInAnonymously() async {
+    return _authState.signInAnonymously();
+  }
+
   Future<void> deleteUser() async {
     final user = _authState.currentUser;
     if (user == null) return;

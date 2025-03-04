@@ -93,4 +93,8 @@ class AuthUserDataState extends _$AuthUserDataState {
       password: password,
     );
   }
+
+  void clear() {
+    state = AuthUserData();
+  }
 }
