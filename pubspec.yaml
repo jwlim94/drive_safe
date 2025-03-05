@@ -22,6 +22,7 @@ dependencies:
   crypto: ^3.0.6 # generates unique string securely
   carousel_slider: ^5.0.0 # carousel widget in leaderboard
   flame: ^1.25.0 # game engine
+  flame_riverpod: ^5.4.9
 
 dev_dependencies:
   flutter_test:
@@ -51,4 +52,5 @@ flutter:
   # Bring in image assets
   assets:
     - assets/images/
-    - assets/mini_game/cars/
+    - assets/images/mini_game/cars/
+    - assets/images/mini_game/levels/

@@ -1,8 +1,8 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/authentication/presentation/sign_in_screen.dart';
 import 'package:drive_safe/src/features/authentication/presentation/sign_up_screen.dart';
-import 'package:drive_safe/src/features/garage/application/racing_game.dart';
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
+import 'package:drive_safe/src/features/garage/presentation/minigame_presentation/minigame.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';

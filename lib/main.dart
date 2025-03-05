@@ -1,6 +1,6 @@
 import 'package:drive_safe/firebase_options.dart';
 import 'package:drive_safe/src/app.dart';
-import 'package:drive_safe/src/features/garage/application/racing_game.dart';
+import 'package:drive_safe/src/features/garage/presentation/minigame_presentation/minigame.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
