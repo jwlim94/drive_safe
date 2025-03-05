@@ -1,19 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_friends_controller.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddFriendsScreen extends StatefulWidget {
+class AddFriendsScreen extends ConsumerStatefulWidget {
   final Function(Map<String, dynamic>) onFriendAdded;
 
   const AddFriendsScreen({super.key, required this.onFriendAdded});
 
   @override
-  State<AddFriendsScreen> createState() => _AddFriendsScreenState();
+  ConsumerState<AddFriendsScreen> createState() => _AddFriendsScreenState();
 }
 
-class _AddFriendsScreenState extends State<AddFriendsScreen> {
+class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
   final TextEditingController _friendCodeController = TextEditingController();
   Map<String, dynamic>? _searchedFriend;
   bool _isLoading = false;
@@ -70,6 +72,10 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
   void _addFriend() {
     if (_searchedFriend != null) {
       widget.onFriendAdded(_searchedFriend!);
+
+      ref
+          .watch(updateUserFriendsControllerProvider.notifier)
+          .updateUserFriends(_searchedFriend!["id"], "add");
 
       showDialog(
         context: context,
@@ -147,7 +153,7 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
               width: double.infinity,
               child: CustomButton(
                 text: _isLoading ? "Searching..." : "Find Friend",
-                onPressed: _isLoading ? null : _findFriend,
+                onPressed: () => _findFriend(),
                 backgroundColor: AppColors.customPink,
               ),
             ),
@@ -170,7 +176,7 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.customPink,
                   ),
-                  onPressed: _addFriend,
+                  onPressed: () => _addFriend(),
                   child:
                       const Text("Add", style: TextStyle(color: Colors.white)),
                 ),
