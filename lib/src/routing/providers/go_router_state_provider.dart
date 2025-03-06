@@ -2,7 +2,6 @@ import 'package:drive_safe/src/features/authentication/data/auth_repository.dart
 import 'package:drive_safe/src/features/authentication/presentation/sign_in_screen.dart';
 import 'package:drive_safe/src/features/authentication/presentation/sign_up_screen.dart';
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
-import 'package:drive_safe/src/features/garage/presentation/minigame_presentation/minigame.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
@@ -189,8 +188,7 @@ GoRouter goRouterState(Ref ref) {
                       path: 'minigame',
                       name: AppRoute.minigame.name,
                       builder: (context, state) {
-                        final game = state.extra as RacingGame?;
-                        return RacingGameScreen(game: game ?? RacingGame());
+                        return const RacingGameScreen();
                       },
                     ),
                   ])
