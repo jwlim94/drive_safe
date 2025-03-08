@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
@@ -101,15 +103,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .updateUserDrivePoints(totalPoints);
   }
 
-  void startDrive(User? currentUser, int lastDrivePoints) {
+  Future<void> startDrive(User? currentUser, int lastDrivePoints) async {
     if (state == 'Stopped') {
+      //Start Kiosk mode (prevents user from leaving this app)
+      await startKioskMode();
+
+      //TODO: figure out how to cancel the operation IF the user regects kiosk mode on their device...
+
       // Reset lastDrive when starting a new drive
       ref.read(lastDriveNotifierProvider.notifier).addLastDrive(
             Drive(points: 0, timeElapsed: Duration.zero, getAchievement: true),
           );
-
-      //Start Kiosk mode (prevents user from leaving this app)
-      startKioskMode();
 
       setState(() {
         pauseButtonText = 'Pause';
