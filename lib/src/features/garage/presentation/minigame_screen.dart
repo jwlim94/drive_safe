@@ -1,4 +1,5 @@
 import 'package:drive_safe/src/features/garage/presentation/minigame/minigame.dart';
+import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -15,16 +16,8 @@ class RacingGameScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Rival Racing'),
       ),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: RiverpodAwareGameWidget(
-              key: gameWidgetKey,
-              game: gameInstance,
-            ),
-          ),
-        ],
+      body: const GameWidget.controlled(
+        gameFactory: RacingGame.new,
       ),
     );
   }
