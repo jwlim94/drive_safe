@@ -108,7 +108,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       //Start Kiosk mode (prevents user from leaving this app)
       await startKioskMode();
 
-      //TODO: figure out how to cancel the operation IF the user regects kiosk mode on their device...
+      //TODO: figure out how to cancel the operation IF the user rejects kiosk mode on their device...
 
       // Reset lastDrive when starting a new drive
       ref.read(lastDriveNotifierProvider.notifier).addLastDrive(
