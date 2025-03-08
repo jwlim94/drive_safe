@@ -23,6 +23,8 @@ dependencies:
   carousel_slider: ^5.0.0 # carousel widget in leaderboard
   flame: ^1.25.0 # game engine
   flame_riverpod: ^5.4.9
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +32,7 @@ dev_dependencies:
 
   flutter_lints: ^4.0.0
   build_runner: ^2.4.13 # handles code generation. used with riverpod_annotaion, json_serializable packages
+  hive_generator: ^2.0.0
 
   riverpod_generator: ^2.6.3 # enables code generation for providers when used in conjunction with build_runner
   custom_lint: ^0.7.0 # allows defining custom lint rules
@@ -52,5 +55,4 @@ flutter:
   # Bring in image assets
   assets:
     - assets/images/
-    - assets/images/mini_game/cars/
-    - assets/images/mini_game/levels/
+    - assets/images/mini_game/cars/playerCar.png

@@ -1,4 +1,4 @@
-import 'package:drive_safe/src/features/garage/presentation/minigame_presentation/minigame.dart';
+import 'package:drive_safe/src/features/garage/presentation/minigame/minigame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 
