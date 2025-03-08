@@ -182,7 +182,7 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
               width: double.infinity,
               child: CustomButton(
                 text: _isLoading ? "Searching..." : "Find Friend",
-                onPressed: _isLoading ? null : _findFriend,
+                onPressed: () => _findFriend(),
                 backgroundColor: AppColors.customPink,
               ),
             ),
@@ -206,7 +206,7 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.customPink,
                   ),
-                  onPressed: _addFriend,
+                  onPressed: () => _addFriend(),
                   child:
                       const Text("Add", style: TextStyle(color: Colors.white)),
                 ),
