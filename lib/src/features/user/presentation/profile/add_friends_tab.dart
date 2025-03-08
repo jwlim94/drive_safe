@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddFriendsScreen extends ConsumerStatefulWidget {
-  final Function(Map<String, dynamic>) onFriendAdded;
-
-  const AddFriendsScreen({super.key, required this.onFriendAdded});
+  const AddFriendsScreen({super.key});
 
   @override
   ConsumerState<AddFriendsScreen> createState() => _AddFriendsScreenState();
@@ -20,19 +18,19 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
   Map<String, dynamic>? _searchedFriend;
   bool _isLoading = false;
 
-  /// Firestore에서 친구 찾기
+  /// Firestore에서 친구 검색
   void _findFriend() async {
-    String enteredCode = _friendCodeController.text.trim();
+    String enteredCode =
+        _friendCodeController.text.trim().toUpperCase(); // 🔥 대문자로 변환
 
     if (enteredCode.isEmpty) return;
 
     setState(() {
       _isLoading = true;
-      _searchedFriend = null; // 이전 검색 결과 초기화
+      _searchedFriend = null;
     });
 
     try {
-      // Firestore에서 code 값이 입력한 코드와 일치하는 문서를 찾기
       var querySnapshot = await FirebaseFirestore.instance
           .collection('users')
           .where('code', isEqualTo: enteredCode)
@@ -71,35 +69,64 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
   /// 친구 추가
   void _addFriend() {
     if (_searchedFriend != null) {
-      widget.onFriendAdded(_searchedFriend!);
+      final friendId = _searchedFriend!['id'];
 
       ref
-          .watch(updateUserFriendsControllerProvider.notifier)
-          .updateUserFriends(_searchedFriend!["id"], "add");
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: Colors.black,
-          title: const Text("Success!", style: TextStyle(color: Colors.white)),
-          content: const Text("Friend Added Successfully.",
-              style: TextStyle(color: Colors.white)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // 팝업 닫기
-              },
-              child: const Text("OK", style: TextStyle(color: Colors.blue)),
-            ),
-          ],
-        ),
-      );
-
-      setState(() {
-        _searchedFriend = null; // 검색된 친구 정보 초기화
-        _friendCodeController.clear(); // 입력 필드 초기화
+          .read(updateUserFriendsControllerProvider.notifier)
+          .updateUserFriends(friendId, 'add')
+          .then((_) {
+        _showSuccessDialog("Friend Added Successfully.");
+        _resetSearch();
+      }).catchError((error) {
+        _showErrorDialog("Failed to add friend: $error");
       });
     }
+  }
+
+  /// 성공 메시지 표시
+  void _showSuccessDialog(String message) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: const Text("Success!", style: TextStyle(color: Colors.white)),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK", style: TextStyle(color: Colors.blue)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 오류 메시지 표시
+  void _showErrorDialog(String message) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: const Text("Error!", style: TextStyle(color: Colors.white)),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 검색 상태 초기화
+  void _resetSearch() {
+    setState(() {
+      _searchedFriend = null;
+      _friendCodeController.clear();
+    });
   }
 
   @override
@@ -123,6 +150,8 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
           children: [
             const Text("Enter your friend's code", style: TextStyles.h3),
             const SizedBox(height: 20),
+
+            // 🔥 입력 값이 자동으로 대문자로 변환됨
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
@@ -134,7 +163,6 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                 keyboardType: TextInputType.text,
                 style: const TextStyle(color: Colors.white),
                 onChanged: (value) {
-                  // 입력값을 모두 대문자로 변환하여 저장
                   _friendCodeController.value =
                       _friendCodeController.value.copyWith(
                     text: value.toUpperCase(),
@@ -148,6 +176,7 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
@@ -157,6 +186,7 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                 backgroundColor: AppColors.customPink,
               ),
             ),
+
             if (_searchedFriend != null) ...[
               const SizedBox(height: 20),
               ListTile(
