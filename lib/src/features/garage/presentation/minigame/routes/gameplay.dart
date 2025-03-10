@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:drive_safe/src/features/garage/presentation/minigame/input.dart';
+import 'package:drive_safe/src/features/garage/presentation/minigame/player.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
@@ -10,12 +12,29 @@ class Gameplay extends Component with KeyboardHandler {
   final VoidCallback? onPausePressed;
   final VoidCallback? onGameOver;
 
+  final input = Input();
+
   static const id = 'GamePlay';
 
   @override
   Future<void> onLoad() async {
-    final map = await TiledComponent.load("desert_track.tmx", Vector2.all(24));
+    final map = await TiledComponent.load("road.tmx", Vector2.all(16))
+      ..debugMode = true;
     await add(map);
+
+    final player = Player(position: Vector2((map.size.x * 0.5), 0));
+
+    final world = World(children: [map, input, player]);
+    await add(world);
+
+    final camera = CameraComponent.withFixedResolution(
+      width: 200,
+      height: 300,
+      world: world,
+    );
+    await add(camera);
+
+    camera.follow(player);
   }
 
   @override
