@@ -1,11 +1,4 @@
-import 'dart:async';
-import 'dart:ui';
-
-import 'package:drive_safe/src/features/garage/presentation/minigame/constants/constants.dart';
-import 'package:drive_safe/src/features/garage/presentation/minigame/local_data/hive_repository.dart';
-import 'package:drive_safe/src/features/user/domain/user.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
-import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 
