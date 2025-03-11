@@ -161,7 +161,7 @@ GoRouter goRouterState(Ref ref) {
                   name: AppRoute.garage.name,
                   pageBuilder: (context, state) {
                     return const NoTransitionPage(
-                      child: GarageScreen(),
+                      child: RacingGameScreen(),
                     );
                   },
                   routes: [
