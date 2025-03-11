@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
@@ -103,12 +101,57 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .updateUserDrivePoints(totalPoints);
   }
 
+  Future<bool> isInKioskMode() async {
+    final mode = await getKioskMode();
+    if (mode == KioskMode.enabled) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> _waitForKioskModeActivation() async {
+    for (int i = 0; i < 1000000; i++) {
+      // Wait up to 10 seconds
+      await Future.delayed(const Duration(seconds: 1));
+      if (await isInKioskMode()) {
+        return true; // User accepted Kiosk Mode
+      }
+    }
+    return false; // User rejected or timeout reached
+  }
+
+  void _showKioskModeInfoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Kiosk Mode Required'),
+          content: const Text(
+              'You will be unable to start the focus session without Kiosk Mode enabled. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> startDrive(User? currentUser, int lastDrivePoints) async {
     if (state == 'Stopped') {
-      //Start Kiosk mode (prevents user from leaving this app)
       await startKioskMode();
 
-      //TODO: figure out how to cancel the operation IF the user rejects kiosk mode on their device...
+      // Wait a few seconds to check if Kiosk Mode was activated
+      bool isKioskActive = await _waitForKioskModeActivation();
+
+      if (!isKioskActive) {
+        debugPrint("User rejected Kiosk Mode. Drive session will not start.");
+        _showKioskModeInfoDialog();
+        return; // Exit if user denied Kiosk Mode
+      }
 
       // Reset lastDrive when starting a new drive
       ref.read(lastDriveNotifierProvider.notifier).addLastDrive(
@@ -161,7 +204,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  void pauseDrive() {
+  void pauseDrive() async {
     if (pauseButtonText == 'Pause') {
       setState(() {
         pauseButtonText = 'Resume';
@@ -169,10 +212,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopKioskMode();
       stopWatch.stop();
     } else {
+      await startKioskMode();
+
+      // Wait a few seconds to check if Kiosk Mode was activated
+      bool isKioskActive = await _waitForKioskModeActivation();
+
+      if (!isKioskActive) {
+        debugPrint("User rejected Kiosk Mode. Drive session will not start.");
+        _showKioskModeInfoDialog();
+        return; // Exit if user denied Kiosk Mode
+      }
+
       setState(() {
         pauseButtonText = 'Pause';
       });
-      startKioskMode();
       stopWatch.start();
     }
 
