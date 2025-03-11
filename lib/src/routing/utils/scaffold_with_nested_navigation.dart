@@ -71,7 +71,7 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.garage_outlined),
-                  label: 'Garage',
+                  label: 'Game',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_2_outlined),
