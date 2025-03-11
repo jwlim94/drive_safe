@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
+import 'package:kiosk_mode/kiosk_mode.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -100,8 +103,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .updateUserDrivePoints(totalPoints);
   }
 
-  void startDrive(User? currentUser, int lastDrivePoints) {
+  Future<void> startDrive(User? currentUser, int lastDrivePoints) async {
     if (state == 'Stopped') {
+      //Start Kiosk mode (prevents user from leaving this app)
+      await startKioskMode();
+
+      //TODO: figure out how to cancel the operation IF the user rejects kiosk mode on their device...
+
       // Reset lastDrive when starting a new drive
       ref.read(lastDriveNotifierProvider.notifier).addLastDrive(
             Drive(points: 0, timeElapsed: Duration.zero, getAchievement: true),
@@ -118,7 +126,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopWatch.start();
       updateElapsedEarnings();
     } else {
-      // Persist drive when stopping
+      // Persist drive when stopping and stop kiosk mode
+      stopKioskMode();
       stopWatch.stop();
       stopWatch.reset();
 
@@ -157,11 +166,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       setState(() {
         pauseButtonText = 'Resume';
       });
+      stopKioskMode();
       stopWatch.stop();
     } else {
       setState(() {
         pauseButtonText = 'Pause';
       });
+      startKioskMode();
       stopWatch.start();
     }
 
@@ -204,7 +215,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 40),
             child: Text(
-              'Points $titleText Drive',
+              'Points $titleText Session',
               textAlign: TextAlign.center,
               style: TextStyles.h2,
             ),
@@ -221,7 +232,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 40),
             child: Text(
-              'Safe Minutes: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
+              'Focus Session Minutes: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
               textAlign: TextAlign.center,
               style: TextStyles.bodyMedium,
             ),
@@ -232,7 +243,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: const EdgeInsets.only(top: 40, right: 10),
                 child: Center(
                   child: CustomButton(
-                    text: '$pauseButtonText Drive',
+                    text: '$pauseButtonText Focus',
                     onPressed: pauseDrive,
                     horizontalPadding: 10,
                     borderOutline: AppColors.customPink,
@@ -244,7 +255,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: const EdgeInsets.only(top: 40),
               child: Center(
                 child: CustomButton(
-                  text: '$buttonText Drive',
+                  text: '$buttonText Focus',
                   onPressed: () => startDrive(currentUser, lastDrive.points),
                   horizontalPadding: buttonSize,
                   backgroundColor: AppColors.customPink,
