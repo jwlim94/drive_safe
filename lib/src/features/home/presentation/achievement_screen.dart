@@ -109,7 +109,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                 const Padding(
                   padding: EdgeInsets.only(bottom: 20),
                   child: Text(
-                    'Your Safe Drive Streak!',
+                    'Your Focus Streak!',
                     style: TextStyles.h3,
                   ),
                 ),
@@ -139,7 +139,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Text(
-                    'You have completed ${currentUser.driveStreak.toString()} rides in a row! \n Let\'s see what that does for your progress!',
+                    'You have completed ${currentUser.driveStreak.toString()} sessions in a row! \n Let\'s see what that does for your progress!',
                     style: TextStyles.bodyMedium,
                     textAlign: TextAlign.center,
                   ),

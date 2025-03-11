@@ -142,7 +142,7 @@ class MeTab extends ConsumerWidget {
                         ],
                       ),
                       const Text(
-                        'Drive Streak',
+                        'Focus Streak',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
