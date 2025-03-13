@@ -51,8 +51,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
-    timer.cancel();
-    super.dispose();
+    try {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      timer.cancel();
+      super.dispose();
+    } catch (e) {
+      timer.cancel();
+      super.dispose();
+    }
   }
 
   void updateDriveStreak() {
@@ -120,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
         _showSnackBar(
-            "Kiosk Mode not enabled or you took too long to enable it. Please try again by pressing Start Focus and waiting 15 seconds");
+            "Kiosk Mode Error. Kiosk mode must be functioning to start a session. If Kiosk mode was enabled and you are seeing this message, click 'Start Focus' to unpin and try again.");
         setState(() {
           state = 'Stopped';
           buttonSize = 100;
@@ -184,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
         _showSnackBar(
-            "Kiosk Mode not enabled or you took too long to enable it. Please try again by pressing Resume Focus and waiting 15 seconds");
+            "Kiosk Mode Error. Kiosk mode must be functioning to resume your session. If Kiosk mode was enabled and you are seeing this message, click 'Resume Focus' to unpin and try again.");
         return;
       } else if (await updateElapsedEarnings() == '') {
         setState(() {
@@ -202,7 +208,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (state == "Started" && mode == KioskMode.disabled) {
       stopWatch.stop();
       if (pauseButtonText != "Resume") {
-        stopWatch.reset();
+        pauseButtonText = "Resume";
+        _showSnackBar(
+            "Oops! It looks like Kiosk mode was disabled. Press 'Resume Focus' and re-enable Kiosk Mode to continue your session.");
       }
       return "Kiosk Mode not enabled";
     }
@@ -223,8 +231,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return '';
   }
 
-  void _showSnackBar(String message) => ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text(message)));
+  void _showSnackBar(String message) =>
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 30),
+          action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                try {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                } catch (e) {
+                  null;
+                }
+              }),
+          dismissDirection: DismissDirection.down,
+          content: Text(
+            message,
+            style: TextStyles.semiFinePrint,
+          ),
+        ),
+      );
 
   void _handleStart(bool didStart) {
     if (!didStart && Platform.isIOS) {
