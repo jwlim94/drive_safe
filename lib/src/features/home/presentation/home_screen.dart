@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drive_safe/src/features/home/domain/drive.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
@@ -32,6 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final stopWatch = Stopwatch();
   late Timer timer;
   double buttonSize = 100;
+  late final Stream<KioskMode> _currentMode = watchKioskMode();
 
   @override
   void initState() {
@@ -101,76 +104,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .updateUserDrivePoints(totalPoints);
   }
 
-  Future<bool> isInKioskMode() async {
-    final mode = await getKioskMode();
-    if (mode == KioskMode.enabled) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> _waitForKioskModeActivation() async {
-    for (int i = 0; i < 1000000; i++) {
-      // Wait up to 10 seconds
-      await Future.delayed(const Duration(seconds: 1));
-      if (await isInKioskMode()) {
-        return true; // User accepted Kiosk Mode
-      }
-    }
-    return false; // User rejected or timeout reached
-  }
-
-  void _showKioskModeInfoDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Kiosk Mode Required'),
-          content: const Text(
-              'You will be unable to start the focus session without Kiosk Mode enabled. Please try again.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> startDrive(User? currentUser, int lastDrivePoints) async {
     if (state == 'Stopped') {
-      await startKioskMode();
-
-      // Wait a few seconds to check if Kiosk Mode was activated
-      bool isKioskActive = await _waitForKioskModeActivation();
-
-      if (!isKioskActive) {
-        debugPrint("User rejected Kiosk Mode. Drive session will not start.");
-        _showKioskModeInfoDialog();
-        return; // Exit if user denied Kiosk Mode
-      }
-
       // Reset lastDrive when starting a new drive
       ref.read(lastDriveNotifierProvider.notifier).addLastDrive(
             Drive(points: 0, timeElapsed: Duration.zero, getAchievement: true),
           );
 
       setState(() {
-        pauseButtonText = 'Pause';
-        titleText = 'This';
-        buttonText = 'End';
         state = 'Started';
         buttonSize = 20;
       });
 
-      stopWatch.start();
-      updateElapsedEarnings();
+      await simulateDelay();
+
+      if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
+        _showSnackBar(
+            "Kiosk Mode not enabled or you took too long to enable it. Please try again by pressing Start Focus and waiting 15 seconds");
+        setState(() {
+          state = 'Stopped';
+          buttonSize = 100;
+          buttonText = 'Start';
+        });
+        return;
+      } else if (await updateElapsedEarnings() == '') {
+        setState(() {
+          pauseButtonText = 'Pause';
+          titleText = 'This';
+          buttonText = 'End';
+          state = 'Started';
+          buttonSize = 20;
+        });
+
+        stopWatch.start();
+      }
     } else {
       // Persist drive when stopping and stop kiosk mode
-      stopKioskMode();
       stopWatch.stop();
       stopWatch.reset();
 
@@ -204,36 +173,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  void pauseDrive() async {
-    if (pauseButtonText == 'Pause') {
+  Future<void> pauseDrive() async {
+    if (state == 'Started' && pauseButtonText == "Pause") {
       setState(() {
         pauseButtonText = 'Resume';
       });
-      stopKioskMode();
       stopWatch.stop();
     } else {
-      await startKioskMode();
+      await simulateDelay();
 
-      // Wait a few seconds to check if Kiosk Mode was activated
-      bool isKioskActive = await _waitForKioskModeActivation();
-
-      if (!isKioskActive) {
-        debugPrint("User rejected Kiosk Mode. Drive session will not start.");
-        _showKioskModeInfoDialog();
-        return; // Exit if user denied Kiosk Mode
+      if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
+        _showSnackBar(
+            "Kiosk Mode not enabled or you took too long to enable it. Please try again by pressing Resume Focus and waiting 15 seconds");
+        return;
+      } else if (await updateElapsedEarnings() == '') {
+        setState(() {
+          pauseButtonText = 'Pause';
+        });
+        stopWatch.start();
       }
-
-      setState(() {
-        pauseButtonText = 'Pause';
-      });
-      stopWatch.start();
     }
-
-    updateElapsedEarnings();
   }
 
-  void updateElapsedEarnings() {
+  Future<String> updateElapsedEarnings() async {
+    final mode = await getKioskMode();
     final lastDrive = ref.read(lastDriveNotifierProvider);
+
+    if (state == "Started" && mode == KioskMode.disabled) {
+      stopWatch.stop();
+      if (pauseButtonText != "Resume") {
+        stopWatch.reset();
+      }
+      return "Kiosk Mode not enabled";
+    }
 
     final updatedDrive = lastDrive.copyWith(
       timeElapsed: stopWatch.elapsed,
@@ -248,78 +220,186 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     ref.read(lastDriveNotifierProvider.notifier).addLastDrive(updatedDrive);
+    return '';
+  }
+
+  void _showSnackBar(String message) => ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text(message)));
+
+  void _handleStart(bool didStart) {
+    if (!didStart && Platform.isIOS) {
+      _showSnackBar(_unsupportedMessage);
+    }
+  }
+
+  void _handleStop(bool? didStop) {
+    if (didStop == false) {
+      _showSnackBar(
+        'Kiosk mode could not be stopped or was not active to begin with.',
+      );
+    }
+  }
+
+  Future<void> simulateDelay() async {
+    setState(() {
+      state = "Loading";
+    }); // Show loading
+    await Future.delayed(const Duration(seconds: 15)); // Simulate delay
+    setState(() {
+      state = "Started";
+    }); // Hide loading
   }
 
   @override
-  Widget build(BuildContext context) {
-    final lastDrive = ref.watch(lastDriveNotifierProvider);
-    final currentUser = ref.watch(currentUserStateProvider);
-    ref.watch(updateUserDriveStreakControllerProvider);
-    ref.watch(updateUserLastDriveStreakAtControllerProvider);
-    ref.watch(updateUserDrivePointsControllerProvider);
+  Widget build(BuildContext context) => StreamBuilder(
+      stream: _currentMode,
+      builder: (context, snapshot) {
+        final mode = snapshot.data;
+        final lastDrive = ref.watch(lastDriveNotifierProvider);
+        final currentUser = ref.watch(currentUserStateProvider);
+        ref.watch(updateUserDriveStreakControllerProvider);
+        ref.watch(updateUserLastDriveStreakAtControllerProvider);
+        ref.watch(updateUserDrivePointsControllerProvider);
 
-    // TODO: handle loading state
-    if (currentUser == null) return Container();
+        // TODO: handle loading state
+        if (currentUser == null) return Container();
 
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 40),
-            child: Text(
-              'Points $titleText Session',
-              textAlign: TextAlign.center,
-              style: TextStyles.h2,
+        return Stack(
+          children: [
+            Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: Text(
+                      'Points $titleText Session',
+                      textAlign: TextAlign.center,
+                      style: TextStyles.h2,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (lastDrive.points > 99)
+                        _buildPointContainer(
+                            (lastDrive.points ~/ 100).toString()),
+                      _buildPointContainer(
+                          ((lastDrive.points ~/ 10) % 10).toString()),
+                      _buildPointContainer(
+                          ((lastDrive.points ~/ 1) % 10).toString()),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40),
+                    child: Text(
+                      'Focus Session Minutes: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
+                      textAlign: TextAlign.center,
+                      style: TextStyles.bodyMedium,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (state == 'Started')
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40, right: 10),
+                          child: Center(
+                            child: CustomButton(
+                              text: '$pauseButtonText Focus',
+                              onPressed: () {
+                                if (state == "Started" &&
+                                    pauseButtonText == "Pause") {
+                                  switch (mode) {
+                                    case null:
+                                    case KioskMode.disabled:
+                                      return; // Do nothing
+                                    case KioskMode.enabled:
+                                      pauseDrive();
+                                      stopKioskMode().then(_handleStop);
+                                      break;
+                                  }
+                                } else if (state == "Started" &&
+                                    pauseButtonText == "Resume") {
+                                  switch (mode) {
+                                    case null:
+                                    case KioskMode.enabled:
+                                      stopKioskMode().then(_handleStop);
+                                    case KioskMode.disabled:
+                                      startKioskMode().then(_handleStart);
+                                      pauseDrive();
+                                      break;
+                                  }
+                                }
+                              },
+                              horizontalPadding: 10,
+                              borderOutline: AppColors.customPink,
+                              backgroundColor: Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 40),
+                        child: Center(
+                          child: CustomButton(
+                            text: '$buttonText Focus',
+                            onPressed: () {
+                              if (state == "Stopped") {
+                                switch (mode) {
+                                  case null:
+                                  case KioskMode.enabled:
+                                    stopKioskMode().then(_handleStop);
+                                    break;
+                                  case KioskMode.disabled:
+                                    startKioskMode().then(_handleStart);
+                                    startDrive(currentUser, lastDrive.points);
+                                    break;
+                                }
+                              } else if (state == "Started") {
+                                switch (mode) {
+                                  case null:
+                                  case KioskMode.disabled:
+                                    if (buttonText != "End") {
+                                      state = "Stopped";
+                                      _showSnackBar(
+                                          "You must have Kiosk Mode enabled while your Focus Session is active in order for the session to be valid. Sorry, try again!");
+                                      return;
+                                    } else {
+                                      startDrive(currentUser, lastDrive.points);
+                                    }
+                                  case KioskMode.enabled:
+                                    stopKioskMode().then(_handleStop);
+                                    startDrive(currentUser, lastDrive.points);
+                                    break;
+                                }
+                              } else if (state == "Paused") {
+                                startDrive(currentUser, lastDrive.points);
+                              }
+                            },
+                            horizontalPadding: buttonSize,
+                            backgroundColor: AppColors.customPink,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (lastDrive.points > 99)
-                _buildPointContainer((lastDrive.points ~/ 100).toString()),
-              _buildPointContainer(((lastDrive.points ~/ 10) % 10).toString()),
-              _buildPointContainer(((lastDrive.points ~/ 1) % 10).toString()),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 40),
-            child: Text(
-              'Focus Session Minutes: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
-              textAlign: TextAlign.center,
-              style: TextStyles.bodyMedium,
-            ),
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            if (state == 'Started')
-              Padding(
-                padding: const EdgeInsets.only(top: 40, right: 10),
-                child: Center(
-                  child: CustomButton(
-                    text: '$pauseButtonText Focus',
-                    onPressed: pauseDrive,
-                    horizontalPadding: 10,
-                    borderOutline: AppColors.customPink,
-                    backgroundColor: Colors.transparent,
+
+            // Loading overlay
+            if (state == "Loading")
+              Positioned.fill(
+                child: Container(
+                  color: const Color.fromARGB(150, 168, 168, 168),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
                   ),
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Center(
-                child: CustomButton(
-                  text: '$buttonText Focus',
-                  onPressed: () => startDrive(currentUser, lastDrive.points),
-                  horizontalPadding: buttonSize,
-                  backgroundColor: AppColors.customPink,
-                ),
-              ),
-            ),
-          ])
-        ],
-      ),
-    );
-  }
+          ],
+        );
+      });
 
   Widget _buildPointContainer(String text) {
     return Container(
@@ -336,3 +416,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
+
+const _unsupportedMessage = '''
+Single App mode is supported only for devices that are supervised 
+using Mobile Device Management (MDM) and the app itself must 
+be enabled for this mode by MDM.
+''';
