@@ -173,7 +173,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             lastDrivePoints,
           ),
         );
-
         ref.read(UpdateDailyGoalControllerProvider(
             currentUser.userGoal, stopWatch.elapsed.inSeconds));
       }
@@ -224,8 +223,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopWatch.stop();
       if (pauseButtonText != "Resume") {
         pauseButtonText = "Resume";
-        _showSnackBar(
-            "Oops! It looks like Kiosk mode was disabled. Press 'Resume Focus' and re-enable Kiosk Mode to continue your session.");
+        // _showSnackBar(
+        //     "Oops! It looks like Kiosk mode was disabled. Press 'Resume Focus' and re-enable Kiosk Mode to continue your session.");
       }
       return "Kiosk Mode not enabled";
     }

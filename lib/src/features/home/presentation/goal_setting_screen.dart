@@ -29,8 +29,7 @@ class _GoalSetScreenState extends ConsumerState<GoalSetScreen> {
       return;
     }
 
-    //TODO update state of the session goal
-
+    //TODO update state of the session goal so it reflects in the home page upon returning...
     ref.read(updateDailyGoalControllerProvider(dailyGoal * 60, 0));
     ref.read(sessionNotifierProvider.notifier).addNewUserGoal(dailyGoal);
     if (mounted) {
@@ -83,6 +82,8 @@ class _GoalSetScreenState extends ConsumerState<GoalSetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(sessionNotifierProvider);
+
     return Stack(
       children: [
         const CheckeredFlag(),

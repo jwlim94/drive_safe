@@ -22,21 +22,31 @@ class UpdateDailyGoalController extends _$UpdateDailyGoalController {
             checkDailyGoalComplete(sessionTime, currentUser.userGoal);
       }
 
-      //User Daily Goal Set and Completed
+      //User Daily Goal Set and Completed without excess time
       if (isDailyGoalComplete['IsCompleted'] == true &&
-          isDailyGoalComplete['IsGoalSet'] == true) {
+          isDailyGoalComplete['IsGoalSet'] == true &&
+          isDailyGoalComplete['IsExcessGoalTime'] == false) {
+        final timeExceededGoal = currentUser.userGoal - sessionTime! - 1;
+        userRepository.updateUserDailyGoal(timeExceededGoal, currentUser.id);
+      }
+      //User Daily Goal Set and Completed with excess time
+      if (isDailyGoalComplete['IsCompleted'] == true &&
+          isDailyGoalComplete['IsGoalSet'] == true &&
+          isDailyGoalComplete['IsExcessGoalTime'] == true) {
         final timeExceededGoal = currentUser.userGoal - sessionTime!;
         userRepository.updateUserDailyGoal(timeExceededGoal, currentUser.id);
       }
       //User Daily Goal Set and NOT Completed
       else if (isDailyGoalComplete['IsCompleted'] == false &&
-          isDailyGoalComplete['IsGoalSet'] == true) {
+          isDailyGoalComplete['IsGoalSet'] == true &&
+          isDailyGoalComplete['IsExcessGoalTime'] == false) {
         final goalTimeRemaining = currentUser.userGoal - sessionTime!;
         userRepository.updateUserDailyGoal(goalTimeRemaining, currentUser.id);
       }
       //User Daily Goal NOT Set and NOT Completed
       else if (isDailyGoalComplete['IsCompleted'] == false &&
-          isDailyGoalComplete['IsGoalSet'] == false) {
+          isDailyGoalComplete['IsGoalSet'] == false &&
+          isDailyGoalComplete['IsExcessGoalTime'] == false) {
         userRepository.updateUserDailyGoal(userGoal, currentUser.id);
       }
     }

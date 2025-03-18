@@ -13,18 +13,27 @@ Map<String, bool> checkDailyGoalComplete(int sessionTime, int currentUserGoal) {
     return {
       'IsCompleted': false,
       'IsGoalSet': false,
+      'IsExcessGoalTime': false,
     };
   }
 
-  if (sessionTime >= currentUserGoal) {
+  if (sessionTime > currentUserGoal) {
     return {
       'IsCompleted': true,
       'IsGoalSet': true,
+      'IsExcessGoalTime': true,
+    };
+  } else if (sessionTime == currentUserGoal) {
+    return {
+      'IsCompleted': true,
+      'IsGoalSet': true,
+      'IsExcessGoalTime': false,
     };
   } else {
     return {
       'IsCompleted': false,
       'IsGoalSet': true,
+      'IsExcessGoalTime': false,
     };
   }
 }
