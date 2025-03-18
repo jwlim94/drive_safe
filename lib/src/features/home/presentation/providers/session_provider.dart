@@ -1,4 +1,4 @@
-import 'package:drive_safe/src/features/home/domain/drive.dart';
+import 'package:drive_safe/src/features/home/domain/session.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'session_provider.g.dart';

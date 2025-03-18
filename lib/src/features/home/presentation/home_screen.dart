@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:drive_safe/src/features/home/domain/drive.dart';
+import 'package:drive_safe/src/features/home/domain/session.dart';
 import 'package:drive_safe/src/features/home/presentation/controllers/update_daily_goal_controller.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
