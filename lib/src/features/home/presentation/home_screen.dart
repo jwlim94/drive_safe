@@ -307,7 +307,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.watch(updateUserLastDriveStreakAtControllerProvider);
         ref.watch(updateUserDrivePointsControllerProvider);
 
-        // TODO: handle loading state
         if (currentUser == null) return Container();
 
         return Stack(
