@@ -323,7 +323,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Text(
                       state == 'Stopped'
                           ? 'Focus Goal: ${formatGoalTime(currentUser.userGoal)}'
-                          : 'Focus Goal: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
+                          : stopWatch.elapsed.inSeconds <
+                                  currentUser.userGoal * 60
+                              ? 'Focus Goal: ${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s'
+                              : 'Focus Goal: +${lastDrive.timeElapsed.inMinutes}m ${lastDrive.timeElapsed.inSeconds.remainder(60)}s',
                       textAlign: TextAlign.center,
                       style: TextStyles.h3,
                     ),
