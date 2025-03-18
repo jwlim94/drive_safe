@@ -1,7 +1,6 @@
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class ScaffoldWithNestedNavigation extends StatelessWidget {
@@ -26,20 +25,6 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 75,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        flexibleSpace: Align(
-          alignment: Alignment.topCenter,
-          child: SvgPicture.asset(
-            'assets/images/checkered_flag.svg',
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
       body: Center(
         child: navigationShell,
       ),

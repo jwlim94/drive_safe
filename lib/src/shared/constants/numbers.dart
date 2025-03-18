@@ -44,5 +44,5 @@ class Numbers {
     Numbers.userSecondaryWhite,
   ];
 
-  static const int pointsAwardIntervalMinutes = 2;
+  static const int pointsAwardIntervalMinutes = 5;
 }

@@ -14,7 +14,7 @@ class AppColors {
   static const customPink = Color(0xFFE85B81);
   static const customDarkPink = Color(0xFFC12F5D); // hover color
 
-  static const customLightPurple = Color(0xFFB5A1F1); // disabled color
+  static const customLightPurple = Color(0xFF9779F1); // disabled color
   static const customPurple = Color(0xFF5E48E8);
   static const customDarkPurple = Color(0xFF5028C6); // hover color
 

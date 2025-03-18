@@ -1,19 +1,26 @@
-class Drive {
+class Session {
   int points;
   Duration timeElapsed;
   bool getAchievement;
+  int userGoal;
 
-  Drive({
+  Session({
     required this.points,
     required this.timeElapsed,
     required this.getAchievement,
+    required this.userGoal,
   });
 
-  Drive copyWith({int? points, Duration? timeElapsed, bool? getAchievement}) {
-    return Drive(
+  Session copyWith(
+      {int? points,
+      Duration? timeElapsed,
+      int? userGoal,
+      bool? getAchievement}) {
+    return Session(
       points: points ?? this.points,
       timeElapsed: timeElapsed ?? this.timeElapsed,
       getAchievement: getAchievement ?? this.getAchievement,
+      userGoal: userGoal ?? this.userGoal,
     );
   }
 }

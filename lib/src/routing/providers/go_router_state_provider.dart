@@ -4,6 +4,7 @@ import 'package:drive_safe/src/features/authentication/presentation/sign_up_scre
 import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
+import 'package:drive_safe/src/features/home/presentation/goal_setting_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/home_screen.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:drive_safe/src/features/onboarding/presentation/onboarding_basic_info_screen.dart';
@@ -108,15 +109,6 @@ GoRouter goRouterState(Ref ref) {
           ),
         ],
       ),
-      GoRoute(
-        path: '/achievements',
-        name: AppRoute.achievements.name,
-        pageBuilder: (context, state) {
-          return const NoTransitionPage(
-            child: AchievementScreen(),
-          );
-        },
-      ),
       StatefulShellRoute.indexedStack(
         parentNavigatorKey: Keys.rootNavigatorKey,
         pageBuilder: (context, state, navigationShell) => NoTransitionPage(
@@ -136,6 +128,26 @@ GoRouter goRouterState(Ref ref) {
                     child: HomeScreen(),
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'achievements',
+                    name: AppRoute.achievements.name,
+                    pageBuilder: (context, state) {
+                      return const NoTransitionPage(
+                        child: AchievementScreen(),
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'setGoal',
+                    name: AppRoute.setGoal.name,
+                    pageBuilder: (context, state) {
+                      return const NoTransitionPage(
+                        child: GoalSetScreen(),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

@@ -38,6 +38,7 @@ class UsersRepository {
       isGuest: authType == AuthType.guest ? true : false,
       drivePoints: 0,
       driveStreak: 0,
+      userGoal: 0,
     );
 
     await _userDocumentRef(userId).set(user);
@@ -181,6 +182,12 @@ class UsersRepository {
 
     // delete user from Firebase Authentication
     _ref.read(authRepositoryProvider).deleteUser();
+  }
+
+  Future<void> updateUserDailyGoal(int dailyGoalTime, String userId) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    await usersRef.update({'userGoal': dailyGoalTime});
   }
 
   DocumentReference<User> _userDocumentRef(String userId) {
