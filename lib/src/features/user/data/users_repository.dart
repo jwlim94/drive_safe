@@ -184,15 +184,10 @@ class UsersRepository {
     _ref.read(authRepositoryProvider).deleteUser();
   }
 
-  Future<void> updateUserDailyGoal(
-      int dailyGoal, String userId, String? action) async {
+  Future<void> updateUserDailyGoal(int dailyGoalTime, String userId) async {
     final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
 
-    if (action == 'Set') {
-      await usersRef.update({'userGoal': dailyGoal});
-    } else {
-      await usersRef.update({'userGoal': 0});
-    }
+    await usersRef.update({'userGoal': dailyGoalTime});
   }
 
   DocumentReference<User> _userDocumentRef(String userId) {

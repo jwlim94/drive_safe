@@ -1,10 +1,12 @@
 import 'package:drive_safe/src/features/home/presentation/controllers/update_daily_goal_controller.dart';
+import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/checkered_flag.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class GoalSetScreen extends ConsumerStatefulWidget {
   const GoalSetScreen({super.key});
@@ -19,8 +21,64 @@ class _GoalSetScreenState extends ConsumerState<GoalSetScreen> {
     super.initState();
   }
 
-  void setDailyGoal(int dailyGoal) {
-    ref.read(updateDailyGoalControllerProvider(dailyGoal));
+  void setDailyGoal(int dailyGoal) async {
+    bool? userConfirmedGoalDecision = await _confirmGoal(context);
+
+    if (userConfirmedGoalDecision == false ||
+        userConfirmedGoalDecision == null) {
+      return;
+    }
+
+    //TODO update state of the session goal
+
+    ref.read(updateDailyGoalControllerProvider(dailyGoal * 60, 0));
+    ref.read(sessionNotifierProvider.notifier).addNewUserGoal(dailyGoal);
+    if (mounted) {
+      context.go('/home');
+    }
+  }
+
+  Future<bool?> _confirmGoal(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible:
+          false, // Prevents user from tapping outside to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Confirm Goal"),
+              IconButton(
+                icon:
+                    const Icon(Icons.close, color: AppColors.customDarkPurple),
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Close dialog
+                },
+              ),
+            ],
+          ),
+          content: const Text(
+              "Once you set a goal, it is locked in for 24 hours. Proceed?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Close dialog
+              },
+              child: const Text("No"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Close dialog
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

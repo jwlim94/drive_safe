@@ -1,4 +1,4 @@
-import 'package:drive_safe/src/features/home/presentation/providers/last_drive_provider.dart';
+import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_points_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
@@ -63,7 +63,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(lastDriveNotifierProvider);
+    ref.watch(sessionNotifierProvider);
     ref.watch(updateUserDriveStreakControllerProvider);
     ref.watch(updateUserLastDriveStreakAtControllerProvider);
     ref.watch(updateUserDrivePointsControllerProvider);
