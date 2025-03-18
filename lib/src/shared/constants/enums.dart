@@ -21,6 +21,7 @@ enum AppRoute {
   minigame,
   achievements,
   settings,
+  setGoal,
 }
 
 enum AuthType {

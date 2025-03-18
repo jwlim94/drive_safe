@@ -18,6 +18,7 @@ class User {
     required this.isGuest,
     required this.drivePoints,
     required this.driveStreak,
+    required this.userGoal,
     this.lastDriveStreakAt,
   });
 
@@ -34,6 +35,7 @@ class User {
   final bool isGuest;
   final int drivePoints;
   final int driveStreak;
+  final int userGoal;
   int? lastDriveStreakAt;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -56,6 +58,7 @@ class User {
       drivePoints: map['drivePoints'] as int,
       driveStreak: map['driveStreak'] as int,
       lastDriveStreakAt: map['lastDriveStreakAt'],
+      userGoal: map['userGoal'] as int,
     );
   }
 
@@ -75,6 +78,7 @@ class User {
       'isGuest': isGuest,
       'drivePoints': drivePoints,
       'driveStreak': driveStreak,
+      'userGoal': userGoal,
     };
 
     // Optional fields should be added here
