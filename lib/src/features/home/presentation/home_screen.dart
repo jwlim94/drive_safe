@@ -64,43 +64,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  void updateDriveStreak() {
-    final currentUser = ref.read(currentUserStateProvider);
-    if (currentUser == null) return;
+  // void updateDriveStreak() async {
+  //   final currentUser = ref.read(currentUserStateProvider);
+  //   if (currentUser == null) return;
 
-    final lastDriveStreakAt = currentUser.lastDriveStreakAt;
+  //   final lastDriveStreakAt = currentUser.lastDriveStreakAt;
 
-    // First time streak tracking.
-    if (lastDriveStreakAt == null) {
-      ref
-          .read(updateUserDriveStreakControllerProvider.notifier)
-          .updateUserDriveStreak();
-      ref
-          .read(updateUserLastDriveStreakAtControllerProvider.notifier)
-          .updateUserLastDriveStreakAt();
-    }
+  //   // First time streak tracking.
+  //   if (lastDriveStreakAt == null) {
+  //     await ref
+  //         .read(updateUserDriveStreakControllerProvider.notifier)
+  //         .updateUserDriveStreak();
+  //     await ref
+  //         .read(updateUserLastDriveStreakAtControllerProvider.notifier)
+  //         .updateUserLastDriveStreakAt();
+  //   }
 
-    final currentDate = DateTime.now();
-    final currentTimestamp =
-        DateTime(currentDate.year, currentDate.month, currentDate.day)
-            .millisecondsSinceEpoch;
+  //   final currentDate = DateTime.now();
+  //   final currentTimestamp =
+  //       DateTime(currentDate.year, currentDate.month, currentDate.day)
+  //           .millisecondsSinceEpoch;
 
-    final lastStreakDate =
-        DateTime.fromMillisecondsSinceEpoch(lastDriveStreakAt!);
-    final lastTimestamp =
-        DateTime(lastStreakDate.year, lastStreakDate.month, lastStreakDate.day)
-            .millisecondsSinceEpoch;
+  //   if (lastDriveStreakAt != null) {
+  //     final lastStreakDate =
+  //         DateTime.fromMillisecondsSinceEpoch(lastDriveStreakAt);
+  //     final lastTimestamp = DateTime(
+  //             lastStreakDate.year, lastStreakDate.month, lastStreakDate.day)
+  //         .millisecondsSinceEpoch;
 
-    if (currentTimestamp == lastTimestamp) return;
-
-    // Update when it is not on the same day.
-    ref
-        .read(updateUserDriveStreakControllerProvider.notifier)
-        .updateUserDriveStreak();
-    ref
-        .read(updateUserLastDriveStreakAtControllerProvider.notifier)
-        .updateUserLastDriveStreakAt();
-  }
+  //     if (currentTimestamp == lastTimestamp) return;
+  //   }
+  //   // Update when it is not on the same day.
+  //   ref
+  //       .read(updateUserDriveStreakControllerProvider.notifier)
+  //       .updateUserDriveStreak();
+  //   ref
+  //       .read(updateUserLastDriveStreakAtControllerProvider.notifier)
+  //       .updateUserLastDriveStreakAt();
+  // }
 
   void updateDrivePoints() {
     final currentUser = ref.read(currentUserStateProvider);
@@ -125,7 +126,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 points: 0,
                 timeElapsed: Duration.zero,
                 getAchievement: true,
-                userGoal: currentUser.userGoal),
+                userGoal: currentUser.userGoal,
+                goalCompleteByTime: currentUser.goalCompleteByTime),
           );
 
       setState(() {
@@ -179,7 +181,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopWatch.reset();
 
       // Update drive streak and last drive streak date
-      updateDriveStreak();
+      //updateDriveStreak();
 
       // Update drive points
       updateDrivePoints();
