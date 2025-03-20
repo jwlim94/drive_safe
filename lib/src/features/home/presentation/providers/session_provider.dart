@@ -12,7 +12,8 @@ class SessionNotifier extends _$SessionNotifier {
         points: 0,
         userGoal: 0,
         timeElapsed: const Duration(minutes: 0, seconds: 0),
-        getAchievement: false);
+        getAchievement: false,
+        goalCompleteByTime: 0);
   }
 
   //methods to alter states
@@ -26,6 +27,7 @@ class SessionNotifier extends _$SessionNotifier {
       userGoal: newUserGoal,
       timeElapsed: state.timeElapsed,
       getAchievement: state.getAchievement,
+      goalCompleteByTime: state.goalCompleteByTime,
     );
   }
 }

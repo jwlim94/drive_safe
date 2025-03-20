@@ -17,4 +17,12 @@ class CurrentUserState extends _$CurrentUserState {
   void clearUser() {
     state = null;
   }
+
+  void updateUserGoal(int dailyGoal) {
+    state?.userGoal = dailyGoal;
+  }
+
+  void updateUserGoalByTime(int goalByTime) {
+    state?.goalCompleteByTime = goalByTime;
+  }
 }

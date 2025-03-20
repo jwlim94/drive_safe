@@ -130,7 +130,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
-                        'You have completed ${currentUser.driveStreak.toString()} sessions in a row! \n Let\'s see what that does for your progress!',
+                        'You have completed ${currentUser.driveStreak.toString()} daily goals in a row! \n Let\'s see what that does for your progress!',
                         style: TextStyles.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
