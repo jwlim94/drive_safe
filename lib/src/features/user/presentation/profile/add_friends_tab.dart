@@ -67,14 +67,18 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
           .read(updateUserFriendsControllerProvider.notifier)
           .updateUserFriends(friendId, 'add');
 
+      if (!mounted) return;
       _showSuccessDialog("Friend Added Successfully.");
       _resetSearch();
     } catch (error) {
+      if (!mounted) return;
       _showErrorDialog("Failed to add friend: $error");
     } finally {
-      setState(() {
-        _isAddingFriend = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isAddingFriend = false;
+        });
+      }
     }
   }
 
