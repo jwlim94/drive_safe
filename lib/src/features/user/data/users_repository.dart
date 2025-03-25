@@ -38,7 +38,7 @@ class UsersRepository {
       isGuest: authType == AuthType.guest ? true : false,
       drivePoints: 0,
       driveStreak: 0,
-      enduranceMinutes: 0, // ✅ 여기 추가!!
+      enduranceSeconds: 0, // ✅ 여기 추가!!
       userGoal: 0,
       goalCompleteByTime: 0,
     );
@@ -161,10 +161,10 @@ class UsersRepository {
   }
 
   Future<User> updateUserEnduranceMinutes(
-      String userId, int enduranceMinutes) async {
+      String userId, int enduranceSeconds) async {
     final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
 
-    await usersRef.update({'enduranceMinutes': enduranceMinutes});
+    await usersRef.update({'enduranceSeconds': enduranceSeconds});
 
     final updatedSnapshot = await usersRef.get();
     if (!updatedSnapshot.exists) throw Exception('User not found');

@@ -39,7 +39,7 @@ class CurrentUserState extends _$CurrentUserState {
 
     for (final threshold in [30, 60, 90, 120, 150, 180]) {
       final key = 'endurance_$threshold';
-      if (latestUser.enduranceMinutes >= threshold &&
+      if (latestUser.enduranceSeconds >= threshold * 60 &&
           !updatedBadges.contains(key)) {
         updatedBadges.add(key);
       }

@@ -18,7 +18,7 @@ class User {
     required this.isGuest,
     required this.drivePoints,
     required this.driveStreak,
-    required this.enduranceMinutes,
+    required this.enduranceSeconds,
     required this.goalCompleteByTime,
     this.lastDriveStreakAt,
     required this.userGoal,
@@ -42,7 +42,7 @@ class User {
   int goalCompleteByTime;
   int userGoal;
   int? lastDriveStreakAt;
-  final int enduranceMinutes;
+  final int enduranceSeconds;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -63,7 +63,7 @@ class User {
       isGuest: map['isGuest'] ?? false,
       drivePoints: map['drivePoints'] ?? 0,
       driveStreak: map['driveStreak'] ?? 0,
-      enduranceMinutes: map['enduranceMinutes'] ?? 0,
+      enduranceSeconds: map['enduranceSeconds'] ?? 0,
       lastDriveStreakAt: map['lastDriveStreakAt'],
       badges: List<String>.from(map['badges'] ?? []),
       userGoal: map['userGoal'] as int,
@@ -86,7 +86,7 @@ class User {
       'isGuest': isGuest,
       'drivePoints': drivePoints,
       'driveStreak': driveStreak,
-      'enduranceMinutes': enduranceMinutes,
+      'enduranceSeconds': enduranceSeconds,
       'lastDriveStreakAt': lastDriveStreakAt,
       'badges': badges,
       'userGoal': userGoal,
@@ -97,7 +97,7 @@ class User {
   /// ✅ copyWith
   User copyWith({
     List<String>? badges,
-    int? enduranceMinutes,
+    int? enduranceSeconds,
     int? driveStreak,
   }) {
     return User(
@@ -114,7 +114,7 @@ class User {
       isGuest: isGuest,
       drivePoints: drivePoints,
       driveStreak: driveStreak ?? this.driveStreak,
-      enduranceMinutes: enduranceMinutes ?? this.enduranceMinutes,
+      enduranceSeconds: enduranceSeconds ?? this.enduranceSeconds,
       lastDriveStreakAt: lastDriveStreakAt,
       userGoal: userGoal,
       badges: badges ?? this.badges,

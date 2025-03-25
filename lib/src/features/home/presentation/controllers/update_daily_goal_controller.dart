@@ -9,6 +9,7 @@ part 'update_daily_goal_controller.g.dart';
 class UpdateDailyGoalController extends _$UpdateDailyGoalController {
   @override
   Future<void> build(int userGoal, int? sessionTime) async {
+    ref.watch(currentUserStateProvider);
     final currentUser = ref.read(currentUserStateProvider);
     final userRepository = ref.read(usersRepositoryProvider);
     final nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
@@ -39,6 +40,7 @@ class UpdateDailyGoalController extends _$UpdateDailyGoalController {
         if (!userMetGoalInTime(currentUser.goalCompleteByTime, nowTimeStamp)) {
           await userRepository.resetGoalCompleteTime(currentUser.id);
           await userRepository.updateUserDailyGoal(0, currentUser.id);
+          await userRepository.updateUserEnduranceMinutes(currentUser.id, 0);
           ref.read(currentUserStateProvider.notifier).updateUserGoalByTime(0);
           ref.read(currentUserStateProvider.notifier).updateUserGoal(0);
         } else {
@@ -58,6 +60,7 @@ class UpdateDailyGoalController extends _$UpdateDailyGoalController {
         if (!userMetGoalInTime(currentUser.goalCompleteByTime, nowTimeStamp)) {
           await userRepository.resetGoalCompleteTime(currentUser.id);
           await userRepository.updateUserDailyGoal(0, currentUser.id);
+          await userRepository.updateUserEnduranceMinutes(currentUser.id, 0);
           ref.read(currentUserStateProvider.notifier).updateUserGoalByTime(0);
           ref.read(currentUserStateProvider.notifier).updateUserGoal(0);
         } else {
@@ -74,6 +77,7 @@ class UpdateDailyGoalController extends _$UpdateDailyGoalController {
         if (!userMetGoalInTime(currentUser.goalCompleteByTime, nowTimeStamp)) {
           await userRepository.updateUserDailyGoal(0, currentUser.id);
           await userRepository.updateUserDriveStreak(currentUser.id, 0);
+          await userRepository.updateUserEnduranceMinutes(currentUser.id, 0);
           ref.read(currentUserStateProvider.notifier).updateUserGoalByTime(0);
           ref.read(currentUserStateProvider.notifier).updateUserGoal(0);
         } else {
@@ -88,6 +92,7 @@ class UpdateDailyGoalController extends _$UpdateDailyGoalController {
           isDailyGoalComplete['IsExcessGoalTime'] == false) {
         await userRepository.updateGoalCompleteTime(
             currentUser.id, oneDayFromNow);
+        await userRepository.updateUserEnduranceMinutes(currentUser.id, 0);
         ref
             .read(currentUserStateProvider.notifier)
             .updateUserGoalByTime(oneDayFromNow);
