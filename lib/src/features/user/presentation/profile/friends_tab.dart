@@ -25,7 +25,7 @@ class FriendsTab extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 🔥 기존 아이콘 + UI 유지
+        // 🔥 Keep existing icons and UI
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -74,7 +74,7 @@ class FriendsTab extends ConsumerWidget {
         ),
         const Divider(color: Colors.white, thickness: 1.5, height: 20),
 
-        // 🔥 Firestore에서 friends 배열 기반으로 친구 정보 가져오기 (UI 변경 없음)
+        // 🔥 Fetch and display friends based on the friends array in Firestore
         Expanded(
           child: StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance
@@ -158,11 +158,8 @@ class FriendsTab extends ConsumerWidget {
                           icon: const Icon(Icons.remove_circle,
                               color: Colors.red),
                           onPressed: () {
-                            ref
-                                .read(updateUserFriendsControllerProvider
-                                    .notifier)
-                                .updateUserFriends(
-                                    friend['id'], 'remove'); // ✅ 오류 수정
+                            _showConfirmDeleteDialog(
+                                context, ref, currentUser.id, friend['id']);
                           },
                         ),
                       );
@@ -174,6 +171,84 @@ class FriendsTab extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// 🔥 Show confirmation dialog before deleting a friend
+  void _showConfirmDeleteDialog(BuildContext context, WidgetRef ref,
+      String currentUserId, String friendId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title:
+            const Text("Are you sure?", style: TextStyle(color: Colors.white)),
+        content: const Text("Do you really want to delete this friend?",
+            style: TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // ❌ Cancel button
+            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close confirmation dialog
+              _removeFriend(context, ref, currentUserId,
+                  friendId); // ✅ Proceed with deletion
+            },
+            child: const Text("Yes", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🔥 Delete friend and show "Successfully Deleted!" popup
+  void _removeFriend(BuildContext context, WidgetRef ref, String currentUserId,
+      String friendId) {
+    ref
+        .read(updateUserFriendsControllerProvider.notifier)
+        .updateUserFriends(friendId, 'remove')
+        .then((_) {
+      _showSuccessDialog(context, "Successfully Deleted!");
+    }).catchError((error) {
+      _showErrorDialog(context, "Failed to delete friend: $error");
+    });
+  }
+
+  /// ✅ Success message popup
+  void _showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: const Text("Success!", style: TextStyle(color: Colors.white)),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK", style: TextStyle(color: Colors.blue)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// ❌ Error message popup
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: const Text("Error!", style: TextStyle(color: Colors.white)),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
   }
 }

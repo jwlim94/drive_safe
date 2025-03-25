@@ -17,11 +17,12 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
   final TextEditingController _friendCodeController = TextEditingController();
   Map<String, dynamic>? _searchedFriend;
   bool _isLoading = false;
+  bool _isAddingFriend = false; // ✅ Prevents multiple submissions
 
-  /// Firestore에서 친구 검색
+  /// Search for a friend in Firestore
   void _findFriend() async {
     String enteredCode =
-        _friendCodeController.text.trim().toUpperCase(); // 🔥 대문자로 변환
+        _friendCodeController.text.trim().toUpperCase(); // 🔥 Ensure uppercase
 
     if (enteredCode.isEmpty) return;
 
@@ -41,24 +42,10 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
           _searchedFriend = querySnapshot.docs.first.data();
         });
       } else {
-        setState(() {
-          _searchedFriend = null;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No friend found with this code."),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showErrorDialog("No friend found with this code.");
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error: ${e.toString()}"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showErrorDialog("Error: ${e.toString()}");
     } finally {
       setState(() {
         _isLoading = false;
@@ -66,24 +53,36 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
     }
   }
 
-  /// 친구 추가
-  void _addFriend() {
-    if (_searchedFriend != null) {
-      final friendId = _searchedFriend!['id'];
+  /// Add friend with proper state handling
+  void _addFriend() async {
+    if (_searchedFriend == null || _isAddingFriend) return;
+    setState(() {
+      _isAddingFriend = true;
+    });
 
-      ref
+    final friendId = _searchedFriend!['id'];
+
+    try {
+      await ref
           .read(updateUserFriendsControllerProvider.notifier)
-          .updateUserFriends(friendId, 'add')
-          .then((_) {
-        _showSuccessDialog("Friend Added Successfully.");
-        _resetSearch();
-      }).catchError((error) {
-        _showErrorDialog("Failed to add friend: $error");
-      });
+          .updateUserFriends(friendId, 'add');
+
+      if (!mounted) return;
+      _showSuccessDialog("Friend Added Successfully.");
+      _resetSearch();
+    } catch (error) {
+      if (!mounted) return;
+      _showErrorDialog("Failed to add friend: $error");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAddingFriend = false;
+        });
+      }
     }
   }
 
-  /// 성공 메시지 표시
+  /// Show success dialog
   void _showSuccessDialog(String message) {
     if (!mounted) return;
     showDialog(
@@ -102,7 +101,7 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
     );
   }
 
-  /// 오류 메시지 표시
+  /// Show error dialog
   void _showErrorDialog(String message) {
     if (!mounted) return;
     showDialog(
@@ -121,7 +120,7 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
     );
   }
 
-  /// 검색 상태 초기화
+  /// Reset search state
   void _resetSearch() {
     setState(() {
       _searchedFriend = null;
@@ -150,8 +149,6 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
           children: [
             const Text("Enter your friend's code", style: TextStyles.h3),
             const SizedBox(height: 20),
-
-            // 🔥 입력 값이 자동으로 대문자로 변환됨
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
@@ -176,17 +173,15 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: CustomButton(
                 text: _isLoading ? "Searching..." : "Find Friend",
-                onPressed: () => _findFriend(),
+                onPressed: _isLoading ? null : _findFriend,
                 backgroundColor: AppColors.customPink,
               ),
             ),
-
             if (_searchedFriend != null) ...[
               const SizedBox(height: 20),
               ListTile(
@@ -206,9 +201,11 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.customPink,
                   ),
-                  onPressed: () => _addFriend(),
-                  child:
-                      const Text("Add", style: TextStyle(color: Colors.white)),
+                  onPressed: _isAddingFriend ? null : _addFriend,
+                  child: _isAddingFriend
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Add",
+                          style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],

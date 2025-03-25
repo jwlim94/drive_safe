@@ -38,6 +38,7 @@ class UsersRepository {
       isGuest: authType == AuthType.guest ? true : false,
       drivePoints: 0,
       driveStreak: 0,
+      enduranceMinutes: 0, // ✅ 여기 추가!!
       userGoal: 0,
       goalCompleteByTime: 0,
     );
@@ -153,6 +154,28 @@ class UsersRepository {
     await usersRef.update({'isGuest': isGuest});
 
     // Fetch the udpated user document
+    final updatedSnapshot = await usersRef.get();
+    if (!updatedSnapshot.exists) throw Exception('User not found');
+
+    return User.fromMap(updatedSnapshot.data()!);
+  }
+
+  Future<User> updateUserEnduranceMinutes(
+      String userId, int enduranceMinutes) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    await usersRef.update({'enduranceMinutes': enduranceMinutes});
+
+    final updatedSnapshot = await usersRef.get();
+    if (!updatedSnapshot.exists) throw Exception('User not found');
+
+    return User.fromMap(updatedSnapshot.data()!);
+  }
+
+  Future<User> updateUserBadges(String userId, List<String> badges) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+    await usersRef.update({'badges': badges});
+
     final updatedSnapshot = await usersRef.get();
     if (!updatedSnapshot.exists) throw Exception('User not found');
 

@@ -58,3 +58,5 @@ flutter:
   assets:
     - assets/images/
     - assets/tiles/
+    - assets/images/badges/hotstreak/
+    - assets/images/badges/endurance/
