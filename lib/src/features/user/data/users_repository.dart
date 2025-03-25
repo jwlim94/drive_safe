@@ -39,6 +39,8 @@ class UsersRepository {
       drivePoints: 0,
       driveStreak: 0,
       enduranceMinutes: 0, // ✅ 여기 추가!!
+      userGoal: 0,
+      goalCompleteByTime: 0,
     );
 
     await _userDocumentRef(userId).set(user);
@@ -204,6 +206,25 @@ class UsersRepository {
 
     // delete user from Firebase Authentication
     _ref.read(authRepositoryProvider).deleteUser();
+  }
+
+  Future<void> updateUserDailyGoal(int dailyGoalTime, String userId) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    await usersRef.update({'userGoal': dailyGoalTime});
+  }
+
+  Future<void> updateGoalCompleteTime(String userId, int oneDayFromNow) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    await usersRef.update({'goalCompleteByTime': oneDayFromNow});
+  }
+
+  Future<void> resetGoalCompleteTime(String userId) async {
+    const int resetGoalCompleteTime = 0;
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    await usersRef.update({'goalCompleteByTime': resetGoalCompleteTime});
   }
 
   DocumentReference<User> _userDocumentRef(String userId) {

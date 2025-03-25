@@ -71,6 +71,13 @@ class TextStyles {
     letterSpacing: 0,
   );
 
+  static const semiFinePrint = TextStyle(
+    fontSize: 11,
+    color: AppColors.customWhite,
+    fontWeight: FontWeight.w100,
+    letterSpacing: 0,
+  );
+
   static const xlText = TextStyle(
     fontSize: 80,
     color: AppColors.customWhite,

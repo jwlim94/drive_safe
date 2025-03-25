@@ -4,23 +4,6 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  final String id;
-  final String name;
-  final int age;
-  final String carId;
-  final String email;
-  final int primaryColor;
-  final int secondaryColor;
-  final String code;
-  final String leagueId;
-  final List<String> friends;
-  final bool isGuest;
-  final int drivePoints;
-  final int driveStreak;
-  final int enduranceMinutes;
-  final int? lastDriveStreakAt;
-  final int? userGoal;
-  final List<String>? badges; // ✅ 이건 필드 선언 위치가 맞음
 
   User({
     required this.id,
@@ -37,10 +20,34 @@ class User {
     required this.drivePoints,
     required this.driveStreak,
     required this.enduranceMinutes,
+    required this.userGoal,
+    required this.goalCompleteByTime,
     this.lastDriveStreakAt,
     this.userGoal,
     this.badges, // ✅ 생성자 안에 들어가야 함!
   });
+
+  final String id;
+  final String name;
+  final int age;
+  final String carId;
+  final String email;
+  final int primaryColor;
+  final int secondaryColor;
+  final String code;
+  final String leagueId;
+  final List friends;
+  final bool isGuest;
+  final int drivePoints;
+  final int driveStreak;
+  final List<String>? badges; // ✅ 이건 필드 선언 위치가 맞음
+  int goalCompleteByTime;
+  int userGoal;
+  int? lastDriveStreakAt;
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
@@ -59,8 +66,9 @@ class User {
       driveStreak: map['driveStreak'] ?? 0,
       enduranceMinutes: map['enduranceMinutes'] ?? 0,
       lastDriveStreakAt: map['lastDriveStreakAt'],
-      userGoal: map['userGoal'],
       badges: List<String>.from(map['badges'] ?? []),
+      userGoal: map['userGoal'] as int,
+      goalCompleteByTime: map['goalCompleteByTime'] as int,
     );
   }
 
@@ -81,8 +89,9 @@ class User {
       'driveStreak': driveStreak,
       'enduranceMinutes': enduranceMinutes,
       'lastDriveStreakAt': lastDriveStreakAt,
-      'userGoal': userGoal,
       'badges': badges,
+      'userGoal': userGoal,
+      'goalCompleteByTime': goalCompleteByTime,
     };
   }
 
