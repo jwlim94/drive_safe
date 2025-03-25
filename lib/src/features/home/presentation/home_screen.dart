@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:drive_safe/src/features/home/application/daily_goal_service.dart';
 import 'package:drive_safe/src/features/home/domain/session.dart';
 import 'package:drive_safe/src/features/home/presentation/controllers/update_daily_goal_controller.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
@@ -43,6 +44,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
 
+    final currentUser = ref.read(currentUserStateProvider);
+
+    // If the user needs to set a new goal, then make them do so...
+    if (currentUser != null) {
+      final nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
+      if (!userMetGoalInTime(currentUser.goalCompleteByTime, nowTimeStamp)) {
+        ref.read(currentUserStateProvider.notifier).updateUserGoalByTime(0);
+        ref.read(currentUserStateProvider.notifier).updateUserGoal(0);
+      }
+    }
+
     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       setState(() {
         if (stopWatch.isRunning) {
@@ -62,44 +74,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       timer.cancel();
       super.dispose();
     }
-  }
-
-  void updateDriveStreak() {
-    final currentUser = ref.read(currentUserStateProvider);
-    if (currentUser == null) return;
-
-    final lastDriveStreakAt = currentUser.lastDriveStreakAt;
-
-    // First time streak tracking.
-    if (lastDriveStreakAt == null) {
-      ref
-          .read(updateUserDriveStreakControllerProvider.notifier)
-          .updateUserDriveStreak();
-      ref
-          .read(updateUserLastDriveStreakAtControllerProvider.notifier)
-          .updateUserLastDriveStreakAt();
-    }
-
-    final currentDate = DateTime.now();
-    final currentTimestamp =
-        DateTime(currentDate.year, currentDate.month, currentDate.day)
-            .millisecondsSinceEpoch;
-
-    final lastStreakDate =
-        DateTime.fromMillisecondsSinceEpoch(lastDriveStreakAt!);
-    final lastTimestamp =
-        DateTime(lastStreakDate.year, lastStreakDate.month, lastStreakDate.day)
-            .millisecondsSinceEpoch;
-
-    if (currentTimestamp == lastTimestamp) return;
-
-    // Update when it is not on the same day.
-    ref
-        .read(updateUserDriveStreakControllerProvider.notifier)
-        .updateUserDriveStreak();
-    ref
-        .read(updateUserLastDriveStreakAtControllerProvider.notifier)
-        .updateUserLastDriveStreakAt();
   }
 
   void updateDrivePoints() {
@@ -125,7 +99,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 points: 0,
                 timeElapsed: Duration.zero,
                 getAchievement: true,
-                userGoal: currentUser.userGoal),
+                userGoal: currentUser.userGoal,
+                goalCompleteByTime: currentUser.goalCompleteByTime),
           );
 
       setState(() {
@@ -177,9 +152,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             currentUser.userGoal, stopWatch.elapsed.inSeconds));
       }
       stopWatch.reset();
-
-      // Update drive streak and last drive streak date
-      updateDriveStreak();
 
       // Update drive points
       updateDrivePoints();

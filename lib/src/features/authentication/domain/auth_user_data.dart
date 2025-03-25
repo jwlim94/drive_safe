@@ -14,6 +14,7 @@ class AuthUserData {
     this.leagueId,
     this.friends,
     this.userGoal,
+    this.goalCompleteByTime,
   });
 
   final String? id;
@@ -25,6 +26,7 @@ class AuthUserData {
   final String? leagueId;
   final List? friends;
   final int? userGoal;
+  final int? goalCompleteByTime;
 
   factory AuthUserData.fromJson(Map<String, dynamic> json) =>
       _$AuthUserDataFromJson(json);

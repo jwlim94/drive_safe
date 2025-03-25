@@ -1,5 +1,6 @@
 import 'package:drive_safe/src/features/home/presentation/controllers/update_daily_goal_controller.dart';
 import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/checkered_flag.dart';
@@ -29,12 +30,14 @@ class _GoalSetScreenState extends ConsumerState<GoalSetScreen> {
       return;
     }
 
-    //TODO update state of the session goal so it reflects in the home page upon returning...
     ref.read(updateDailyGoalControllerProvider(dailyGoal * 60, 0));
-    ref.read(sessionNotifierProvider.notifier).addNewUserGoal(dailyGoal);
-    if (mounted) {
-      context.go('/home');
-    }
+    ref.read(sessionNotifierProvider.notifier).addNewUserGoal(dailyGoal * 60);
+    ref.read(currentUserStateProvider.notifier).updateUserGoal(dailyGoal * 60);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        context.go('/home');
+      }
+    });
   }
 
   Future<bool?> _confirmGoal(BuildContext context) async {
@@ -83,6 +86,7 @@ class _GoalSetScreenState extends ConsumerState<GoalSetScreen> {
   @override
   Widget build(BuildContext context) {
     ref.watch(sessionNotifierProvider);
+    ref.watch(currentUserStateProvider);
 
     return Stack(
       children: [
