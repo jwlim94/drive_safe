@@ -18,7 +18,9 @@ class User {
     required this.isGuest,
     required this.drivePoints,
     required this.driveStreak,
+    required this.enduranceMinutes, // ✅ NEW FIELD
     this.lastDriveStreakAt,
+    this.userGoal,
   });
 
   final String id;
@@ -30,38 +32,37 @@ class User {
   final int secondaryColor;
   final String code;
   final String leagueId;
-  final List friends;
+  final List<String> friends;
   final bool isGuest;
   final int drivePoints;
   final int driveStreak;
-  int? lastDriveStreakAt;
-
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  final int enduranceMinutes; // ✅ NEW FIELD
+  final int? lastDriveStreakAt;
+  final int? userGoal;
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      age: map['age'] as int,
-      carId: map['carId'] as String,
-      email: map['email'] as String,
-      primaryColor: map['primaryColor'] as int,
-      secondaryColor: map['secondaryColor'] as int,
-      code: map['code'] as String,
-      leagueId: map['leagueId'] as String,
-      friends: map['friends'] as List,
-      isGuest: map['isGuest'] as bool,
-      drivePoints: map['drivePoints'] as int,
-      driveStreak: map['driveStreak'] as int,
+      id: map['id'],
+      name: map['name'],
+      age: map['age'],
+      carId: map['carId'],
+      email: map['email'],
+      primaryColor: map['primaryColor'],
+      secondaryColor: map['secondaryColor'],
+      code: map['code'],
+      leagueId: map['leagueId'],
+      friends: List<String>.from(map['friends'] ?? []),
+      isGuest: map['isGuest'] ?? false,
+      drivePoints: map['drivePoints'] ?? 0,
+      driveStreak: map['driveStreak'] ?? 0,
+      enduranceMinutes: map['enduranceMinutes'] ?? 0, // ✅ NEW FIELD
       lastDriveStreakAt: map['lastDriveStreakAt'],
+      userGoal: map['userGoal'],
     );
   }
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> data = {
-      // Required fields
+    return {
       'id': id,
       'name': name,
       'age': age,
@@ -75,13 +76,9 @@ class User {
       'isGuest': isGuest,
       'drivePoints': drivePoints,
       'driveStreak': driveStreak,
+      'enduranceMinutes': enduranceMinutes, // ✅ NEW FIELD
+      'lastDriveStreakAt': lastDriveStreakAt,
+      'userGoal': userGoal,
     };
-
-    // Optional fields should be added here
-    if (lastDriveStreakAt != null) {
-      data['lastDriveStreakAt'] = lastDriveStreakAt;
-    }
-
-    return data;
   }
 }
