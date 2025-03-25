@@ -50,6 +50,8 @@ class CurrentUserState extends _$CurrentUserState {
     }
 
     state = latestUser.copyWith(badges: updatedBadges);
+  }
+
   void updateUserGoal(int dailyGoal) {
     state?.userGoal = dailyGoal;
   }

@@ -4,7 +4,6 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-
   User({
     required this.id,
     required this.name,
@@ -20,10 +19,9 @@ class User {
     required this.drivePoints,
     required this.driveStreak,
     required this.enduranceMinutes,
-    required this.userGoal,
     required this.goalCompleteByTime,
     this.lastDriveStreakAt,
-    this.userGoal,
+    required this.userGoal,
     this.badges, // ✅ 생성자 안에 들어가야 함!
   });
 
@@ -44,6 +42,7 @@ class User {
   int goalCompleteByTime;
   int userGoal;
   int? lastDriveStreakAt;
+  final int enduranceMinutes;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -119,6 +118,7 @@ class User {
       lastDriveStreakAt: lastDriveStreakAt,
       userGoal: userGoal,
       badges: badges ?? this.badges,
+      goalCompleteByTime: this.goalCompleteByTime,
     );
   }
 }
