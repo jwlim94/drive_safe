@@ -170,6 +170,16 @@ class UsersRepository {
     return User.fromMap(updatedSnapshot.data()!);
   }
 
+  Future<User> updateUserBadges(String userId, List<String> badges) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+    await usersRef.update({'badges': badges});
+
+    final updatedSnapshot = await usersRef.get();
+    if (!updatedSnapshot.exists) throw Exception('User not found');
+
+    return User.fromMap(updatedSnapshot.data()!);
+  }
+
   Future<void> deleteUser(String userId) async {
     // start batch
     final batch = _firestore.batch();

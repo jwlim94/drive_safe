@@ -4,6 +4,24 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
+  final String id;
+  final String name;
+  final int age;
+  final String carId;
+  final String email;
+  final int primaryColor;
+  final int secondaryColor;
+  final String code;
+  final String leagueId;
+  final List<String> friends;
+  final bool isGuest;
+  final int drivePoints;
+  final int driveStreak;
+  final int enduranceMinutes;
+  final int? lastDriveStreakAt;
+  final int? userGoal;
+  final List<String>? badges; // ✅ 이건 필드 선언 위치가 맞음
+
   User({
     required this.id,
     required this.name,
@@ -18,27 +36,11 @@ class User {
     required this.isGuest,
     required this.drivePoints,
     required this.driveStreak,
-    required this.enduranceMinutes, // ✅ NEW FIELD
+    required this.enduranceMinutes,
     this.lastDriveStreakAt,
     this.userGoal,
+    this.badges, // ✅ 생성자 안에 들어가야 함!
   });
-
-  final String id;
-  final String name;
-  final int age;
-  final String carId;
-  final String email;
-  final int primaryColor;
-  final int secondaryColor;
-  final String code;
-  final String leagueId;
-  final List<String> friends;
-  final bool isGuest;
-  final int drivePoints;
-  final int driveStreak;
-  final int enduranceMinutes; // ✅ NEW FIELD
-  final int? lastDriveStreakAt;
-  final int? userGoal;
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
@@ -55,9 +57,10 @@ class User {
       isGuest: map['isGuest'] ?? false,
       drivePoints: map['drivePoints'] ?? 0,
       driveStreak: map['driveStreak'] ?? 0,
-      enduranceMinutes: map['enduranceMinutes'] ?? 0, // ✅ NEW FIELD
+      enduranceMinutes: map['enduranceMinutes'] ?? 0,
       lastDriveStreakAt: map['lastDriveStreakAt'],
       userGoal: map['userGoal'],
+      badges: List<String>.from(map['badges'] ?? []),
     );
   }
 
@@ -76,9 +79,37 @@ class User {
       'isGuest': isGuest,
       'drivePoints': drivePoints,
       'driveStreak': driveStreak,
-      'enduranceMinutes': enduranceMinutes, // ✅ NEW FIELD
+      'enduranceMinutes': enduranceMinutes,
       'lastDriveStreakAt': lastDriveStreakAt,
       'userGoal': userGoal,
+      'badges': badges,
     };
+  }
+
+  /// ✅ copyWith
+  User copyWith({
+    List<String>? badges,
+    int? enduranceMinutes,
+    int? driveStreak,
+  }) {
+    return User(
+      id: id,
+      name: name,
+      age: age,
+      carId: carId,
+      email: email,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      code: code,
+      leagueId: leagueId,
+      friends: friends,
+      isGuest: isGuest,
+      drivePoints: drivePoints,
+      driveStreak: driveStreak ?? this.driveStreak,
+      enduranceMinutes: enduranceMinutes ?? this.enduranceMinutes,
+      lastDriveStreakAt: lastDriveStreakAt,
+      userGoal: userGoal,
+      badges: badges ?? this.badges,
+    );
   }
 }

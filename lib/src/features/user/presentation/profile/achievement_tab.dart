@@ -8,18 +8,21 @@ class AchievementTab extends ConsumerWidget {
   static const List<int> hotStreakBadges = [10, 20, 50, 100, 250, 365];
   static const List<int> enduranceBadges = [30, 60, 90, 120, 150, 180];
 
-  /// Helper function to create 3x3-like badge rows
   List<Widget> buildBadgeRows(
     List<int> badgeList,
     String type,
-    int currentValue,
+    List<String>? unlockedBadges,
   ) {
     List<Widget> rows = [];
     for (int i = 0; i < badgeList.length; i += 3) {
       final rowBadges = badgeList.skip(i).take(3).map((value) {
-        final path = 'assets/images/badges/$type/$value.png';
+        final badgeKey = '${type}_$value';
+        final isUnlocked = unlockedBadges?.contains(badgeKey) ?? false;
+        final path =
+            'assets/images/badges/$type/${value}_${isUnlocked ? 'unlocked' : 'locked'}.png';
+
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4), // tight spacing
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Image.asset(
             path,
             width: 76,
@@ -53,6 +56,8 @@ class AchievementTab extends ConsumerWidget {
       );
     }
 
+    final unlockedBadges = currentUser.badges ?? [];
+
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1E),
       appBar: AppBar(
@@ -70,12 +75,22 @@ class AchievementTab extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 30),
 
-            /// 🔥 Hot Streak
+            /// 🔁 Refresh 버튼
+            ElevatedButton(
+              onPressed: () async {
+                await ref
+                    .read(currentUserStateProvider.notifier)
+                    .refreshAndSetUser();
+              },
+              child: const Text('🧪 Refresh Badge from Firebase'),
+            ),
+
+            /// 🔥 Hot Streak Section
             const Align(
               alignment: Alignment.center,
               child: Text(
@@ -88,12 +103,11 @@ class AchievementTab extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 4),
-            ...buildBadgeRows(
-                hotStreakBadges, 'hotstreak', currentUser.driveStreak),
+            ...buildBadgeRows(hotStreakBadges, 'hotstreak', unlockedBadges),
 
             const SizedBox(height: 20),
 
-            /// 🏁 Endurance
+            /// 🏁 Endurance Section
             const Align(
               alignment: Alignment.center,
               child: Text(
@@ -106,8 +120,7 @@ class AchievementTab extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 4),
-            ...buildBadgeRows(
-                enduranceBadges, 'endurance', currentUser.enduranceMinutes),
+            ...buildBadgeRows(enduranceBadges, 'endurance', unlockedBadges),
           ],
         ),
       ),
