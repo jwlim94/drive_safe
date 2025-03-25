@@ -1,4 +1,4 @@
-package com.example.driveSafe
+package com.example.drive_safe
 
 import io.flutter.embedding.android.FlutterActivity
 
