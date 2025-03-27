@@ -6,8 +6,10 @@ import 'package:drive_safe/src/features/home/presentation/controllers/update_dai
 import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_drive_streak_badge_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_points_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_endurance_minutes_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
@@ -100,7 +102,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 timeElapsed: Duration.zero,
                 getAchievement: true,
                 userGoal: currentUser.userGoal,
-                goalCompleteByTime: currentUser.goalCompleteByTime),
+                goalCompleteByTime: currentUser.goalCompleteByTime,
+                sessionBadges: []),
           );
 
       setState(() {
@@ -148,19 +151,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             lastDrivePoints,
           ),
         );
+
+        //Update streak, streak achievements, and daily goal
         ref.read(UpdateDailyGoalControllerProvider(
             currentUser.userGoal, stopWatch.elapsed.inSeconds));
+
+        //Update time elapsed in minutes (for achievements)
+        ref
+            .read(updateUserEnduranceMinutesControllerProvider.notifier)
+            .updateUser(currentUser.id,
+                (stopWatch.elapsed.inSeconds + currentUser.enduranceSeconds));
+
+        //Update streak achievements
+        ref
+            .read(updateDriveStreakBadgeControllerProvider.notifier)
+            .updateUserDriveStreakBadge(currentUser);
       }
       stopWatch.reset();
 
       // Update drive points
       updateDrivePoints();
 
-      // Navigate if achievement is earned
-      final thisSession = ref.read(sessionNotifierProvider);
-      if (thisSession.getAchievement) {
-        context.go('/home/achievements');
-      }
+      //Navigate to achievements screen
+      context.go('/home/achievements');
     }
   }
 
@@ -294,6 +307,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.watch(updateUserDriveStreakControllerProvider);
         ref.watch(updateUserLastDriveStreakAtControllerProvider);
         ref.watch(updateUserDrivePointsControllerProvider);
+        ref.watch(updateUserEnduranceMinutesControllerProvider);
+        ref.watch(updateDriveStreakBadgeControllerProvider);
 
         if (currentUser == null) return Container();
 

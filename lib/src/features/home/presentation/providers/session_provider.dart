@@ -13,12 +13,17 @@ class SessionNotifier extends _$SessionNotifier {
         userGoal: 0,
         timeElapsed: const Duration(minutes: 0, seconds: 0),
         getAchievement: false,
-        goalCompleteByTime: 0);
+        goalCompleteByTime: 0,
+        sessionBadges: []);
   }
 
   //methods to alter states
   void updateSession(Session session) {
     state = session;
+  }
+
+  void addSessionBadges(String badge) {
+    state.sessionBadges.add(badge);
   }
 
   void addNewUserGoal(int newUserGoal) {
@@ -28,6 +33,7 @@ class SessionNotifier extends _$SessionNotifier {
       timeElapsed: state.timeElapsed,
       getAchievement: state.getAchievement,
       goalCompleteByTime: state.goalCompleteByTime,
+      sessionBadges: state.sessionBadges,
     );
   }
 }

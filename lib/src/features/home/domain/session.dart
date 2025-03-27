@@ -4,6 +4,7 @@ class Session {
   bool getAchievement;
   int userGoal;
   int goalCompleteByTime;
+  List sessionBadges;
 
   Session({
     required this.points,
@@ -11,6 +12,7 @@ class Session {
     required this.getAchievement,
     required this.userGoal,
     required this.goalCompleteByTime,
+    required this.sessionBadges,
   });
 
   Session copyWith(
@@ -18,13 +20,15 @@ class Session {
       Duration? timeElapsed,
       int? userGoal,
       bool? getAchievement,
-      int? goalCompleteByTime}) {
+      int? goalCompleteByTime,
+      List? sessionBadges}) {
     return Session(
       points: points ?? this.points,
       timeElapsed: timeElapsed ?? this.timeElapsed,
       getAchievement: getAchievement ?? this.getAchievement,
       userGoal: userGoal ?? this.userGoal,
       goalCompleteByTime: goalCompleteByTime ?? this.goalCompleteByTime,
+      sessionBadges: sessionBadges ?? this.sessionBadges,
     );
   }
 }

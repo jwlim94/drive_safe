@@ -1,6 +1,8 @@
 import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_drive_streak_badge_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_points_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_endurance_minutes_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
@@ -67,7 +69,10 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
     ref.watch(updateUserDriveStreakControllerProvider);
     ref.watch(updateUserLastDriveStreakAtControllerProvider);
     ref.watch(updateUserDrivePointsControllerProvider);
+    ref.watch(updateUserEnduranceMinutesControllerProvider);
+    ref.watch(updateDriveStreakBadgeControllerProvider);
     final currentUser = ref.watch(currentUserStateProvider);
+    final currentSession = ref.watch(sessionNotifierProvider);
 
     // TODO: handle loading state
     if (currentUser == null) return Container();
@@ -164,73 +169,87 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(bottom: 20, top: 150),
+                    padding: EdgeInsets.only(bottom: 5, top: 150),
                     child: Text(
                       'Achievements Earned!',
                       style: TextStyles.h3,
                     ),
                   ),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      ClipOval(
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          color: Color(currentUser.primaryColor),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Center(
-                            child: Text(
-                              currentUser.name[0],
-                              style: TextStyles.h1,
-                            ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Prevent nested scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // 2 items per row
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 1.2, // Adjust as needed
                           ),
+                          itemCount: currentSession.sessionBadges.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Image.asset(
+                                  'assets/images/badges/${currentSession.sessionBadges[index].toString().split("_")[0]}/${currentSession.sessionBadges[index].toString().split("_")[1]}_unlocked.png',
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.contain,
+                                ),
+                                // Conditional text display
+                                if (currentSession.sessionBadges[index]
+                                        .toString()
+                                        .split("_")[0] ==
+                                    "endurance")
+                                  Text(
+                                    '${currentSession.sessionBadges[index].toString().split("_")[1]} daily minutes!',
+                                    style: TextStyles.bodyMedium,
+                                  )
+                                else if (currentSession.sessionBadges[index]
+                                        .toString()
+                                        .split("_")[0] ==
+                                    "hotstreak")
+                                  Text(
+                                    '${currentSession.sessionBadges[index].toString().split("_")[1]} streak!',
+                                    style: TextStyles.bodyMedium,
+                                  ),
+                              ],
+                            );
+                          },
                         ),
                       ),
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Text(
-                      'List of Achievements here:',
-                      style: TextStyles.bodyMedium,
-                      textAlign: TextAlign.center,
                     ),
                   ),
+                  const SizedBox(height: 20), // Add spacing before buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 30, right: 20),
-                        child: Center(
-                          child: CustomButton(
-                            text: 'Back',
-                            onPressed: () => previousState(),
-                            horizontalPadding: 50,
-                            backgroundColor: Colors.transparent,
-                            borderOutline: AppColors.customPink,
-                          ),
+                        padding: const EdgeInsets.only(top: 20, right: 20),
+                        child: CustomButton(
+                          text: 'Back',
+                          onPressed: () => previousState(),
+                          horizontalPadding: 50,
+                          backgroundColor: Colors.transparent,
+                          borderOutline: AppColors.customPink,
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Center(
-                          child: CustomButton(
-                            text: 'Finish',
-                            onPressed: () => nextState(),
-                            horizontalPadding: 50,
-                            backgroundColor: AppColors.customPink,
-                          ),
+                        padding: const EdgeInsets.only(top: 20),
+                        child: CustomButton(
+                          text: 'Finish',
+                          onPressed: () => nextState(),
+                          horizontalPadding: 50,
+                          backgroundColor: AppColors.customPink,
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20), // Keeps some space at the bottom
                 ],
               ),
             ]),
