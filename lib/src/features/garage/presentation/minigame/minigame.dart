@@ -5,9 +5,11 @@ import 'package:drive_safe/src/features/garage/presentation/minigame/routes/retr
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/settings.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart' as flame;
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-class RacingGame extends flame.FlameGame with HasKeyboardHandlerComponents {
+class RacingGame extends flame.FlameGame
+    with HasCollisionDetection, HasKeyboardHandlerComponents {
   final musicValueNotifier = ValueNotifier(true);
   final sfxValueNotifier = ValueNotifier(true);
 
@@ -61,6 +63,10 @@ class RacingGame extends flame.FlameGame with HasKeyboardHandlerComponents {
   }
 
   void _startGame() {
+    if (_router.currentRoute.name == RetryMenu.id) {
+      _router.pop();
+    }
+    resumeEngine();
     _router.pushReplacement(
       flame.Route(
         () => Gameplay(
@@ -83,11 +89,12 @@ class RacingGame extends flame.FlameGame with HasKeyboardHandlerComponents {
   }
 
   void _exitToMainMenu() {
-    _resumeGame();
+    resumeEngine();
     _router.pushReplacementNamed(MainMenu.id);
   }
 
   void _showRetryMenu() {
     _router.pushNamed(RetryMenu.id);
+    pauseEngine();
   }
 }
