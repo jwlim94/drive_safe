@@ -12,6 +12,7 @@ import 'package:drive_safe/src/features/user/presentation/controllers/update_use
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_endurance_minutes_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/routing/providers/scaffold_with_nested_navigation_visibility_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/numbers.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
@@ -111,7 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         buttonSize = 20;
       });
 
-      await simulateDelay();
+      await simulateDelay(15);
 
       if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
         _showSnackBar(
@@ -183,8 +184,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         pauseButtonText = 'Resume';
       });
       stopWatch.stop();
+      await simulateDelay(5);
     } else {
-      await simulateDelay();
+      await simulateDelay(15);
 
       if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
         _showSnackBar(
@@ -208,6 +210,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopWatch.stop();
       if (pauseButtonText != "Resume") {
         pauseButtonText = "Resume";
+        ref.read(bottomNavBarVisibilityProvider.notifier).state =
+            !ref.read(bottomNavBarVisibilityProvider);
         // _showSnackBar(
         //     "Oops! It looks like Kiosk mode was disabled. Press 'Resume Focus' and re-enable Kiosk Mode to continue your session.");
       }
@@ -287,11 +291,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  Future<void> simulateDelay() async {
+  Future<void> simulateDelay(int seconds) async {
     setState(() {
       state = "Loading";
     }); // Show loading
-    await Future.delayed(const Duration(seconds: 15)); // Simulate delay
+    await Future.delayed(Duration(seconds: seconds)); // Simulate delay
     setState(() {
       state = "Started";
     }); // Hide loading
@@ -377,6 +381,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       case KioskMode.enabled:
                                         pauseDrive();
                                         stopKioskMode().then(_handleStop);
+                                        ref
+                                                .read(
+                                                    bottomNavBarVisibilityProvider
+                                                        .notifier)
+                                                .state =
+                                            !ref.read(
+                                                bottomNavBarVisibilityProvider);
                                         break;
                                     }
                                   } else if (state == "Started" &&
@@ -388,6 +399,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       case KioskMode.disabled:
                                         startKioskMode().then(_handleStart);
                                         pauseDrive();
+                                        ref
+                                                .read(
+                                                    bottomNavBarVisibilityProvider
+                                                        .notifier)
+                                                .state =
+                                            !ref.read(
+                                                bottomNavBarVisibilityProvider);
                                         break;
                                     }
                                   }
@@ -409,11 +427,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     case null:
                                     case KioskMode.enabled:
                                       stopKioskMode().then(_handleStop);
+                                      ref
+                                              .read(
+                                                  bottomNavBarVisibilityProvider
+                                                      .notifier)
+                                              .state =
+                                          !ref.read(
+                                              bottomNavBarVisibilityProvider);
                                       break;
                                     case KioskMode.disabled:
                                       startKioskMode().then(_handleStart);
                                       startDrive(
                                           currentUser, thisSession.points);
+                                      ref
+                                              .read(
+                                                  bottomNavBarVisibilityProvider
+                                                      .notifier)
+                                              .state =
+                                          !ref.read(
+                                              bottomNavBarVisibilityProvider);
                                       break;
                                   }
                                 } else if (state == "Started") {
@@ -431,6 +463,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       }
                                     case KioskMode.enabled:
                                       stopKioskMode().then(_handleStop);
+                                      ref
+                                              .read(
+                                                  bottomNavBarVisibilityProvider
+                                                      .notifier)
+                                              .state =
+                                          !ref.read(
+                                              bottomNavBarVisibilityProvider);
                                       startDrive(
                                           currentUser, thisSession.points);
                                       break;
