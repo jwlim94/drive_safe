@@ -1,11 +1,13 @@
 import 'dart:ui';
 
+import 'package:drive_safe/src/features/garage/presentation/minigame/minigame.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
-class Input extends Component with KeyboardHandler {
+class Input extends Component with KeyboardHandler, HasGameRef {
   bool _leftPressed = false;
   bool _rightPressed = false;
+  TouchController? joystick;
 
   var _leftInput = 0.0;
   var _rightInput = 0.0;
@@ -28,7 +30,11 @@ class Input extends Component with KeyboardHandler {
       sensitivity * dt,
     )!;
 
-    hAxis = _rightInput - _leftInput;
+    if (joystick?.direction != JoystickDirection.idle) {
+      hAxis = joystick!.relativeDelta.x * maxHAxis;
+    } else {
+      hAxis = _rightInput - _leftInput;
+    }
   }
 
   @override

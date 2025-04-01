@@ -47,7 +47,7 @@ class RoadBoundary extends Component with HasGameRef {
     final leftBoundary = roadStartX + boundaryWidth;
 
     // 도로의 우측 경계 (오른쪽으로 더 확장)
-    final rightBoundary = roadStartX + roadWidth + 5 - boundaryWidth;
+    final rightBoundary = roadStartX + roadWidth - boundaryWidth;
 
     // 플레이어가 도로 경계를 벗어났는지 체크 (플레이어 크기 고려)
     final isOutOfBounds = playerX < leftBoundary || playerX > rightBoundary;

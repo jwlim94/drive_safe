@@ -116,14 +116,81 @@ class PlaceholderTiledComponent extends PositionComponent {
   // 맵의 크기를 명시적으로 노출
   double get mapHeight => size.y;
 
+  /// 잔디 패턴을 위한 색상 목록
+  final List<Color> _grassColors = [
+    const Color(0xFF3D7E2E), // 더 진한 초록
+    const Color(0xFF5CAE4A), // 더 밝은 초록
+    const Color(0xFF4C9E39), // 기본 초록
+    const Color(0xFF3D8E2E), // 약간 진한 초록
+    const Color(0xFF5CBE4A), // 약간 밝은 초록
+  ];
+
+  /// 잔디 패턴 생성
+  List<RectangleComponent> _createGrassPatterns() {
+    final patterns = <RectangleComponent>[];
+    final roadWidth = 64.0;
+    final roadStartX = (size.x - roadWidth) / 2;
+
+    // 도로 주변 영역 계산
+    final roadLeft = roadStartX - 100;
+    final roadRight = roadStartX + roadWidth + 100;
+
+    // 패턴이 세그먼트 경계를 넘어서도 생성되도록 여유 공간 추가
+    final extraHeight = size.y * 0.2; // 세그먼트 높이의 20%만큼 여유 공간
+    final spacing = 10.0; // 패턴 간격을 더 줄임
+
+    // 패턴 개수 계산 (더 조밀하게)
+    final patternsPerRow = ((roadRight - roadLeft) / spacing).ceil();
+    final patternsPerCol = ((size.y + extraHeight * 2) / spacing).ceil();
+    final totalPatterns = patternsPerRow * patternsPerCol;
+
+    for (int i = 0; i < totalPatterns; i++) {
+      final color = _grassColors[i % _grassColors.length];
+      final patternSize = Vector2(
+        3 + (i % 3) * 2, // 더 작은 크기로 조정
+        3 + (i % 3) * 2,
+      );
+
+      // 격자 기반 위치 계산으로 변경
+      final row = i ~/ patternsPerRow;
+      final col = i % patternsPerRow;
+
+      final x = roadLeft + col * spacing;
+      final y = row * spacing - extraHeight;
+
+      // 시작 부분과 끝 부분에서 자연스럽게 이어지도록 조정
+      if (y >= -extraHeight && y <= size.y + extraHeight) {
+        final position = Vector2(x, y);
+
+        // 도로 영역에 패턴이 생성되지 않도록 체크
+        if (x < roadStartX - 5 || x > roadStartX + roadWidth + 5) {
+          patterns.add(RectangleComponent(
+            position: position,
+            size: patternSize,
+            paint: Paint()
+              ..color = color
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+          ));
+        }
+      }
+    }
+    return patterns;
+  }
+
   @override
   Future<void> onLoad() async {
-    // 도로 배경 (회색)
-    final background = RectangleComponent(
+    // 기본 잔디 배경 (진한 초록색)
+    final grassBackground = RectangleComponent(
       size: size,
-      paint: Paint()..color = const Color(0xFFCCCCCC),
+      paint: Paint()..color = const Color(0xFF4C9E39),
     );
-    await add(background);
+    await add(grassBackground);
+
+    // 잔디 패턴 추가
+    final grassPatterns = _createGrassPatterns();
+    for (final pattern in grassPatterns) {
+      await add(pattern);
+    }
 
     // 도로 (어두운 회색)
     final roadWidth = 64.0;

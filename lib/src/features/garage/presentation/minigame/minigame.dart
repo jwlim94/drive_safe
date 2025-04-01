@@ -1,17 +1,22 @@
+import 'package:drive_safe/src/features/garage/presentation/minigame/players/player_stats.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/gameplay.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/main_menu.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/pause_menu.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/retry_menu.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/settings.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart' as flame;
 import 'package:flame/game.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:flame/components.dart';
+import 'package:flame/input.dart';
+import 'package:flame/events.dart';
 
 class RacingGame extends flame.FlameGame
-    with HasCollisionDetection, HasKeyboardHandlerComponents {
-  final musicValueNotifier = ValueNotifier(true);
-  final sfxValueNotifier = ValueNotifier(true);
+    with HasCollisionDetection, HasKeyboardHandlerComponents, DragCallbacks {
+  final musicValueNotifier = ValueNotifier(false);
+  final sfxValueNotifier = ValueNotifier(false);
+  bool isMusicEnabled = false;
 
   late final _routes = <String, flame.Route>{
     MainMenu.id: flame.OverlayRoute(
@@ -25,7 +30,10 @@ class RacingGame extends flame.FlameGame
         onBackPressed: _popRoute,
         musicValueListenable: musicValueNotifier,
         sfxValueListenable: sfxValueNotifier,
-        onMusicValueChanged: (value) => musicValueNotifier.value = value,
+        onMusicValueChanged: (value) {
+          musicValueNotifier.value = value;
+          toggleMusic(value);
+        },
         onSfxValueChanged: (value) => sfxValueNotifier.value = value,
       ),
     ),
@@ -51,7 +59,23 @@ class RacingGame extends flame.FlameGame
 
   @override
   Future<void> onLoad() async {
+    // 배경음악 로드 및 재생
+    await FlameAudio.audioCache.load('background_music.mp3');
+    isMusicEnabled = musicValueNotifier.value; // 현재 설정값으로 초기화
+    if (isMusicEnabled) {
+      FlameAudio.bgm.play('background_music.mp3');
+    }
+
     await add(_router);
+  }
+
+  void toggleMusic(bool enabled) {
+    isMusicEnabled = enabled;
+    if (enabled) {
+      FlameAudio.bgm.play('background_music.mp3');
+    } else {
+      FlameAudio.bgm.stop();
+    }
   }
 
   void _routeById(String id) {
@@ -67,11 +91,13 @@ class RacingGame extends flame.FlameGame
       _router.pop();
     }
     resumeEngine();
+
     _router.pushReplacement(
       flame.Route(
         () => Gameplay(
           onPausePressed: _pauseGame,
           onGameOver: _showRetryMenu,
+          sfxEnabled: sfxValueNotifier.value,
         ),
       ),
       name: Gameplay.id,
@@ -79,22 +105,67 @@ class RacingGame extends flame.FlameGame
   }
 
   void _pauseGame() {
+    if (isMusicEnabled) {
+      FlameAudio.bgm.pause();
+    }
+
     _router.pushNamed(PauseMenu.id);
     pauseEngine();
   }
 
   void _resumeGame() {
+    if (isMusicEnabled) {
+      FlameAudio.bgm.resume();
+    }
+
     _router.pop();
     resumeEngine();
   }
 
   void _exitToMainMenu() {
     resumeEngine();
+
+    // 게임 상태 초기화
+    if (children.query<PlayerStats>().isNotEmpty) {
+      children.query<PlayerStats>().first.reset();
+    }
+
+    // 현재 라우트가 RetryMenu인 경우 먼저 pop
+    if (_router.currentRoute.name == RetryMenu.id) {
+      _router.pop();
+    }
+
+    // 메인 메뉴로 이동
     _router.pushReplacementNamed(MainMenu.id);
   }
 
   void _showRetryMenu() {
     _router.pushNamed(RetryMenu.id);
     pauseEngine();
+  }
+}
+
+class TouchController extends JoystickComponent with HasGameRef {
+  TouchController()
+      : super(
+          knob: CircleComponent(
+            radius: 10,
+            paint: Paint()..color = Colors.white.withAlpha(200),
+          ),
+          background: CircleComponent(
+            radius: 20,
+            paint: Paint()..color = Colors.grey.withAlpha(200),
+          ),
+          priority: 100, // 다른 컴포넌트보다 위에 그려지도록
+        );
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    // 위치를 직접 설정
+    position = Vector2(
+      (gameRef.size.x / 4) * 3, // 화면 오른쪽 1/4 지점
+      gameRef.size.y - 75, // 화면 하단에서 75픽셀 위
+    );
   }
 }

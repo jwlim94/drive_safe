@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 class RoadObstacle extends PositionComponent
     with CollisionCallbacks, HasGameRef {
@@ -14,6 +15,7 @@ class RoadObstacle extends PositionComponent
     required Vector2 position,
     required this.player,
     required this.playerStats,
+    required this.sfxEnabled,
     this.speed = 100,
     Vector2? obstacleSize,
   }) : super(position: position);
@@ -23,6 +25,7 @@ class RoadObstacle extends PositionComponent
   final Player player;
   final PlayerStats playerStats;
   final double speed;
+  final bool sfxEnabled;
 
   bool _hasCollided = false;
 
@@ -87,6 +90,11 @@ class RoadObstacle extends PositionComponent
     if (_hasCollided) return;
     _hasCollided = true;
     playerStats.collision();
+
+    // 효과음 재생
+    if (sfxEnabled) {
+      FlameAudio.play('crash.mp3');
+    }
 
     if (_carSprite != null) {
       _carSprite!.opacity = 0.5;
