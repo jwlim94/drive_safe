@@ -79,6 +79,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  Future<void> checkNavBar() async {
+    var navBarState = ref.read(bottomNavBarVisibilityProvider.notifier).state;
+    if (navBarState == false) {
+      !ref.read(bottomNavBarVisibilityProvider);
+    }
+  }
+
   void updateDrivePoints() {
     final currentUser = ref.read(currentUserStateProvider);
     if (currentUser == null) return;
@@ -210,8 +217,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopWatch.stop();
       if (pauseButtonText != "Resume") {
         pauseButtonText = "Resume";
-        ref.read(bottomNavBarVisibilityProvider.notifier).state =
-            !ref.read(bottomNavBarVisibilityProvider);
+        if (ref.read(bottomNavBarVisibilityProvider.notifier).state == false) {
+          ref.read(bottomNavBarVisibilityProvider.notifier).state =
+              !ref.read(bottomNavBarVisibilityProvider);
+        }
         // _showSnackBar(
         //     "Oops! It looks like Kiosk mode was disabled. Press 'Resume Focus' and re-enable Kiosk Mode to continue your session.");
       }
@@ -342,12 +351,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyles.h3,
                   ),
-                  const Padding(padding: EdgeInsets.only(top: 5)),
-                  Text(
-                    'Current Session Time: ${stopWatch.elapsed.inMinutes}m ${stopWatch.elapsed.inSeconds.remainder(60)}s',
-                    textAlign: TextAlign.center,
-                    style: TextStyles.bodySmall,
-                  ),
                   const Padding(padding: EdgeInsets.only(bottom: 15)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -360,6 +363,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _buildPointContainer(
                           ((thisSession.points ~/ 1) % 10).toString()),
                     ],
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 5)),
+                  Text(
+                    'Current Session Time: ${stopWatch.elapsed.inMinutes}m ${stopWatch.elapsed.inSeconds.remainder(60)}s',
+                    textAlign: TextAlign.center,
+                    style: TextStyles.bodySmall,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -456,6 +465,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         state = "Stopped";
                                         _showSnackBar(
                                             "You must have Kiosk Mode enabled while your Focus Session is active in order for the session to be valid. Sorry, try again!");
+                                        ref
+                                                .read(
+                                                    bottomNavBarVisibilityProvider
+                                                        .notifier)
+                                                .state =
+                                            !ref.read(
+                                                bottomNavBarVisibilityProvider);
                                         return;
                                       } else {
                                         startDrive(
