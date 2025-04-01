@@ -16,14 +16,13 @@ class AppStartupLoadingStateWidget extends StatelessWidget {
               fit: BoxFit.fitHeight,
             ),
           ),
-          //TODO: new logo for AutoFocus
-          // Center(
-          //   child: SvgPicture.asset(
-          //     'assets/images/logo_drive_safe.svg',
-          //     width: 250,
-          //     height: 450,
-          //   ),
-          // ),
+          Center(
+            child: SvgPicture.asset(
+              'assets/images/SplashScreenLogo.svg',
+              width: 250,
+              height: 450,
+            ),
+          ),
         ],
       ),
     );

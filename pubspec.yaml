@@ -40,6 +40,15 @@ dev_dependencies:
   custom_lint: ^0.7.0 # allows defining custom lint rules
   riverpod_lint: ^2.6.3 # provides pre-defined lint rules specifically for Riverpod
   json_serializable: ^6.9.0 # generate JSON serialization code in data model
+  flutter_launcher_icons: "^0.14.1"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/AppIconLogo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/AppIconLogo.png"
+  adaptive_icon_foreground_inset: 24
 
 flutter:
   uses-material-design: true
