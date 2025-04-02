@@ -87,7 +87,7 @@ class AchievementTab extends ConsumerWidget {
                     .read(currentUserStateProvider.notifier)
                     .refreshAndSetUser();
               },
-              child: const Text('🧪 Refresh Badge from Firebase'),
+              child: const Text('🧪 Refresh Badges'),
             ),
 
             /// 🔥 Hot Streak Section

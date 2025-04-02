@@ -37,6 +37,8 @@ class MeTab extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
@@ -149,7 +151,7 @@ class MeTab extends ConsumerWidget {
                     ),
                   ],
                 ),
-                label: 'Focus Streak',
+                label: 'Streak',
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -165,7 +167,7 @@ class MeTab extends ConsumerWidget {
                   },
                   child: _buildProfileBadge(
                     icon: const Icon(Icons.star, color: Colors.amber, size: 36),
-                    label: 'Achievement',
+                    label: 'Achievements',
                   ),
                 ),
               ),

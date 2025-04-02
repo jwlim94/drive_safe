@@ -36,7 +36,7 @@ GoRouter goRouterState(Ref ref) {
     navigatorKey: Keys.rootNavigatorKey,
     redirect: (context, state) {
       // Show splash screen while the app is initializing
-      if (appStartupState.isLoading || appStartupState.hasError) {
+      if (appStartupState.hasError) {
         return '/startup';
       }
 
