@@ -1,4 +1,5 @@
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -72,23 +73,9 @@ class AchievementTab extends ConsumerWidget {
           children: [
             const Text(
               'Achievements',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: TextStyles.h2,
             ),
-            const SizedBox(height: 30),
-
-            /// 🔁 Refresh 버튼
-            ElevatedButton(
-              onPressed: () async {
-                await ref
-                    .read(currentUserStateProvider.notifier)
-                    .refreshAndSetUser();
-              },
-              child: const Text('🧪 Refresh Badges'),
-            ),
+            const SizedBox(height: 15),
 
             /// 🔥 Hot Streak Section
             const Align(
@@ -101,6 +88,10 @@ class AchievementTab extends ConsumerWidget {
                   color: Color.fromRGBO(255, 156, 156, 1),
                 ),
               ),
+            ),
+            const Text(
+              'Hot Streaks are for tracking how many days in a row you have achieved your goal',
+              style: TextStyles.finePrint,
             ),
             const SizedBox(height: 4),
             ...buildBadgeRows(hotStreakBadges, 'hotstreak', unlockedBadges),
@@ -119,8 +110,27 @@ class AchievementTab extends ConsumerWidget {
                 ),
               ),
             ),
+            const Text(
+              'Endurance badges are for tracking how long you have focused for in a day',
+              style: TextStyles.finePrint,
+            ),
+
             const SizedBox(height: 4),
             ...buildBadgeRows(enduranceBadges, 'endurance', unlockedBadges),
+
+            const SizedBox(height: 15),
+
+            /// 🔁 Refresh 버튼
+            ElevatedButton(
+              onPressed: () async {
+                await ref
+                    .read(currentUserStateProvider.notifier)
+                    .refreshAndSetUser();
+              },
+              child: const Text('🧪 Refresh Achievements'),
+            ),
+
+            const SizedBox(height: 15),
           ],
         ),
       ),
