@@ -1,14 +1,34 @@
 import 'package:drive_safe/src/features/garage/presentation/minigame/minigame.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_highest_score_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RacingGameScreen extends StatelessWidget {
+class RacingGameScreen extends ConsumerWidget {
   const RacingGameScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: GameWidget.controlled(gameFactory: RacingGame.new),
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(updateUserHighestScoreControllerProvider);
+
+    void onGameOver(int score) {
+      final currentUser = ref.read(currentUserStateProvider);
+      if (currentUser == null) return;
+
+      final currentSavedScore = currentUser.highestScore;
+
+      if (currentSavedScore > score) return;
+
+      ref
+          .read(updateUserHighestScoreControllerProvider.notifier)
+          .updateHighestScore(currentUser.id, score);
+    }
+
+    return Scaffold(
+      body: GameWidget.controlled(
+        gameFactory: () => RacingGame(onScoreUpdate: onGameOver),
+      ),
     );
   }
 }

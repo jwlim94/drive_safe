@@ -23,6 +23,7 @@ class User {
     this.lastDriveStreakAt,
     required this.userGoal,
     this.badges, // ✅ 생성자 안에 들어가야 함!
+    required this.highestScore,
   });
 
   final String id;
@@ -43,9 +44,9 @@ class User {
   int userGoal;
   int? lastDriveStreakAt;
   final int enduranceSeconds;
+  final int highestScore;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   factory User.fromMap(Map<String, dynamic> map) {
@@ -68,6 +69,7 @@ class User {
       badges: List<String>.from(map['badges'] ?? []),
       userGoal: map['userGoal'] as int,
       goalCompleteByTime: map['goalCompleteByTime'] as int,
+      highestScore: map['highestScore'] ?? 0,
     );
   }
 
@@ -91,6 +93,7 @@ class User {
       'badges': badges,
       'userGoal': userGoal,
       'goalCompleteByTime': goalCompleteByTime,
+      'highestScore': highestScore,
     };
   }
 
@@ -99,6 +102,7 @@ class User {
     List<String>? badges,
     int? enduranceSeconds,
     int? driveStreak,
+    int? highestScore,
   }) {
     return User(
       id: id,
@@ -118,7 +122,8 @@ class User {
       lastDriveStreakAt: lastDriveStreakAt,
       userGoal: userGoal,
       badges: badges ?? this.badges,
-      goalCompleteByTime: this.goalCompleteByTime,
+      goalCompleteByTime: goalCompleteByTime,
+      highestScore: highestScore ?? this.highestScore,
     );
   }
 }

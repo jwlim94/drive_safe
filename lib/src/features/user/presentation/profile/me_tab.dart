@@ -1,5 +1,6 @@
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/providers/current_league_state_provider.dart';
+import 'package:drive_safe/src/features/user/domain/user.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/achievement_tab.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/gauge_meter.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
@@ -15,35 +16,79 @@ class MeTab extends ConsumerWidget {
 
   // Build a reusable profile badge with icon and label
   Widget _buildProfileBadge({required Widget icon, required String label}) {
-    return Expanded(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.borderColor, width: 2),
+        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFF2C2C2E),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(76),
+            offset: const Offset(0, 2),
+            blurRadius: 4,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.customWhite,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighScoreCard(User user) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.borderColor, width: 2),
-          borderRadius: BorderRadius.circular(20),
-          color: const Color(0xFF2C2C2E),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              offset: const Offset(0, 2),
-              blurRadius: 4,
-            )
-          ],
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade400, Colors.purple.shade700],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            icon,
-            const SizedBox(height: 8),
+            const Row(
+              children: [
+                Icon(Icons.videogame_asset, color: Colors.white),
+                SizedBox(width: 8),
+                Text(
+                  'Driving Game Score',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
             Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
+              user.highestScore.toString(),
               style: const TextStyle(
-                fontSize: 16,
+                color: Colors.white,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.customWhite,
               ),
             ),
           ],
@@ -118,44 +163,50 @@ class MeTab extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          _buildHighScoreCard(currentUser),
           const SizedBox(height: 28),
           Row(
             children: [
-              _buildProfileBadge(
-                icon: SvgPicture.asset(
-                  LeagueUtils.getSvgPath(currentLeague.name),
-                  width: 36,
-                  height: 36,
+              Expanded(
+                child: _buildProfileBadge(
+                  icon: SvgPicture.asset(
+                    LeagueUtils.getSvgPath(currentLeague.name),
+                    width: 36,
+                    height: 36,
+                  ),
+                  label: LeagueUtils.getFormattedLeagueName(currentLeague.name),
                 ),
-                label: LeagueUtils.getFormattedLeagueName(currentLeague.name),
-              ),
-              const SizedBox(width: 12),
-              _buildProfileBadge(
-                icon: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/flame.svg',
-                      width: 36,
-                      height: 36,
-                    ),
-                    Positioned(
-                      top: 14,
-                      child: Text(
-                        currentUser.driveStreak.toString(),
-                        style: const TextStyle(
-                          color: AppColors.streakNumber,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                label: 'Streak',
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: InkWell(
+                child: _buildProfileBadge(
+                  icon: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/flame.svg',
+                        width: 36,
+                        height: 36,
+                      ),
+                      Positioned(
+                        top: 14,
+                        child: Text(
+                          currentUser.driveStreak.toString(),
+                          style: const TextStyle(
+                            color: AppColors.streakNumber,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  label: 'Streak',
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: GestureDetector(
                   onTap: () {
                     // Navigate to AchievementTab when tapped
                     Navigator.push(

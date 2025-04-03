@@ -14,6 +14,10 @@ import 'package:flame/events.dart';
 
 class RacingGame extends flame.FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents, DragCallbacks {
+  final void Function(int score)? onScoreUpdate;
+
+  RacingGame({this.onScoreUpdate});
+
   final musicValueNotifier = ValueNotifier(false);
   final sfxValueNotifier = ValueNotifier(false);
   bool isMusicEnabled = false;
@@ -136,8 +140,31 @@ class RacingGame extends flame.FlameGame
   }
 
   void _showRetryMenu() {
+    if (onScoreUpdate != null) {
+      final score = _calculateGameScore();
+      onScoreUpdate!(score);
+    }
+
     _router.pushNamed(RetryMenu.id);
     pauseEngine();
+  }
+
+  int _calculateGameScore() {
+    final allComponents = descendants();
+
+    final playerStatsList = allComponents.whereType<PlayerStats>().toList();
+
+    if (playerStatsList.isNotEmpty) {
+      return playerStatsList.first.score;
+    }
+
+    final gameplayList = allComponents.whereType<Gameplay>().toList();
+    if (gameplayList.isNotEmpty) {
+      final gameplay = gameplayList.first;
+      return gameplay.playerStats.score;
+    }
+
+    return 0;
   }
 }
 
