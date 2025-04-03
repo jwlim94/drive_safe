@@ -1,5 +1,6 @@
 import 'package:drive_safe/src/features/car/presentation/providers/current_car_state_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/providers/current_league_state_provider.dart';
+import 'package:drive_safe/src/features/user/presentation/profile/achievement_tab.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/gauge_meter.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
@@ -7,10 +8,49 @@ import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:drive_safe/src/shared/utils/league_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MeTab extends ConsumerWidget {
   const MeTab({super.key});
+
+  // Build a reusable profile badge with icon and label
+  Widget _buildProfileBadge({required Widget icon, required String label}) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.borderColor, width: 2),
+          borderRadius: BorderRadius.circular(20),
+          color: const Color(0xFF2C2C2E),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              offset: const Offset(0, 2),
+              blurRadius: 4,
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon,
+            const SizedBox(height: 8),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.customWhite,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,75 +121,53 @@ class MeTab extends ConsumerWidget {
           const SizedBox(height: 28),
           Row(
             children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.borderColor, width: 2),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        LeagueUtils.getSvgPath(currentLeague.name),
-                        width: 40,
-                        height: 40,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        LeagueUtils.getFormattedLeagueName(currentLeague.name),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.customWhite,
-                        ),
-                      ),
-                    ],
-                  ),
+              _buildProfileBadge(
+                icon: SvgPicture.asset(
+                  LeagueUtils.getSvgPath(currentLeague.name),
+                  width: 36,
+                  height: 36,
                 ),
+                label: LeagueUtils.getFormattedLeagueName(currentLeague.name),
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.borderColor, width: 2),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/flame.svg',
-                            width: 40,
-                            height: 40,
-                          ),
-                          Positioned(
-                            top: 18,
-                            child: Text(
-                              currentUser.driveStreak.toString(),
-                              style: const TextStyle(
-                                color: AppColors.streakNumber,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Text(
-                        'Focus Streak',
-                        style: TextStyle(
-                          fontSize: 18,
+              const SizedBox(width: 12),
+              _buildProfileBadge(
+                icon: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/flame.svg',
+                      width: 36,
+                      height: 36,
+                    ),
+                    Positioned(
+                      top: 14,
+                      child: Text(
+                        currentUser.driveStreak.toString(),
+                        style: const TextStyle(
+                          color: AppColors.streakNumber,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.customWhite,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                label: 'Streak',
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    // Navigate to AchievementTab when tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AchievementTab(),
+                      ),
+                    );
+                  },
+                  child: _buildProfileBadge(
+                    icon: const Icon(Icons.star, color: Colors.amber, size: 36),
+                    label: 'Achievements',
                   ),
                 ),
               ),

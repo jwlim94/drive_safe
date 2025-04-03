@@ -6,10 +6,13 @@ import 'package:drive_safe/src/features/home/presentation/controllers/update_dai
 import 'package:drive_safe/src/features/home/presentation/providers/session_provider.dart';
 import 'package:drive_safe/src/features/leaderboard/presentation/controllers/update_user_league_status_controller.dart';
 import 'package:drive_safe/src/features/user/domain/user.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_drive_streak_badge_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_points_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_endurance_minutes_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/routing/providers/scaffold_with_nested_navigation_visibility_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/numbers.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
@@ -76,6 +79,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  Future<void> checkNavBar() async {
+    var navBarState = ref.read(bottomNavBarVisibilityProvider.notifier).state;
+    if (navBarState == false) {
+      !ref.read(bottomNavBarVisibilityProvider);
+    }
+  }
+
   void updateDrivePoints() {
     final currentUser = ref.read(currentUserStateProvider);
     if (currentUser == null) return;
@@ -100,7 +110,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 timeElapsed: Duration.zero,
                 getAchievement: true,
                 userGoal: currentUser.userGoal,
-                goalCompleteByTime: currentUser.goalCompleteByTime),
+                goalCompleteByTime: currentUser.goalCompleteByTime,
+                sessionBadges: []),
           );
 
       setState(() {
@@ -108,7 +119,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         buttonSize = 20;
       });
 
-      await simulateDelay();
+      await simulateDelay(15);
 
       if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
         _showSnackBar(
@@ -148,19 +159,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             lastDrivePoints,
           ),
         );
+
+        //Update streak, streak achievements, and daily goal
         ref.read(UpdateDailyGoalControllerProvider(
             currentUser.userGoal, stopWatch.elapsed.inSeconds));
+
+        //Update time elapsed in minutes (for achievements)
+        ref
+            .read(updateUserEnduranceMinutesControllerProvider.notifier)
+            .updateUser(currentUser.id,
+                (stopWatch.elapsed.inSeconds + currentUser.enduranceSeconds));
+
+        //Update streak achievements
+        ref
+            .read(updateDriveStreakBadgeControllerProvider.notifier)
+            .updateUserDriveStreakBadge(currentUser);
       }
       stopWatch.reset();
 
       // Update drive points
       updateDrivePoints();
 
-      // Navigate if achievement is earned
-      final thisSession = ref.read(sessionNotifierProvider);
-      if (thisSession.getAchievement) {
-        context.go('/home/achievements');
-      }
+      //Navigate to achievements screen
+      context.go('/home/achievements');
     }
   }
 
@@ -170,8 +191,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         pauseButtonText = 'Resume';
       });
       stopWatch.stop();
+      await simulateDelay(5);
     } else {
-      await simulateDelay();
+      await simulateDelay(15);
 
       if (await updateElapsedEarnings() == "Kiosk Mode not enabled") {
         _showSnackBar(
@@ -195,6 +217,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       stopWatch.stop();
       if (pauseButtonText != "Resume") {
         pauseButtonText = "Resume";
+        if (ref.read(bottomNavBarVisibilityProvider.notifier).state == false) {
+          ref.read(bottomNavBarVisibilityProvider.notifier).state =
+              !ref.read(bottomNavBarVisibilityProvider);
+        }
         // _showSnackBar(
         //     "Oops! It looks like Kiosk mode was disabled. Press 'Resume Focus' and re-enable Kiosk Mode to continue your session.");
       }
@@ -274,11 +300,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  Future<void> simulateDelay() async {
+  Future<void> simulateDelay(int seconds) async {
     setState(() {
       state = "Loading";
     }); // Show loading
-    await Future.delayed(const Duration(seconds: 15)); // Simulate delay
+    await Future.delayed(Duration(seconds: seconds)); // Simulate delay
     setState(() {
       state = "Started";
     }); // Hide loading
@@ -294,6 +320,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.watch(updateUserDriveStreakControllerProvider);
         ref.watch(updateUserLastDriveStreakAtControllerProvider);
         ref.watch(updateUserDrivePointsControllerProvider);
+        ref.watch(updateUserEnduranceMinutesControllerProvider);
+        ref.watch(updateDriveStreakBadgeControllerProvider);
 
         if (currentUser == null) return Container();
 
@@ -323,12 +351,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyles.h3,
                   ),
-                  const Padding(padding: EdgeInsets.only(top: 5)),
-                  Text(
-                    'Current Session Time: ${stopWatch.elapsed.inMinutes}m ${stopWatch.elapsed.inSeconds.remainder(60)}s',
-                    textAlign: TextAlign.center,
-                    style: TextStyles.bodySmall,
-                  ),
                   const Padding(padding: EdgeInsets.only(bottom: 15)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -341,6 +363,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _buildPointContainer(
                           ((thisSession.points ~/ 1) % 10).toString()),
                     ],
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 5)),
+                  Text(
+                    'Current Session Time: ${stopWatch.elapsed.inMinutes}m ${stopWatch.elapsed.inSeconds.remainder(60)}s',
+                    textAlign: TextAlign.center,
+                    style: TextStyles.bodySmall,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -362,6 +390,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       case KioskMode.enabled:
                                         pauseDrive();
                                         stopKioskMode().then(_handleStop);
+                                        ref
+                                                .read(
+                                                    bottomNavBarVisibilityProvider
+                                                        .notifier)
+                                                .state =
+                                            !ref.read(
+                                                bottomNavBarVisibilityProvider);
                                         break;
                                     }
                                   } else if (state == "Started" &&
@@ -373,6 +408,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       case KioskMode.disabled:
                                         startKioskMode().then(_handleStart);
                                         pauseDrive();
+                                        ref
+                                                .read(
+                                                    bottomNavBarVisibilityProvider
+                                                        .notifier)
+                                                .state =
+                                            !ref.read(
+                                                bottomNavBarVisibilityProvider);
                                         break;
                                     }
                                   }
@@ -394,11 +436,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     case null:
                                     case KioskMode.enabled:
                                       stopKioskMode().then(_handleStop);
+                                      ref
+                                              .read(
+                                                  bottomNavBarVisibilityProvider
+                                                      .notifier)
+                                              .state =
+                                          !ref.read(
+                                              bottomNavBarVisibilityProvider);
                                       break;
                                     case KioskMode.disabled:
                                       startKioskMode().then(_handleStart);
                                       startDrive(
                                           currentUser, thisSession.points);
+                                      ref
+                                              .read(
+                                                  bottomNavBarVisibilityProvider
+                                                      .notifier)
+                                              .state =
+                                          !ref.read(
+                                              bottomNavBarVisibilityProvider);
                                       break;
                                   }
                                 } else if (state == "Started") {
@@ -409,6 +465,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         state = "Stopped";
                                         _showSnackBar(
                                             "You must have Kiosk Mode enabled while your Focus Session is active in order for the session to be valid. Sorry, try again!");
+                                        ref
+                                                .read(
+                                                    bottomNavBarVisibilityProvider
+                                                        .notifier)
+                                                .state =
+                                            !ref.read(
+                                                bottomNavBarVisibilityProvider);
                                         return;
                                       } else {
                                         startDrive(
@@ -416,6 +479,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       }
                                     case KioskMode.enabled:
                                       stopKioskMode().then(_handleStop);
+                                      ref
+                                              .read(
+                                                  bottomNavBarVisibilityProvider
+                                                      .notifier)
+                                              .state =
+                                          !ref.read(
+                                              bottomNavBarVisibilityProvider);
                                       startDrive(
                                           currentUser, thisSession.points);
                                       break;

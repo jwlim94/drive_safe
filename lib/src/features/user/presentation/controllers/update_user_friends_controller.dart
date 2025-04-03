@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/features/user/data/users_repository.dart';
-import 'package:drive_safe/src/features/user/domain/user.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,7 +9,7 @@ part 'update_user_friends_controller.g.dart';
 class UpdateUserFriendsController extends _$UpdateUserFriendsController {
   @override
   FutureOr<void> build() {
-    // no op
+    // No operation needed
   }
 
   Future<void> updateUserFriends(String friendId, String action) async {
@@ -22,7 +21,7 @@ class UpdateUserFriendsController extends _$UpdateUserFriendsController {
     state = const AsyncValue.loading();
 
     try {
-      // Firestore의 friends 배열을 업데이트하는 코드 추가
+      // Firestore reference
       final userRef =
           FirebaseFirestore.instance.collection('users').doc(currentUser.id);
       final userSnapshot = await userRef.get();
@@ -33,26 +32,30 @@ class UpdateUserFriendsController extends _$UpdateUserFriendsController {
 
       List<dynamic> friendsList = userSnapshot.data()?['friends'] ?? [];
 
-      if (action == 'add' && !friendsList.contains(friendId)) {
-        friendsList.add(friendId);
+      if (action == 'add') {
+        if (!friendsList.contains(friendId)) {
+          friendsList.add(friendId);
+        } else {
+          throw Exception("Friend already added.");
+        }
       } else if (action == 'remove') {
         friendsList.remove(friendId);
       }
 
-      await userRef.update({'friends': friendsList}); // Firestore 업데이트
+      // ✅ Firestore update before state change
+      await userRef.update({'friends': friendsList});
 
-      // 기존 state 업데이트
-      state = await AsyncValue.guard(
-        () =>
-            usersRepository.updateUserFriends(currentUser.id, friendId, action),
-      );
-
-      if (!state.hasError) {
-        final user = state.value as User;
-        ref.read(currentUserStateProvider.notifier).setUser(user);
+      // ✅ Update Riverpod state properly
+      final updatedUser = await usersRepository.fetchUser(currentUser.id);
+      if (updatedUser == null) {
+        throw Exception("Failed to fetch updated user.");
       }
+      ref.read(currentUserStateProvider.notifier).setUser(updatedUser);
+
+      state = AsyncValue.data(null); // ✅ No extra Future completion
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
+      throw Exception("Failed to update friend: ${e.toString()}");
     }
   }
 }

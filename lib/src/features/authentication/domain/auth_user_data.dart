@@ -13,6 +13,7 @@ class AuthUserData {
     this.password,
     this.leagueId,
     this.friends,
+    this.enduranceSeconds, // ✅ New field added
     this.userGoal,
     this.goalCompleteByTime,
   });
@@ -25,6 +26,7 @@ class AuthUserData {
   final String? password;
   final String? leagueId;
   final List? friends;
+  final int? enduranceSeconds; // ✅ New field
   final int? userGoal;
   final int? goalCompleteByTime;
 

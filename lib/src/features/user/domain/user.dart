@@ -18,9 +18,11 @@ class User {
     required this.isGuest,
     required this.drivePoints,
     required this.driveStreak,
-    required this.userGoal,
+    required this.enduranceSeconds,
     required this.goalCompleteByTime,
     this.lastDriveStreakAt,
+    required this.userGoal,
+    this.badges, // ✅ 생성자 안에 들어가야 함!
   });
 
   final String id;
@@ -36,9 +38,11 @@ class User {
   final bool isGuest;
   final int drivePoints;
   final int driveStreak;
+  final List<String>? badges; // ✅ 이건 필드 선언 위치가 맞음
   int goalCompleteByTime;
   int userGoal;
   int? lastDriveStreakAt;
+  final int enduranceSeconds;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -46,28 +50,29 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      age: map['age'] as int,
-      carId: map['carId'] as String,
-      email: map['email'] as String,
-      primaryColor: map['primaryColor'] as int,
-      secondaryColor: map['secondaryColor'] as int,
-      code: map['code'] as String,
-      leagueId: map['leagueId'] as String,
-      friends: map['friends'] as List,
-      isGuest: map['isGuest'] as bool,
-      drivePoints: map['drivePoints'] as int,
-      driveStreak: map['driveStreak'] as int,
+      id: map['id'],
+      name: map['name'],
+      age: map['age'],
+      carId: map['carId'],
+      email: map['email'],
+      primaryColor: map['primaryColor'],
+      secondaryColor: map['secondaryColor'],
+      code: map['code'],
+      leagueId: map['leagueId'],
+      friends: List<String>.from(map['friends'] ?? []),
+      isGuest: map['isGuest'] ?? false,
+      drivePoints: map['drivePoints'] ?? 0,
+      driveStreak: map['driveStreak'] ?? 0,
+      enduranceSeconds: map['enduranceSeconds'] ?? 0,
       lastDriveStreakAt: map['lastDriveStreakAt'],
+      badges: List<String>.from(map['badges'] ?? []),
       userGoal: map['userGoal'] as int,
       goalCompleteByTime: map['goalCompleteByTime'] as int,
     );
   }
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> data = {
-      // Required fields
+    return {
       'id': id,
       'name': name,
       'age': age,
@@ -81,15 +86,39 @@ class User {
       'isGuest': isGuest,
       'drivePoints': drivePoints,
       'driveStreak': driveStreak,
+      'enduranceSeconds': enduranceSeconds,
+      'lastDriveStreakAt': lastDriveStreakAt,
+      'badges': badges,
       'userGoal': userGoal,
       'goalCompleteByTime': goalCompleteByTime,
     };
+  }
 
-    // Optional fields should be added here
-    if (lastDriveStreakAt != null) {
-      data['lastDriveStreakAt'] = lastDriveStreakAt;
-    }
-
-    return data;
+  /// ✅ copyWith
+  User copyWith({
+    List<String>? badges,
+    int? enduranceSeconds,
+    int? driveStreak,
+  }) {
+    return User(
+      id: id,
+      name: name,
+      age: age,
+      carId: carId,
+      email: email,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      code: code,
+      leagueId: leagueId,
+      friends: friends,
+      isGuest: isGuest,
+      drivePoints: drivePoints,
+      driveStreak: driveStreak ?? this.driveStreak,
+      enduranceSeconds: enduranceSeconds ?? this.enduranceSeconds,
+      lastDriveStreakAt: lastDriveStreakAt,
+      userGoal: userGoal,
+      badges: badges ?? this.badges,
+      goalCompleteByTime: this.goalCompleteByTime,
+    );
   }
 }
