@@ -27,6 +27,7 @@ dependencies:
   hive_flutter: ^1.1.0
   flame_tiled: ^2.0.1
   kiosk_mode: ^0.6.0
+  flame_audio: ^2.11.2
 
 dev_dependencies:
   flutter_test:
@@ -67,5 +68,6 @@ flutter:
   assets:
     - assets/images/
     - assets/tiles/
+    - assets/audio/
     - assets/images/badges/hotstreak/
     - assets/images/badges/endurance/
