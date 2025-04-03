@@ -55,6 +55,7 @@ class FriendsTabState extends ConsumerState<FriendsTab> {
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserStateProvider);
+    ref.watch(updateUserFriendsControllerProvider);
 
     if (currentUser == null) {
       return const Center(
@@ -275,9 +276,9 @@ class FriendsTabState extends ConsumerState<FriendsTab> {
       await ref
           .read(updateUserFriendsControllerProvider.notifier)
           .updateUserFriends(friendId, 'remove');
-    } catch (error) {
-      //TODO: fix bad state error. Below is SUPER bad practice...it basically says we are planning on an error.
       _showSuccessDialog("Friend Deleted Successfully.");
+    } catch (error) {
+      print(error);
     }
   }
 

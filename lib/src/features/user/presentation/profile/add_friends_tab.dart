@@ -70,13 +70,10 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
       await ref
           .read(updateUserFriendsControllerProvider.notifier)
           .updateUserFriends(friendId, 'add');
-
-      // Check if the widget is still mounted to prevent updating state after unmounting
-      if (!mounted) return;
-    } catch (error) {
-      //TODO: fix bad state error. Below is SUPER bad practice...it basically says we are planning on an error.
       _showSuccessDialog("Friend Added Successfully.");
       _resetSearch(); // Reset search and clear input field after success
+    } catch (error) {
+      print(error);
     } finally {
       // Make sure to reset adding state, so the button can be pressed again if necessary
       if (mounted) {
@@ -138,6 +135,8 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(updateUserFriendsControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.customBlack,
       appBar: AppBar(
