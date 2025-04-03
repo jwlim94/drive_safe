@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:drive_safe/src/features/home/application/daily_goal_service.dart';
 import 'package:drive_safe/src/features/home/domain/session.dart';
@@ -11,6 +12,7 @@ import 'package:drive_safe/src/features/user/presentation/controllers/update_use
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_drive_streak_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_endurance_minutes_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_last_drive_streak_at_controller.dart';
+import 'package:drive_safe/src/features/user/presentation/controllers/update_user_required_focus_time_in_seconds_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/routing/providers/scaffold_with_nested_navigation_visibility_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
@@ -174,6 +176,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref
             .read(updateDriveStreakBadgeControllerProvider.notifier)
             .updateUserDriveStreakBadge(currentUser);
+
+        // Update required focus time in seconds
+        final currentRequiredFocusTimeInSeconds =
+            currentUser.requiredFocusTimeInSeconds;
+
+        final remainingRequiredFocusTimeInSeconds = math.max(
+            0, currentRequiredFocusTimeInSeconds - stopWatch.elapsed.inSeconds);
+
+        ref
+            .read(
+                updateUserRequiredFocusTimeInSecondsControllerProvider.notifier)
+            .updateUserRequiredFocusTimeInSeconds(
+                currentUser.id, remainingRequiredFocusTimeInSeconds);
       }
       stopWatch.reset();
 

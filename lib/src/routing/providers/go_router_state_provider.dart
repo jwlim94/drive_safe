@@ -1,7 +1,6 @@
 import 'package:drive_safe/src/features/authentication/data/auth_repository.dart';
 import 'package:drive_safe/src/features/authentication/presentation/sign_in_screen.dart';
 import 'package:drive_safe/src/features/authentication/presentation/sign_up_screen.dart';
-import 'package:drive_safe/src/features/garage/presentation/garage_screen.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/achievement_screen.dart';
 import 'package:drive_safe/src/features/home/presentation/goal_setting_screen.dart';
@@ -169,41 +168,14 @@ GoRouter goRouterState(Ref ref) {
             navigatorKey: Keys.garageNavigatorKey,
             routes: [
               GoRoute(
-                  path: '/garage',
-                  name: AppRoute.garage.name,
-                  pageBuilder: (context, state) {
-                    return const NoTransitionPage(
-                      child: RacingGameScreen(),
-                    );
-                  },
-                  routes: [
-                    GoRoute(
-                      path: 'trophy',
-                      name: AppRoute.trophy.name,
-                      pageBuilder: (context, state) {
-                        return const NoTransitionPage(
-                          child: GarageScreen(),
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'carcustomization',
-                      name: AppRoute.carcustomization.name,
-                      pageBuilder: (context, state) {
-                        return const NoTransitionPage(
-                          //add any animations here...
-                          child: GarageScreen(),
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'minigame',
-                      name: AppRoute.minigame.name,
-                      builder: (context, state) {
-                        return const RacingGameScreen();
-                      },
-                    ),
-                  ])
+                path: '/garage',
+                name: AppRoute.garage.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(
+                    child: RacingGameScreen(),
+                  );
+                },
+              ),
             ],
           ),
           StatefulShellBranch(

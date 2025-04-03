@@ -2,7 +2,7 @@ import 'package:drive_safe/src/features/garage/presentation/minigame/players/pla
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/gameplay.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/main_menu.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/pause_menu.dart';
-import 'package:drive_safe/src/features/garage/presentation/minigame/routes/retry_menu.dart';
+import 'package:drive_safe/src/features/garage/presentation/minigame/routes/exit_menu.dart';
 import 'package:drive_safe/src/features/garage/presentation/minigame/routes/settings.dart';
 import 'package:flame/game.dart' as flame;
 import 'package:flame/game.dart';
@@ -15,8 +15,12 @@ import 'package:flame/events.dart';
 class RacingGame extends flame.FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents, DragCallbacks {
   final void Function(int score)? onScoreUpdate;
+  final void Function()? onResetRequiredFocusTime;
 
-  RacingGame({this.onScoreUpdate});
+  RacingGame({
+    this.onScoreUpdate,
+    this.onResetRequiredFocusTime,
+  });
 
   final musicValueNotifier = ValueNotifier(false);
   final sfxValueNotifier = ValueNotifier(false);
@@ -48,8 +52,8 @@ class RacingGame extends flame.FlameGame
         onExitPressed: _exitToMainMenu,
       ),
     ),
-    RetryMenu.id: flame.OverlayRoute(
-      (context, game) => RetryMenu(
+    ExitMenu.id: flame.OverlayRoute(
+      (context, game) => ExitMenu(
         onRetryPressed: _startGame,
         onExitPressed: _exitToMainMenu,
       ),
@@ -90,7 +94,7 @@ class RacingGame extends flame.FlameGame
   }
 
   void _startGame() {
-    if (_router.currentRoute.name == RetryMenu.id) {
+    if (_router.currentRoute.name == ExitMenu.id) {
       _router.pop();
     }
     resumeEngine();
@@ -99,12 +103,16 @@ class RacingGame extends flame.FlameGame
       flame.Route(
         () => Gameplay(
           onPausePressed: _pauseGame,
-          onGameOver: _showRetryMenu,
+          onGameOver: _showExitMenu,
           sfxEnabled: sfxValueNotifier.value,
         ),
       ),
       name: Gameplay.id,
     );
+
+    if (onResetRequiredFocusTime != null) {
+      onResetRequiredFocusTime!();
+    }
   }
 
   void _pauseGame() {
@@ -132,20 +140,20 @@ class RacingGame extends flame.FlameGame
       children.query<PlayerStats>().first.reset();
     }
 
-    if (_router.currentRoute.name == RetryMenu.id) {
+    if (_router.currentRoute.name == ExitMenu.id) {
       _router.pop();
     }
 
     _router.pushReplacementNamed(MainMenu.id);
   }
 
-  void _showRetryMenu() {
+  void _showExitMenu() {
     if (onScoreUpdate != null) {
       final score = _calculateGameScore();
       onScoreUpdate!(score);
     }
 
-    _router.pushNamed(RetryMenu.id);
+    _router.pushNamed(ExitMenu.id);
     pauseEngine();
   }
 

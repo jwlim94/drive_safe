@@ -3,8 +3,8 @@ import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
-class RetryMenu extends StatelessWidget {
-  const RetryMenu({
+class ExitMenu extends StatelessWidget {
+  const ExitMenu({
     super.key,
     this.onRetryPressed,
     this.onExitPressed,
@@ -13,7 +13,7 @@ class RetryMenu extends StatelessWidget {
   final VoidCallback? onRetryPressed;
   final VoidCallback? onExitPressed;
 
-  static const id = 'RetryMenu';
+  static const id = 'ExitMenu';
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,6 @@ class RetryMenu extends StatelessWidget {
           children: [
             const Text('Game Over', style: TextStyles.h2),
             const SizedBox(height: 24),
-            CustomButton(
-              text: 'Retry',
-              onPressed: onRetryPressed,
-              backgroundColor: AppColors.customDarkPurple,
-            ),
-            const SizedBox(height: 8),
             CustomButton(
               text: 'Exit',
               onPressed: onExitPressed,

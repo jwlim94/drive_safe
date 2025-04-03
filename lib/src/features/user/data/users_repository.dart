@@ -42,6 +42,7 @@ class UsersRepository {
       userGoal: 0,
       goalCompleteByTime: 0,
       highestScore: 0,
+      requiredFocusTimeInSeconds: 0,
     );
 
     await _userDocumentRef(userId).set(user);
@@ -186,6 +187,18 @@ class UsersRepository {
   Future<User> updateUserHighestScore(String userId, int highestScore) async {
     final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
     await usersRef.update({'highestScore': highestScore});
+
+    final updatedSnapshot = await usersRef.get();
+    if (!updatedSnapshot.exists) throw Exception('User not found');
+
+    return User.fromMap(updatedSnapshot.data()!);
+  }
+
+  Future<User> updateUserRequiredFocusTimeInSeconds(
+      String userId, int requiredFocusTimeInSeconds) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+    await usersRef
+        .update({'requiredFocusTimeInSeconds': requiredFocusTimeInSeconds});
 
     final updatedSnapshot = await usersRef.get();
     if (!updatedSnapshot.exists) throw Exception('User not found');
