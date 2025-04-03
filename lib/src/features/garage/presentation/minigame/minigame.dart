@@ -59,9 +59,8 @@ class RacingGame extends flame.FlameGame
 
   @override
   Future<void> onLoad() async {
-    // 배경음악 로드 및 재생
     await FlameAudio.audioCache.load('background_music.mp3');
-    isMusicEnabled = musicValueNotifier.value; // 현재 설정값으로 초기화
+    isMusicEnabled = musicValueNotifier.value;
     if (isMusicEnabled) {
       FlameAudio.bgm.play('background_music.mp3');
     }
@@ -125,17 +124,14 @@ class RacingGame extends flame.FlameGame
   void _exitToMainMenu() {
     resumeEngine();
 
-    // 게임 상태 초기화
     if (children.query<PlayerStats>().isNotEmpty) {
       children.query<PlayerStats>().first.reset();
     }
 
-    // 현재 라우트가 RetryMenu인 경우 먼저 pop
     if (_router.currentRoute.name == RetryMenu.id) {
       _router.pop();
     }
 
-    // 메인 메뉴로 이동
     _router.pushReplacementNamed(MainMenu.id);
   }
 
@@ -156,16 +152,16 @@ class TouchController extends JoystickComponent with HasGameRef {
             radius: 20,
             paint: Paint()..color = Colors.grey.withAlpha(200),
           ),
-          priority: 100, // 다른 컴포넌트보다 위에 그려지도록
+          priority: 100,
         );
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // 위치를 직접 설정
+
     position = Vector2(
-      (gameRef.size.x / 4) * 3, // 화면 오른쪽 1/4 지점
-      gameRef.size.y - 75, // 화면 하단에서 75픽셀 위
+      (gameRef.size.x / 4) * 3,
+      gameRef.size.y - 75,
     );
   }
 }

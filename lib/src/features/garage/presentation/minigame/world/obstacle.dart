@@ -30,19 +30,17 @@ class RoadObstacle extends PositionComponent
   bool _hasCollided = false;
 
   SpriteComponent? _carSprite;
-  int _carColorIndex = 0;
+  final _carColorIndex = 0;
 
   @override
   Future<void> onLoad() async {
-    size = Vector2(16, 16); // 🔒 스프라이트와 컴포넌트 크기 모두 16 고정
+    size = Vector2(16, 16);
 
-    // 정확하고 타이트한 히트박스 설정 (조금 작게, 중심 기준)
     await add(RectangleHitbox(
       size: Vector2(10, 10),
       anchor: Anchor.center,
     ));
 
-    // NPC 자동차 스프라이트 로딩
     try {
       final carImage = await gameRef.images.load('npc_cars_16_x_16.png');
       final spriteSheet = SpriteSheet(
@@ -55,14 +53,12 @@ class RoadObstacle extends PositionComponent
 
       _carSprite = SpriteComponent(
         sprite: spriteSheet.getSprite(randomRow, 0),
-        size: Vector2(16, 16), // 🔒 고정
+        size: Vector2(16, 16),
         anchor: Anchor.center,
       );
 
       await add(_carSprite!);
-    } catch (e) {
-      // fallback 생략
-    }
+    } catch (e) {}
   }
 
   @override
@@ -91,7 +87,6 @@ class RoadObstacle extends PositionComponent
     _hasCollided = true;
     playerStats.collision();
 
-    // 효과음 재생
     if (sfxEnabled) {
       FlameAudio.play('crash.mp3');
     }

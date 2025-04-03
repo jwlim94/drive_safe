@@ -12,13 +12,12 @@ class Player extends PositionComponent
   Player();
 
   late final SpriteComponent _body;
-  final _moveDirection = Vector2(0, 1); // downward for now
+  final _moveDirection = Vector2(0, 1);
 
   static const _maxSpeed = 160;
   static const _acceleration = 0.5;
   var _speed = 0.0;
 
-  // 깜빡임 효과 관련 변수
   bool _isVisible = true;
   static const _blinkInterval = 0.1;
   double _blinkTimer = 0;
@@ -34,7 +33,7 @@ class Player extends PositionComponent
     ));
 
     _body = SpriteComponent(
-      sprite: spriteSheet.getSprite(0, 4), // index
+      sprite: spriteSheet.getSprite(0, 4),
       anchor: Anchor.center,
     );
     await add(_body);
@@ -53,7 +52,6 @@ class Player extends PositionComponent
     angle = _moveDirection.screenAngle() + pi;
     position.addScaled(_moveDirection, _speed * dt);
 
-    // 무적 시간 동안 깜빡임 효과
     final playerStats = ancestor.playerStats;
     if (playerStats.isInvincible) {
       _blinkTimer += dt;
@@ -72,7 +70,5 @@ class Player extends PositionComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-
-    // RoadObstacle이 직접 충돌 처리하기 때문에 여기선 안 해도 됨.
   }
 }
