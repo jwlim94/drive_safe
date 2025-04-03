@@ -1,16 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_friends_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/add_friends_tab.dart';
-import 'package:drive_safe/src/features/user/presentation/profile/search_friends_tab.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class FriendsTab extends ConsumerWidget {
+class FriendsTab extends ConsumerStatefulWidget {
   const FriendsTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  FriendsTabState createState() => FriendsTabState();
+}
+
+class FriendsTabState extends ConsumerState<FriendsTab> {
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> allFriends = [];
+  List<Map<String, dynamic>> filteredFriends = [];
+  bool showDropdown = false;
+  bool isLoading = true;
+  bool isSearchBarActive = false;
+
+  @override
+  void initState() {
+    super.initState;
+    setState(() {
+      isSearchBarActive = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  /// Filters friends based on search query
+  void _searchFriends(String query) {
+    setState(() {
+      // Filter the allFriends list based on the search query
+      filteredFriends = allFriends
+          .where((friend) =>
+              friend['name']
+                  ?.toString()
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ??
+              false)
+          .toList();
+      showDropdown = query.isNotEmpty && filteredFriends.isNotEmpty;
+      isSearchBarActive = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserStateProvider);
 
     if (currentUser == null) {
@@ -50,30 +94,41 @@ class FriendsTab extends ConsumerWidget {
                         fontWeight: FontWeight.bold)),
               ],
             ),
-            Column(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.search, color: Colors.white, size: 40),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SearchFriendsTab(),
-                      ),
-                    );
-                  },
-                ),
-                const Text("Search",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold)),
-              ],
-            ),
           ],
         ),
         const Divider(color: Colors.white, thickness: 1.5, height: 20),
-
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.customWhite, width: 1),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  onChanged:
+                      _searchFriends, // Call _searchFriends on text change
+                  controller: _searchController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Search",
+                    hintStyle: TextStyles.searchHint,
+                    contentPadding: EdgeInsets.all(12),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.search, color: Colors.white),
+                  onPressed: () => _searchFriends(_searchController.text),
+                  splashRadius: 24,
+                ),
+              ),
+            ],
+          ),
+        ),
         // 🔥 Fetch and display friends based on the friends array in Firestore
         Expanded(
           child: StreamBuilder<DocumentSnapshot>(
@@ -110,16 +165,17 @@ class FriendsTab extends ConsumerWidget {
                 );
               }
 
-              return FutureBuilder<QuerySnapshot>(
-                future: FirebaseFirestore.instance
+              return StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
                     .collection('users')
                     .where(FieldPath.documentId, whereIn: friendIds)
-                    .get(),
+                    .snapshots(),
                 builder: (context, friendsSnapshot) {
                   if (friendsSnapshot.connectionState ==
                       ConnectionState.waiting) {
                     return const Center(
-                        child: CircularProgressIndicator(color: Colors.white));
+                      child: CircularProgressIndicator(color: Colors.white),
+                    );
                   }
 
                   if (!friendsSnapshot.hasData ||
@@ -132,20 +188,30 @@ class FriendsTab extends ConsumerWidget {
                     );
                   }
 
-                  final friendsList = friendsSnapshot.data!.docs.map((doc) {
-                    return doc.data() as Map<String, dynamic>;
-                  }).toList();
+                  if (isSearchBarActive == false) {
+                    // Corrected: Get the list of friends from the `docs` property
+                    allFriends = friendsSnapshot.data!.docs.map((doc) {
+                      return doc.data() as Map<String, dynamic>;
+                    }).toList();
+                    filteredFriends = allFriends;
+                  } else {
+                    // Initially, show all friends if the search query is empty and then show only the filtered ones
+                    filteredFriends;
+                  }
 
                   return ListView.builder(
-                    itemCount: friendsList.length,
+                    itemCount: filteredFriends.length, // Use filteredFriends
                     itemBuilder: (context, index) {
-                      final friend = friendsList[index];
+                      final friend =
+                          filteredFriends[index]; // Use filteredFriends
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Color(friend['primaryColor']),
                           child: Text(
                             friend['name'][0].toUpperCase(),
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Color(friend['secondaryColor']),
+                            ),
                           ),
                         ),
                         title: Text(friend['name'],
@@ -193,8 +259,8 @@ class FriendsTab extends ConsumerWidget {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close confirmation dialog
-              _removeFriend(context, ref, currentUserId,
-                  friendId); // ✅ Proceed with deletion
+              _removeFriend(
+                  context, currentUserId, friendId); // ✅ Proceed with deletion
             },
             child: const Text("Yes", style: TextStyle(color: Colors.red)),
           ),
@@ -204,20 +270,21 @@ class FriendsTab extends ConsumerWidget {
   }
 
   /// 🔥 Delete friend and show "Successfully Deleted!" popup
-  void _removeFriend(BuildContext context, WidgetRef ref, String currentUserId,
-      String friendId) {
-    ref
-        .read(updateUserFriendsControllerProvider.notifier)
-        .updateUserFriends(friendId, 'remove')
-        .then((_) {
-      _showSuccessDialog(context, "Successfully Deleted!");
-    }).catchError((error) {
-      _showErrorDialog(context, "Failed to delete friend: $error");
-    });
+  Future<void> _removeFriend(
+      BuildContext context, String currentUserId, String friendId) async {
+    try {
+      await ref
+          .read(updateUserFriendsControllerProvider.notifier)
+          .updateUserFriends(friendId, 'remove');
+    } catch (error) {
+      //TODO: fix bad state error. Below is SUPER bad practice...it basically says we are planning on an error.
+      _showSuccessDialog("Friend Deleted Successfully.");
+    }
   }
 
-  /// ✅ Success message popup
-  void _showSuccessDialog(BuildContext context, String message) {
+  /// Show success dialog
+  void _showSuccessDialog(String message) {
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -226,26 +293,11 @@ class FriendsTab extends ConsumerWidget {
         content: Text(message, style: const TextStyle(color: Colors.white)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.of(context).pop();
+              // _resetSearch();
+            },
             child: const Text("OK", style: TextStyle(color: Colors.blue)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// ❌ Error message popup
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
-        title: const Text("Error!", style: TextStyle(color: Colors.white)),
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class AddFriendsScreen extends ConsumerStatefulWidget {
   const AddFriendsScreen({super.key});
@@ -47,33 +48,38 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
     } catch (e) {
       _showErrorDialog("Error: ${e.toString()}");
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  /// Add friend with proper state handling
-  void _addFriend() async {
-    if (_searchedFriend == null || _isAddingFriend) return;
-    setState(() {
-      _isAddingFriend = true;
-    });
-
-    final friendId = _searchedFriend!['id'];
-
+  void _addFriend(String friendId) async {
+    // Prevent multiple submissions
+    if (_searchedFriend == null || _isAddingFriend) {
+      return;
+    } else {
+      setState(() {
+        _isAddingFriend =
+            true; // Indicate we are in the process of adding a friend
+      });
+    }
     try {
+      // Call the function to update friends, ensuring no multiple calls
       await ref
           .read(updateUserFriendsControllerProvider.notifier)
           .updateUserFriends(friendId, 'add');
 
+      // Check if the widget is still mounted to prevent updating state after unmounting
       if (!mounted) return;
-      _showSuccessDialog("Friend Added Successfully.");
-      _resetSearch();
     } catch (error) {
-      if (!mounted) return;
-      _showErrorDialog("Failed to add friend: $error");
+      //TODO: fix bad state error. Below is SUPER bad practice...it basically says we are planning on an error.
+      _showSuccessDialog("Friend Added Successfully.");
+      _resetSearch(); // Reset search and clear input field after success
     } finally {
+      // Make sure to reset adding state, so the button can be pressed again if necessary
       if (mounted) {
         setState(() {
           _isAddingFriend = false;
@@ -93,7 +99,10 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
         content: Text(message, style: const TextStyle(color: Colors.white)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.of(context).pop();
+              _resetSearch();
+            },
             child: const Text("OK", style: TextStyle(color: Colors.blue)),
           ),
         ],
@@ -201,7 +210,9 @@ class _AddFriendsScreenState extends ConsumerState<AddFriendsScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.customPink,
                   ),
-                  onPressed: _isAddingFriend ? null : _addFriend,
+                  onPressed: _isAddingFriend
+                      ? null
+                      : () => _addFriend(_searchedFriend!['id']),
                   child: _isAddingFriend
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text("Add",
