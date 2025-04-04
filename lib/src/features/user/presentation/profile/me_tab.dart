@@ -111,6 +111,9 @@ class MeTab extends ConsumerWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
+          const SizedBox(
+            height: 12,
+          ),
           Row(
             children: [
               Container(
