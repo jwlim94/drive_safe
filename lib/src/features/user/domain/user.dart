@@ -22,9 +22,9 @@ class User {
     required this.goalCompleteByTime,
     this.lastDriveStreakAt,
     required this.userGoal,
-    this.badges, // ✅ 생성자 안에 들어가야 함!
     required this.highestScore,
     required this.requiredFocusTimeInSeconds,
+    this.badges = const [],
   });
 
   final String id;
@@ -40,7 +40,13 @@ class User {
   final bool isGuest;
   final int drivePoints;
   final int driveStreak;
-  final List<String>? badges; // ✅ 이건 필드 선언 위치가 맞음
+
+  @JsonKey(
+    defaultValue: [],
+    fromJson: customBadgesFromJson,
+  )
+  final List<String> badges;
+
   int goalCompleteByTime;
   int userGoal;
   int? lastDriveStreakAt;
@@ -53,24 +59,24 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'],
-      name: map['name'],
-      age: map['age'],
-      carId: map['carId'],
-      email: map['email'],
-      primaryColor: map['primaryColor'],
-      secondaryColor: map['secondaryColor'],
-      code: map['code'],
-      leagueId: map['leagueId'],
+      id: map['id'] ?? '',
+      name: map['name'] ?? 'Unknown',
+      age: map['age'] ?? 0,
+      carId: map['carId'] ?? '',
+      email: map['email'] ?? '',
+      primaryColor: map['primaryColor'] ?? 0,
+      secondaryColor: map['secondaryColor'] ?? 0,
+      code: map['code'] ?? '',
+      leagueId: map['leagueId'] ?? '',
       friends: List<String>.from(map['friends'] ?? []),
       isGuest: map['isGuest'] ?? false,
       drivePoints: map['drivePoints'] ?? 0,
       driveStreak: map['driveStreak'] ?? 0,
       enduranceSeconds: map['enduranceSeconds'] ?? 0,
       lastDriveStreakAt: map['lastDriveStreakAt'],
-      badges: List<String>.from(map['badges'] ?? []),
-      userGoal: map['userGoal'] as int,
-      goalCompleteByTime: map['goalCompleteByTime'] as int,
+      badges: customBadgesFromJson(map['badges']),
+      userGoal: map['userGoal'] ?? 0,
+      goalCompleteByTime: map['goalCompleteByTime'] ?? 0,
       highestScore: map['highestScore'] ?? 0,
       requiredFocusTimeInSeconds: map['requiredFocusTimeInSeconds'] ?? 0,
     );
@@ -101,7 +107,6 @@ class User {
     };
   }
 
-  /// ✅ copyWith
   User copyWith({
     List<String>? badges,
     int? enduranceSeconds,
@@ -133,4 +138,12 @@ class User {
           requiredFocusTimeInSeconds ?? this.requiredFocusTimeInSeconds,
     );
   }
+}
+
+List<String> customBadgesFromJson(dynamic value) {
+  if (value == null) return [];
+  if (value is List) {
+    return value.map((e) => e.toString()).toList();
+  }
+  return [];
 }

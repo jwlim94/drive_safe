@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drive_safe/src/features/user/presentation/controllers/update_user_friends_controller.dart';
 import 'package:drive_safe/src/features/user/presentation/profile/add_friends_tab.dart';
+import 'package:drive_safe/src/features/user/presentation/profile/friend_profile_screen.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
@@ -205,6 +206,16 @@ class FriendsTabState extends ConsumerState<FriendsTab> {
                       final friend =
                           filteredFriends[index]; // Use filteredFriends
                       return ListTile(
+                        onTap: () {
+                          print('Tapped friend id: ${friend['id']}');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  FriendProfileScreen(userId: friend['id']),
+                            ),
+                          );
+                        },
                         leading: CircleAvatar(
                           backgroundColor: Color(friend['primaryColor']),
                           child: Text(
