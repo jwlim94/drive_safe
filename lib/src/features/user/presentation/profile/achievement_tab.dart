@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AchievementTab extends ConsumerWidget {
-  const AchievementTab({super.key});
+  final List<String>? friendBadges;
+  final String? friendId;
+
+  const AchievementTab({super.key, this.friendBadges, this.friendId});
 
   static const List<int> hotStreakBadges = [10, 20, 50, 100, 250, 365];
   static const List<int> enduranceBadges = [30, 60, 90, 120, 150, 180];
@@ -14,13 +17,13 @@ class AchievementTab extends ConsumerWidget {
   List<Widget> buildBadgeRows(
     List<int> badgeList,
     String type,
-    List<String>? unlockedBadges,
+    List<String> unlockedBadges,
   ) {
     List<Widget> rows = [];
     for (int i = 0; i < badgeList.length; i += 3) {
       final rowBadges = badgeList.skip(i).take(3).map((value) {
         final badgeKey = '${type}_$value';
-        final isUnlocked = unlockedBadges?.contains(badgeKey) ?? false;
+        final isUnlocked = unlockedBadges.contains(badgeKey);
         final path =
             'assets/images/badges/$type/${value}_${isUnlocked ? 'unlocked' : 'locked'}.png';
 
@@ -59,7 +62,11 @@ class AchievementTab extends ConsumerWidget {
       );
     }
 
-    final unlockedBadges = currentUser.badges;
+    // Use the passed friendBadges or the current user's badges.
+    var unlockedBadges = friendBadges ?? currentUser.badges;
+
+    // Check if unlockedBadges are the same as friendBadges
+    bool shouldShowRefreshButton = friendId == null;
 
     return Stack(
       children: [
@@ -77,13 +84,10 @@ class AchievementTab extends ConsumerWidget {
             padding: const EdgeInsets.all(5),
             child: Column(
               children: [
-                const Text(
-                  'Achievements',
-                  style: TextStyles.h2,
+                const Text('Achievements', style: TextStyles.h2),
+                const SizedBox(
+                  height: 15,
                 ),
-                const SizedBox(height: 15),
-
-                /// 🔥 Hot Streak Section
                 const Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -101,10 +105,7 @@ class AchievementTab extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 ...buildBadgeRows(hotStreakBadges, 'hotstreak', unlockedBadges),
-
                 const SizedBox(height: 20),
-
-                /// 🏁 Endurance Section
                 const Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -120,23 +121,26 @@ class AchievementTab extends ConsumerWidget {
                   'Endurance badges are for tracking how long you have focused for in a day',
                   style: TextStyles.finePrint,
                 ),
-
                 const SizedBox(height: 4),
                 ...buildBadgeRows(enduranceBadges, 'endurance', unlockedBadges),
-
                 const SizedBox(height: 15),
-
-                /// 🔁 Refresh 버튼
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref
-                        .read(currentUserStateProvider.notifier)
-                        .refreshAndSetUser();
-                  },
-                  child: const Text('🧪 Refresh Achievements'),
-                ),
-
-                const SizedBox(height: 15),
+                if (shouldShowRefreshButton) ...{
+                  IconButton(
+                    icon: const Icon(Icons.refresh,
+                        color: Colors.white, size: 40),
+                    onPressed: () async {
+                      await ref
+                          .read(currentUserStateProvider.notifier)
+                          .refreshAndSetUser();
+                    },
+                  ),
+                  const Text("Refresh Achievements",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 15),
+                }
               ],
             ),
           ),

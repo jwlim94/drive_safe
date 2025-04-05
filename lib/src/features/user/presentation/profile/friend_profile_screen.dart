@@ -5,7 +5,6 @@ import 'package:drive_safe/src/features/user/presentation/providers/friend_car_p
 import 'package:drive_safe/src/features/user/presentation/providers/friend_league_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/friend_user_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
-import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:drive_safe/src/shared/utils/league_utils.dart';
 import 'package:drive_safe/src/shared/widgets/checkered_flag.dart';
@@ -15,8 +14,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class FriendProfileScreen extends ConsumerWidget {
   final String userId;
+  final String carId;
 
-  const FriendProfileScreen({super.key, required this.userId});
+  const FriendProfileScreen(
+      {super.key, required this.userId, required this.carId});
 
   Widget _buildProfileBadge({required Widget icon, required String label}) {
     return Container(
@@ -103,7 +104,7 @@ class FriendProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final friendUserAsync = ref.watch(friendUserProvider(userId));
-    final friendCarAsync = ref.watch(friendCarProvider(userId));
+    final friendCarAsync = ref.watch(friendCarProvider(carId));
     final friendLeagueAsync = ref.watch(friendLeagueProvider(userId));
 
     return Stack(
@@ -247,8 +248,10 @@ class FriendProfileScreen extends ConsumerWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AchievementTab(),
+                                    builder: (context) => AchievementTab(
+                                      friendBadges: user.badges,
+                                      friendId: user.id,
+                                    ),
                                   ),
                                 );
                               },

@@ -113,6 +113,7 @@ class User {
     int? driveStreak,
     int? highestScore,
     int? requiredFocusTimeInSeconds,
+    List<dynamic>? friends,
   }) {
     return User(
       id: id,
@@ -124,7 +125,7 @@ class User {
       secondaryColor: secondaryColor,
       code: code,
       leagueId: leagueId,
-      friends: friends,
+      friends: friends ?? this.friends,
       isGuest: isGuest,
       drivePoints: drivePoints,
       driveStreak: driveStreak ?? this.driveStreak,

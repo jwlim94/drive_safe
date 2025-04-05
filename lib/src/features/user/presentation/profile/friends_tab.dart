@@ -74,25 +74,50 @@ class FriendsTabState extends ConsumerState<FriendsTab> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Column(
+            Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.person_add,
-                      color: Colors.white, size: 40),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddFriendsScreen(),
-                      ),
-                    );
-                  },
+                Column(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.person_add,
+                          color: Colors.white, size: 40),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddFriendsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const Text("Add Friends",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  ],
                 ),
-                const Text("Add Friends",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold)),
+                const SizedBox(
+                  width: 50,
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.refresh,
+                          color: Colors.white, size: 40),
+                      onPressed: () async {
+                        await ref
+                            .read(currentUserStateProvider.notifier)
+                            .refreshAndSetUser();
+                      },
+                    ),
+                    const Text("Refresh Friends",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ],
             ),
           ],
@@ -211,8 +236,8 @@ class FriendsTabState extends ConsumerState<FriendsTab> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  FriendProfileScreen(userId: friend['id']),
+                              builder: (_) => FriendProfileScreen(
+                                  userId: friend['id'], carId: friend['carId']),
                             ),
                           );
                         },

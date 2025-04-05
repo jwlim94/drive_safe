@@ -64,6 +64,19 @@ class UsersRepository {
     }
   }
 
+  Future<List<dynamic>> getUserFriends(String userId) async {
+    final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
+
+    final docSnapshot = await usersRef.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      return data?['friends'] ?? [];
+    } else {
+      return [];
+    }
+  }
+
   Future<User> updateUserName(String userId, String name) async {
     final usersRef = _firestore.collection(Strings.usersCollection).doc(userId);
 

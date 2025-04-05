@@ -68,11 +68,13 @@ class _OnboardingVehicleSelectionScreenState
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset(
-            'assets/images/checkered_flag.svg',
+          SizedBox(
+            height: 80,
             width: double.infinity,
-            height: 100,
-            fit: BoxFit.cover,
+            child: SvgPicture.asset(
+              'assets/images/checkered_flag.svg',
+              fit: BoxFit.cover,
+            ),
           ),
           Expanded(
             child: SafeArea(
