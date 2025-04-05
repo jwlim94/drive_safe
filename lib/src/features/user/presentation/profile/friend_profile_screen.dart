@@ -5,8 +5,10 @@ import 'package:drive_safe/src/features/user/presentation/providers/friend_car_p
 import 'package:drive_safe/src/features/user/presentation/providers/friend_league_provider.dart';
 import 'package:drive_safe/src/features/user/presentation/providers/friend_user_provider.dart';
 import 'package:drive_safe/src/shared/constants/app_colors.dart';
+import 'package:drive_safe/src/shared/constants/text_styles.dart';
 import 'package:drive_safe/src/shared/utils/color_utils.dart';
 import 'package:drive_safe/src/shared/utils/league_utils.dart';
+import 'package:drive_safe/src/shared/widgets/checkered_flag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -104,174 +106,181 @@ class FriendProfileScreen extends ConsumerWidget {
     final friendCarAsync = ref.watch(friendCarProvider(userId));
     final friendLeagueAsync = ref.watch(friendLeagueProvider(userId));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Friend Profile'),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        flexibleSpace: Align(
-          alignment: Alignment.topCenter,
-          child: SvgPicture.asset(
-            'assets/images/checkered_flag.svg', // 체크무늬 이미지 추가
-            width: MediaQuery.of(context).size.width, // 전체 화면 너비로 설정
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      body: friendUserAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(
-          child: Text(
-            'Friend is warming up',
-            style: TextStyle(
-              color: Colors.white, // 글씨 색을 흰색으로 설정
-              fontSize: 20, // 글씨 크기 키우기
-              fontWeight: FontWeight.bold, // 글씨 굵기 설정 (선택 사항)
+    return Stack(
+      children: [
+        const CheckeredFlag(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            iconTheme: const IconThemeData(
+              color: AppColors.customWhite,
+              size: 45,
             ),
           ),
-        ),
-        data: (user) {
-          if (user == null) {
-            return const Center(child: Text('Friend not found'));
-          }
-          final car = friendCarAsync.asData?.value;
-          final league = friendLeagueAsync.asData?.value;
+          body: friendUserAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => const Center(
+              child: Text(
+                'Friend is warming up',
+                style: TextStyle(
+                  color: Colors.white, // 글씨 색을 흰색으로 설정
+                  fontSize: 20, // 글씨 크기 키우기
+                  fontWeight: FontWeight.bold, // 글씨 굵기 설정 (선택 사항)
+                ),
+              ),
+            ),
+            data: (user) {
+              if (user == null) {
+                return const Center(child: Text('Friend not found'));
+              }
+              final car = friendCarAsync.asData?.value;
+              final league = friendLeagueAsync.asData?.value;
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30), // 양옆에 패딩 추가
-              child: Column(
-                children: [
-                  const SizedBox(height: 12),
-                  Row(
+              return SingleChildScrollView(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30), // 양옆에 패딩 추가
+                  child: Column(
                     children: [
-                      Container(
-                        width: 96,
-                        height: 96,
-                        decoration: BoxDecoration(
-                          color: ColorUtils.toColor(user.primaryColor),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            user.name.isNotEmpty
-                                ? user.name[0].toUpperCase()
-                                : '?',
-                            style: TextStyle(
-                              color: ColorUtils.toColor(user.secondaryColor),
-                              fontSize: 64,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                      const SizedBox(
+                        height: 10,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user.name,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.customWhite,
+                      Row(
+                        children: [
+                          Container(
+                            width: 96,
+                            height: 96,
+                            decoration: BoxDecoration(
+                              color: ColorUtils.toColor(user.primaryColor),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                user.name.isNotEmpty
+                                    ? user.name[0].toUpperCase()
+                                    : '?',
+                                style: TextStyle(
+                                  color:
+                                      ColorUtils.toColor(user.secondaryColor),
+                                  fontSize: 64,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              car != null
-                                  ? '${car.description} ${car.type}'
-                                  : 'No car info',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                color: AppColors.customWhite,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  _buildHighScoreCard(user),
-                  const SizedBox(height: 28),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildProfileBadge(
-                          icon: SvgPicture.asset(
-                            LeagueUtils.getSvgPath(league?.name ?? 'bronze'),
-                            width: 36,
-                            height: 36,
                           ),
-                          label: LeagueUtils.getFormattedLeagueName(
-                              league?.name ?? 'bronze'),
-                        ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.customWhite,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  car != null
+                                      ? '${car.description} ${car.type}'
+                                      : 'No car info',
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    color: AppColors.customWhite,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildProfileBadge(
-                          icon: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/flame.svg',
+                      const SizedBox(height: 20),
+                      _buildHighScoreCard(user),
+                      const SizedBox(height: 28),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildProfileBadge(
+                              icon: SvgPicture.asset(
+                                LeagueUtils.getSvgPath(
+                                    league?.name ?? 'bronze'),
                                 width: 36,
                                 height: 36,
                               ),
-                              Positioned(
-                                top: 14,
-                                child: Text(
-                                  user.driveStreak.toString(),
-                                  style: const TextStyle(
-                                    color: AppColors.streakNumber,
-                                    fontWeight: FontWeight.bold,
+                              label: LeagueUtils.getFormattedLeagueName(
+                                  league?.name ?? 'bronze'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildProfileBadge(
+                              icon: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/images/flame.svg',
+                                    width: 36,
+                                    height: 36,
                                   ),
-                                ),
+                                  Positioned(
+                                    top: 14,
+                                    child: Text(
+                                      user.driveStreak.toString(),
+                                      style: const TextStyle(
+                                        color: AppColors.streakNumber,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                              label: 'Streak',
+                            ),
                           ),
-                          label: 'Streak',
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AchievementTab(),
+                                  ),
+                                );
+                              },
+                              child: _buildProfileBadge(
+                                icon: const Icon(Icons.star,
+                                    color: Colors.amber, size: 36),
+                                label: 'Achievements',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Level ${(user.drivePoints / 10000).floor()}',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AchievementTab(),
-                              ),
-                            );
-                          },
-                          child: _buildProfileBadge(
-                            icon: const Icon(Icons.star,
-                                color: Colors.amber, size: 36),
-                            label: 'Achievements',
-                          ),
-                        ),
-                      ),
+                      const SizedBox(height: 100),
+                      GaugeMeter(points: user.drivePoints),
+                      const SizedBox(height: 28),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Level ${(user.drivePoints / 10000).floor()}',
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 100),
-                  GaugeMeter(points: user.drivePoints),
-                  const SizedBox(height: 28),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

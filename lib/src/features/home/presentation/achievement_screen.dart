@@ -103,7 +103,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(bottom: 20, top: 150),
+                      padding: EdgeInsets.only(bottom: 20, top: 100),
                       child: Text(
                         'Your Focus Streak!',
                         style: TextStyles.h3,
@@ -169,7 +169,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(bottom: 5, top: 150),
+                    padding: EdgeInsets.only(bottom: 5, top: 100),
                     child: Text(
                       'Achievements Earned!',
                       style: TextStyles.h3,

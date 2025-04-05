@@ -95,14 +95,16 @@ class _GoalSetScreenState extends ConsumerState<GoalSetScreen> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             iconTheme: const IconThemeData(
-                color: AppColors.customLightPurple, size: 55),
+              color: AppColors.customWhite,
+              size: 45,
+            ),
           ),
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Padding(padding: EdgeInsets.only(top: 50)),
+                const Padding(padding: EdgeInsets.only(top: 5)),
                 const Text(
                   'AutoFocus Time',
                   textAlign: TextAlign.center,

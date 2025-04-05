@@ -161,7 +161,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             iconTheme: const IconThemeData(
-                color: AppColors.customLightPurple, size: 55),
+              color: AppColors.customWhite,
+              size: 45,
+            ),
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 9),

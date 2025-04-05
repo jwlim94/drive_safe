@@ -54,7 +54,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
         Scaffold(
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: const EdgeInsets.only(top: 56),
+            padding: const EdgeInsets.only(top: 78),
             child: Column(
               children: [
                 TabBar(
@@ -92,7 +92,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 // Check selected tab and display the respective content
                 CarouselSlider(
                   carouselController: buttonCarouselController,

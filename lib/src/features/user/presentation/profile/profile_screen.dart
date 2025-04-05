@@ -44,16 +44,16 @@ class _ProfileScreenState extends State<ProfileScreen>
         Scaffold(
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.only(top: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 IconButton(
-                  padding: const EdgeInsets.only(top: 5, right: 12),
+                  padding: const EdgeInsets.only(right: 12),
                   icon: const Icon(
                     Icons.settings,
-                    color: AppColors.customGray,
-                    size: 32,
+                    color: AppColors.customWhite,
+                    size: 30,
                   ),
                   onPressed: () => context.goNamed(AppRoute.settings.name),
                 ),
@@ -87,19 +87,20 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ],
                 ),
                 Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: 22,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: 15,
+                    ),
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: const [
+                        MeTab(),
+                        FriendsTab(),
+                      ],
+                    ),
                   ),
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: const [
-                      MeTab(),
-                      FriendsTab(),
-                    ],
-                  ),
-                )),
+                ),
               ],
             ),
           ),

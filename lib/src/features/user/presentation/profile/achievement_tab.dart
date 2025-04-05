@@ -1,5 +1,7 @@
 import 'package:drive_safe/src/features/user/presentation/providers/current_user_state_provider.dart';
+import 'package:drive_safe/src/shared/constants/app_colors.dart';
 import 'package:drive_safe/src/shared/constants/text_styles.dart';
+import 'package:drive_safe/src/shared/widgets/checkered_flag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,83 +59,89 @@ class AchievementTab extends ConsumerWidget {
       );
     }
 
-    final unlockedBadges = currentUser.badges ?? [];
+    final unlockedBadges = currentUser.badges;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E),
-      appBar: AppBar(
-        title: const Text(''),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text(
-              'Achievements',
-              style: TextStyles.h2,
+    return Stack(
+      children: [
+        const CheckeredFlag(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            iconTheme: const IconThemeData(
+              color: AppColors.customWhite,
+              size: 45,
             ),
-            const SizedBox(height: 15),
-
-            /// 🔥 Hot Streak Section
-            const Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Hot Streak',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(255, 156, 156, 1),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              children: [
+                const Text(
+                  'Achievements',
+                  style: TextStyles.h2,
                 ),
-              ),
-            ),
-            const Text(
-              'Hot Streaks are for tracking how many days in a row you have achieved your goal',
-              style: TextStyles.finePrint,
-            ),
-            const SizedBox(height: 4),
-            ...buildBadgeRows(hotStreakBadges, 'hotstreak', unlockedBadges),
+                const SizedBox(height: 15),
 
-            const SizedBox(height: 20),
-
-            /// 🏁 Endurance Section
-            const Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Endurance',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 147, 255, 170),
+                /// 🔥 Hot Streak Section
+                const Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Hot Streak',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(255, 156, 156, 1),
+                    ),
+                  ),
                 ),
-              ),
+                const Text(
+                  'Hot Streaks are for tracking how many days in a row you have achieved your goal',
+                  style: TextStyles.finePrint,
+                ),
+                const SizedBox(height: 4),
+                ...buildBadgeRows(hotStreakBadges, 'hotstreak', unlockedBadges),
+
+                const SizedBox(height: 20),
+
+                /// 🏁 Endurance Section
+                const Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Endurance',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 147, 255, 170),
+                    ),
+                  ),
+                ),
+                const Text(
+                  'Endurance badges are for tracking how long you have focused for in a day',
+                  style: TextStyles.finePrint,
+                ),
+
+                const SizedBox(height: 4),
+                ...buildBadgeRows(enduranceBadges, 'endurance', unlockedBadges),
+
+                const SizedBox(height: 15),
+
+                /// 🔁 Refresh 버튼
+                ElevatedButton(
+                  onPressed: () async {
+                    await ref
+                        .read(currentUserStateProvider.notifier)
+                        .refreshAndSetUser();
+                  },
+                  child: const Text('🧪 Refresh Achievements'),
+                ),
+
+                const SizedBox(height: 15),
+              ],
             ),
-            const Text(
-              'Endurance badges are for tracking how long you have focused for in a day',
-              style: TextStyles.finePrint,
-            ),
-
-            const SizedBox(height: 4),
-            ...buildBadgeRows(enduranceBadges, 'endurance', unlockedBadges),
-
-            const SizedBox(height: 15),
-
-            /// 🔁 Refresh 버튼
-            ElevatedButton(
-              onPressed: () async {
-                await ref
-                    .read(currentUserStateProvider.notifier)
-                    .refreshAndSetUser();
-              },
-              child: const Text('🧪 Refresh Achievements'),
-            ),
-
-            const SizedBox(height: 15),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -7,7 +7,7 @@ class CheckeredFlag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 125,
+      height: 80,
       width: double.infinity,
       child: SvgPicture.asset(
         'assets/images/checkered_flag.svg',
