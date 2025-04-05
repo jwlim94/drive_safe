@@ -28,6 +28,8 @@ class CurrentUserState extends _$CurrentUserState {
     final latestUser = await repo.fetchUser(authUser.uid);
     if (latestUser == null) return;
 
+    final updatedFriends = await repo.getUserFriends(latestUser.id);
+
     final updatedBadges = List<String>.from(latestUser.badges ?? []);
 
     for (final threshold in [10, 20, 50, 100, 250, 365]) {
@@ -45,11 +47,11 @@ class CurrentUserState extends _$CurrentUserState {
       }
     }
 
-    if (updatedBadges.length != (latestUser.badges?.length ?? 0)) {
+    if (updatedBadges.length != (latestUser.badges.length)) {
       await repo.updateUserBadges(latestUser.id, updatedBadges);
     }
 
-    state = latestUser.copyWith(badges: updatedBadges);
+    state = latestUser.copyWith(badges: updatedBadges, friends: updatedFriends);
   }
 
   void updateUserGoal(int dailyGoal) {

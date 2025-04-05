@@ -348,7 +348,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               body: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Padding(padding: EdgeInsets.only(top: 75)),
+                  const Padding(padding: EdgeInsets.only(top: 50)),
                   Text(
                     state == 'Stopped' && currentUser.userGoal < 0
                         ? 'Focus Goal: +${formatGoalTime(currentUser.userGoal)}'
