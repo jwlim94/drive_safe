@@ -564,8 +564,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 const _unsupportedMessage = '''
 Manually enable Guided Access (iOS) or App Pinning (Android) 
-AFTER clicking Start or Resume focus.
 iOS: Settings -> Accessibility -> Guided Access
 Android: Settings -> Secuirity & Location -> Advanced -> App Pinning
-Finally, enable Guided Access or App Pinning while in the AutoFocus app
+Finally, AFTER clicking 'Start Focus' or 'Resume Focus', enable Guided Access
 ''';
