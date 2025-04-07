@@ -563,7 +563,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 }
 
 const _unsupportedMessage = '''
-Single App mode is supported only for devices that are supervised 
-using Mobile Device Management (MDM) and the app itself must 
-be enabled for this mode by MDM.
+Manually enable Guided Access (iOS) or App Pinning (Android).
+iOS: Settings -> Accessibility -> Guided Access
+Android: Settings -> Secuirity & Location -> Advanced -> App Pinning
+Finally, enable Guided Access or App Pinning while in the AutoFocus app
 ''';
